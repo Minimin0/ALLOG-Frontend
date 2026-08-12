@@ -1,0 +1,10 @@
+﻿:root {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --accent-primary: #4CAF50;
+  --accent-secondary: #FF9800;
+  --error: #F44336;
+  --success: #4CAF50;
+}
