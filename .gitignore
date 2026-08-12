@@ -1,36 +1,48 @@
-# Environment variables
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# build output
+dist
+dist-ssr
+
+# env
 .env
 .env.*
 !.env.example
 
-# Dependencies
-node_modules/
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+logs/
 
-# Build outputs
-dist/
-build/
-out/
-coverage/
+# editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+*.iml
 
-# Framework and tooling
+# secrets
+*.pem
+*.key
+
+# framework and tooling
 .next/
 .expo/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 
-# IDE
-.idea/
-.vscode/
-*.iml
+# additional build and test output
+build/
+out/
+coverage/
 
-# OS
-.DS_Store
-
-# Logs
-*.log
-logs/
-
-# Secrets
-*.pem
-*.key
+# capacitor native (초기엔 커밋, 팀 규칙에 따라 조정)
+# android/
