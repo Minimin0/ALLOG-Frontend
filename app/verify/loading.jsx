@@ -28,7 +28,7 @@ function MascotRing() {
         </Svg>
       </Animated.View>
       <View className="h-[150px] w-[150px] items-center justify-center overflow-hidden rounded-full bg-primary-tint">
-        <Mascot size={120} />
+        <Mascot size={120} animated />
       </View>
     </View>
   );

@@ -1,26 +1,35 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, Easing, runOnJS } from 'react-native-reanimated';
 
-// 마스코트 버튼: 누르면 한 번 폴짝 뛴 뒤 AI 코칭(/ai)으로 이동.
-// 내 그룹 헤더와 전체 랭킹 헤더가 공유한다(동작 단일화). 크기는 className으로 조절.
-// source: 진입 화면('feed' | 'ranking')을 쿼리로 넘겨 화면별 추천 질문을 띄운다.
-export default function CoachMascotButton({ className = 'h-14 w-14', source = 'ranking' }) {
-  const navigate = useNavigate();
-  const [hopping, setHopping] = useState(false);
+import Mascot from '@/components/common/Mascot';
 
-  const openCoach = () => {
-    if (hopping) return;
-    setHopping(true);
-    setTimeout(() => navigate(`/ai?from=${source}`), 380); // 폴짝 뛴 뒤 이동
+// 우측 상단 코치 캐릭터: 누르면 한 번 폴짝 뛴 뒤 AI 코칭으로 이동 (웹 hop 애니 포팅).
+export default function CoachMascotButton({ to = '/ai', circle = 54, size = 44 }) {
+  const router = useRouter();
+  const y = useSharedValue(0);
+  const style = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
+
+  const go = () => router.push(to);
+
+  const onPress = () => {
+    y.value = withSequence(
+      withTiming(-14, { duration: 130, easing: Easing.out(Easing.quad) }),
+      withTiming(0, { duration: 220, easing: Easing.bounce }, (finished) => {
+        if (finished) runOnJS(go)();
+      }),
+    );
   };
 
   return (
-    <button type="button" onClick={openCoach} aria-label="AI 코칭 열기">
-      <img
-        src="/images/mascot.png"
-        alt="AI 코치"
-        className={`origin-bottom object-contain ${className} ${hopping ? 'animate-hop' : ''}`}
-      />
-    </button>
+    <Pressable
+      onPress={onPress}
+      accessibilityLabel="AI 코칭 열기"
+      style={{ width: circle, height: circle, borderRadius: circle / 2, backgroundColor: '#edf2ec', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
+    >
+      <Animated.View style={style}>
+        <Mascot size={size} />
+      </Animated.View>
+    </Pressable>
   );
 }

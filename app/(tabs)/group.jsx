@@ -3,7 +3,7 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-import Mascot from '@/components/common/Mascot';
+import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
 import Confetti from '@/components/group/Confetti';
@@ -220,12 +220,7 @@ export default function GroupScreen() {
       <View className="flex-row items-center justify-between px-5 pt-2">
         <Text className="text-[28px] font-bold text-ink">내 그룹</Text>
         {tab !== 'info' ? (
-          <Pressable
-            onPress={() => router.push(`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`)}
-            className="h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-primary-tint"
-          >
-            <Mascot size={44} />
-          </Pressable>
+          <CoachMascotButton to={`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`} circle={56} size={44} />
         ) : (
           <View className="h-14 w-14" />
         )}

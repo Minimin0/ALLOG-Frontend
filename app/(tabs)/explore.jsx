@@ -3,7 +3,7 @@ import { View, Text, Pressable, ScrollView, TextInput, Modal } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-import Mascot from '@/components/common/Mascot';
+import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
 
 // 탐색 화면 (웹 src/pages/explore/ExplorePage.jsx 포팅). 참가/필터 모달은 RN Modal로.
@@ -59,13 +59,7 @@ export default function ExploreScreen() {
     <SafeAreaView edges={['top']} className="flex-1 bg-bg">
       <View className="flex-row items-center justify-between px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">탐색</Text>
-        <Pressable
-          onPress={() => router.push('/ai')}
-          accessibilityLabel="AI 코치"
-          className="h-[54px] w-[54px] items-center justify-center overflow-hidden rounded-full bg-primary-tint"
-        >
-          <Mascot size={44} />
-        </Pressable>
+        <CoachMascotButton to="/ai" circle={54} size={44} />
       </View>
 
       <ScrollView className="flex-1 px-[30px]" contentContainerClassName="gap-4 pb-8 pt-5">

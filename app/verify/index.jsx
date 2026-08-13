@@ -2,6 +2,7 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import BottomNavBar from '@/components/nav/BottomNavBar';
 import { mockGroup } from '@/data/mockGroups.js';
 import { useVerificationStore } from '@/stores/verificationStore.js';
 
@@ -59,6 +60,8 @@ export default function VerifyStartScreen() {
           <Text className="text-[15px] font-bold text-white">인증하기</Text>
         </Pressable>
       </ScrollView>
+
+      <BottomNavBar />
     </SafeAreaView>
   );
 }

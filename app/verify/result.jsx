@@ -39,7 +39,7 @@ export default function ResultScreen() {
 
             {/* 마스코트 */}
             <View className="h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-primary-tint">
-              <Mascot size={120} />
+              <Mascot size={120} animated />
             </View>
             <Text className="text-[22px] font-bold text-ink">인증 성공!</Text>
 

@@ -2,7 +2,7 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-import Mascot from '@/components/common/Mascot';
+import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
 
@@ -19,13 +19,7 @@ export default function HomeScreen() {
       {/* 헤더 */}
       <View className="flex-row items-center justify-between px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">홈</Text>
-        <Pressable
-          onPress={() => router.push('/ai')}
-          accessibilityLabel="AI 코치"
-          className="h-[54px] w-[54px] items-center justify-center overflow-hidden rounded-full bg-primary-tint"
-        >
-          <Mascot size={44} />
-        </Pressable>
+        <CoachMascotButton to="/ai" circle={54} size={44} />
       </View>
 
       <ScrollView className="flex-1 px-[30px]" contentContainerClassName="gap-4 pb-8 pt-5">

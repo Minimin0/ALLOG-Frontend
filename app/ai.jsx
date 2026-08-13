@@ -5,6 +5,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 
 import AiMessageRN from '@/components/ai/AiMessageRN';
+import BottomNavBar from '@/components/nav/BottomNavBar';
 import { getCoachContent } from '@/data/mockChat.js';
 
 // 사용자 메시지 (오른쪽, 흰 말풍선)
@@ -68,6 +69,8 @@ export default function AiCoachScreen() {
           ))}
         </ScrollView>
       </View>
+
+      <BottomNavBar />
     </SafeAreaView>
   );
 }
