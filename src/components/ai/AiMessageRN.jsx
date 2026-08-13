@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Circle, Line } from 'react-native-svg';
+import Animated, { useSharedValue, useAnimatedStyle, withDelay, withTiming, Easing } from 'react-native-reanimated';
+
+import Mascot from '@/components/common/Mascot';
 
 // AI 코치 메시지 + 데이터 시각화 (웹 AiMessage 포팅). viz: pips/ring/columns/versus.
 // 애니메이션(막대 차오름 등)은 최종 상태로 렌더(등장 애니는 상위에서 Reanimated로).
@@ -52,15 +56,29 @@ function VizRing({ value, goal, unit, note }) {
   );
 }
 
+// 막대: 마운트 시 0 → 목표 높이로 차오름 (stagger).
+function GrowBar({ targetH, highlight, index }) {
+  const h = useSharedValue(0);
+  useEffect(() => {
+    h.value = withDelay(index * 120, withTiming(targetH, { duration: 700, easing: Easing.out(Easing.cubic) }));
+  }, [targetH]);
+  const style = useAnimatedStyle(() => ({ height: h.value }));
+  return (
+    <Animated.View
+      style={[{ width: 28, borderTopLeftRadius: 4, borderTopRightRadius: 4, backgroundColor: highlight ? '#14453a' : '#bababa' }, style]}
+    />
+  );
+}
+
 function VizColumns({ data, unit }) {
   const max = Math.max(...data.map((d) => d.value));
   const H = 64;
   return (
     <View className="mt-3 w-full flex-row items-end justify-center gap-7" style={{ height: H + 44 }}>
-      {data.map((d) => (
+      {data.map((d, i) => (
         <View key={d.label} className="items-center gap-1.5">
           <Text className={`text-[11px] font-bold ${d.highlight ? 'text-primary' : 'text-muted'}`}>{d.value}{unit}</Text>
-          <View className={`w-7 rounded-t ${d.highlight ? 'bg-primary' : 'bg-disabled'}`} style={{ height: (d.value / max) * H }} />
+          <GrowBar targetH={(d.value / max) * H} highlight={d.highlight} index={i} />
           <Text className={`text-[11px] ${d.highlight ? 'font-bold text-primary' : 'text-muted'}`}>{d.label}</Text>
         </View>
       ))}
@@ -106,8 +124,8 @@ export default function AiMessageRN({ text, viz }) {
   const wide = viz?.type === 'columns';
   return (
     <View className="flex-row items-start gap-2">
-      <View className="h-9 w-9 items-center justify-center rounded-full bg-primary-tint" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
-        <Text className="text-lg">🌱</Text>
+      <View className="h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary-tint" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
+        <Mascot size={30} />
       </View>
       <View className={`rounded-2xl bg-primary-tint px-4 py-3 ${wide ? 'flex-1' : 'max-w-[80%]'}`}>
         <Text className="text-[15px] leading-6 text-ink">{text}</Text>

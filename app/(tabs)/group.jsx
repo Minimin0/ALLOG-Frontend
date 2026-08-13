@@ -3,6 +3,8 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Mascot from '@/components/common/Mascot';
+import Confetti from '@/components/group/Confetti';
 import RankingItemRN from '@/components/group/RankingItemRN';
 import { mockGroup, mockGroupRanking, mockFeed } from '@/data/mockGroups.js';
 import { rankMembers } from '@/utils/ranking.js';
@@ -65,7 +67,7 @@ function FeedCard({ item, onVerify, onCheer, onReport }) {
   );
 }
 
-function FeedView({ toast }) {
+function FeedView({ toast, cheer }) {
   const router = useRouter();
   // 2열 그리드: 2개씩 묶어 행으로
   const rows = [];
@@ -79,7 +81,7 @@ function FeedView({ toast }) {
               key={item.id}
               item={item}
               onVerify={() => router.push('/verify')}
-              onCheer={() => toast('응원을 보냈어요! 💚')}
+              onCheer={cheer}
               onReport={() => toast('재인증 요청이 전송되었어요!')}
             />
           ))}
@@ -192,10 +194,19 @@ export default function GroupScreen() {
   const router = useRouter();
   const [tab, setTab] = useState('feed');
   const [toastMsg, setToastMsg] = useState('');
+  const [cheerKey, setCheerKey] = useState(0);
+  const [cheerOn, setCheerOn] = useState(false);
 
   const toast = (msg) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(''), 2000);
+  };
+
+  const cheer = () => {
+    setCheerKey((k) => k + 1);
+    setCheerOn(true);
+    toast('응원을 보냈어요! 💚');
+    setTimeout(() => setCheerOn(false), 1300);
   };
 
   return (
@@ -206,9 +217,9 @@ export default function GroupScreen() {
         {tab !== 'info' ? (
           <Pressable
             onPress={() => router.push(`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`)}
-            className="h-14 w-14 items-center justify-center rounded-full bg-primary-tint"
+            className="h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-primary-tint"
           >
-            <Text className="text-2xl">🌱</Text>
+            <Mascot size={44} />
           </Pressable>
         ) : (
           <View className="h-14 w-14" />
@@ -243,10 +254,13 @@ export default function GroupScreen() {
 
       {/* 선택된 뷰 */}
       <ScrollView className="flex-1" contentContainerClassName="pb-6">
-        {tab === 'feed' && <FeedView toast={toast} />}
+        {tab === 'feed' && <FeedView toast={toast} cheer={cheer} />}
         {tab === 'ranking' && <RankingView />}
         {tab === 'info' && <InfoView toast={toast} />}
       </ScrollView>
+
+      {/* 응원 폭죽 */}
+      {cheerOn && <Confetti key={cheerKey} />}
 
       {/* 토스트 */}
       {!!toastMsg && (

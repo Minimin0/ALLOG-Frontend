@@ -2,8 +2,37 @@ import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
+import Svg, { Circle } from 'react-native-svg';
 
+import Mascot from '@/components/common/Mascot';
 import { useVerificationStore } from '@/stores/verificationStore.js';
+
+const RING = 176;
+const R = 83;
+const CIRC = 2 * Math.PI * R;
+
+// 마스코트 + 회전하는 진행 링 (웹 conic-gradient 스피너 → Reanimated 회전 SVG 아크).
+function MascotRing() {
+  const rot = useSharedValue(0);
+  useEffect(() => {
+    rot.value = withRepeat(withTiming(360, { duration: 1400, easing: Easing.linear }), -1);
+  }, []);
+  const style = useAnimatedStyle(() => ({ transform: [{ rotate: `${rot.value}deg` }] }));
+  return (
+    <View style={{ width: RING, height: RING }} className="items-center justify-center">
+      <Animated.View style={[{ position: 'absolute' }, style]}>
+        <Svg width={RING} height={RING}>
+          <Circle cx={88} cy={88} r={R} stroke="#e7e3d8" strokeWidth={6} fill="none" />
+          <Circle cx={88} cy={88} r={R} stroke="#14453a" strokeWidth={6} fill="none" strokeLinecap="round" strokeDasharray={`${CIRC * 0.82} ${CIRC}`} />
+        </Svg>
+      </Animated.View>
+      <View className="h-[150px] w-[150px] items-center justify-center overflow-hidden rounded-full bg-primary-tint">
+        <Mascot size={120} />
+      </View>
+    </View>
+  );
+}
 
 const MOCK_RESULT = 'success'; // 'success' | 'retry'
 const CHECK_ITEMS = [
@@ -32,15 +61,10 @@ export default function LoadingScreen() {
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-bg px-5">
       <View className="mt-6 items-center">
-        {/* 마스코트 + 스피너 (conic 링은 Batch 6에서 SVG로) */}
-        <View className="h-44 w-44 items-center justify-center rounded-full bg-primary-tint">
-          <Text className="text-6xl">🌱</Text>
-        </View>
-        <View className="mt-6">
-          <ActivityIndicator size="small" color="#14453a" />
-        </View>
+        {/* 마스코트 + 회전 진행 링 */}
+        <MascotRing />
 
-        <Text className="mt-4 text-center text-[20px] font-bold text-ink">AI 가 인증 내용을 분석하고 있어요.</Text>
+        <Text className="mt-6 text-center text-[20px] font-bold text-ink">AI 가 인증 내용을 분석하고 있어요.</Text>
         <Text className="mt-2 text-center text-[20px] font-medium text-muted">잠시만 기다려주세요.</Text>
       </View>
 

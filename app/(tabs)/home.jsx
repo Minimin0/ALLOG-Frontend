@@ -2,6 +2,8 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Mascot from '@/components/common/Mascot';
+
 // 홈 화면 (웹 src/pages/home/HomePage.jsx 포팅).
 // TODO: 작은 아이콘(하트/리워드/차트/불 SVG)은 추후 실제 에셋으로 교체(지금은 이모지).
 const SUCCESS_RATE = 60;
@@ -18,9 +20,9 @@ export default function HomeScreen() {
         <Pressable
           onPress={() => router.push('/ai')}
           accessibilityLabel="AI 코치"
-          className="h-[54px] w-[54px] items-center justify-center rounded-full bg-primary-tint"
+          className="h-[54px] w-[54px] items-center justify-center overflow-hidden rounded-full bg-primary-tint"
         >
-          <Text className="text-2xl">🌱</Text>
+          <Mascot size={44} />
         </Pressable>
       </View>
 

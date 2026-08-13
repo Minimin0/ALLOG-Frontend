@@ -3,6 +3,8 @@ import { View, Text, Pressable, ScrollView, TextInput, Modal } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Mascot from '@/components/common/Mascot';
+
 // 탐색 화면 (웹 src/pages/explore/ExplorePage.jsx 포팅). 참가/필터 모달은 RN Modal로.
 const categories = ['전체', '수분케어', '식사', '운동', '수면'];
 const durations = ['전체', '7일', '14일', '30일'];
@@ -59,9 +61,9 @@ export default function ExploreScreen() {
         <Pressable
           onPress={() => router.push('/ai')}
           accessibilityLabel="AI 코치"
-          className="h-[54px] w-[54px] items-center justify-center rounded-full bg-primary-tint"
+          className="h-[54px] w-[54px] items-center justify-center overflow-hidden rounded-full bg-primary-tint"
         >
-          <Text className="text-2xl">🌱</Text>
+          <Mascot size={44} />
         </Pressable>
       </View>
 

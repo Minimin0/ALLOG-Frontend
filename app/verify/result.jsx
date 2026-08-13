@@ -3,6 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Mascot from '@/components/common/Mascot';
 import { mockRetryGuide, mockVerifyFeedback } from '@/data/mockGroups.js';
 import { useVerificationStore } from '@/stores/verificationStore.js';
 
@@ -37,8 +38,8 @@ export default function ResultScreen() {
             </View>
 
             {/* 마스코트 */}
-            <View className="h-40 w-40 items-center justify-center rounded-full bg-primary-tint">
-              <Text className="text-6xl">🌱</Text>
+            <View className="h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-primary-tint">
+              <Mascot size={120} />
             </View>
             <Text className="text-[22px] font-bold text-ink">인증 성공!</Text>
 
