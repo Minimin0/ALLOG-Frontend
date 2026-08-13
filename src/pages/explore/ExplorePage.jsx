@@ -5,6 +5,16 @@ import JoinGroupModal from "../../components/group/JoinGroupModal";
 import FilterModal from "../../components/explore/FilterModal";
 import { getCoachStyleImage } from "../../utils/constants";
 import { getCoachStyle } from "../../utils/storage";
+import { mockGroup } from "../../data/mockGroups";
+
+// "N/M명" 형태의 인원 텍스트에서 [현재, 정원]을 뽑아낸다.
+function parseMembers(membersText) {
+  const [current, total] = membersText
+    .replace("명", "")
+    .split("/")
+    .map((n) => parseInt(n, 10));
+  return [current, total];
+}
 
 const categories = ["전체", "수분케어", "식사", "운동", "수면"];
 
@@ -97,9 +107,19 @@ function ExplorePage() {
   const handleConfirmJoin = () => {
     const group = joinTarget;
     setJoinTarget(null);
-    navigate(`/group/join-complete/${group.id}`, {
-      state: { title: group.title },
-    });
+
+    // 참가로 인원이 정원을 채우면 그룹 방이 바로 개설되어 그룹 화면으로,
+    // 아직 자리가 남아있으면 기존처럼 참가 완료 화면으로 이동한다.
+    const [current, total] = parseMembers(group.members);
+    const willBeFull = current + 1 >= total;
+
+    if (willBeFull) {
+      navigate(`/group/${mockGroup.id}`);
+    } else {
+      navigate(`/group/join-complete/${group.id}`, {
+        state: { title: group.title, capacity: total, existingCount: current },
+      });
+    }
   };
 
   return (
@@ -168,13 +188,9 @@ function ExplorePage() {
             })}
           </div>
 
-          <div className="w-full rounded-[18px] border border-[#e7e3d8] bg-[#edf2ec] p-4 text-left">
+          <div className="animate-fade-slide-up w-full rounded-[18px] border border-[#e7e3d8] bg-[#edf2ec] p-4 text-left">
             <div className="flex items-start justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => navigate(`/explore/group/${aiPick.id}`)}
-                className="flex-1 text-left"
-              >
+              <div className="flex-1 text-left">
                 <p className="text-[11px] opacity-75">
                   <span className="font-bold text-black">AI 추천 </span>
                   <span className="font-semibold text-[#14453a]">
@@ -194,7 +210,7 @@ function ExplorePage() {
                     ● ● ● ●
                   </span>
                 </div>
-              </button>
+              </div>
               <button
                 type="button"
                 onClick={() => setJoinTarget(aiPick)}
@@ -215,18 +231,15 @@ function ExplorePage() {
               </p>
             ) : (
             <div className="space-y-3">
-              {filteredGroups.map((group) => (
+              {filteredGroups.map((group, i) => (
                 <div
                   key={group.id}
-                  className={`flex w-full items-center justify-between rounded-[16px] p-4 text-left ${
+                  style={{ animationDelay: `${i * 70}ms` }}
+                  className={`animate-fade-slide-up flex w-full items-center justify-between rounded-[16px] p-4 text-left ${
                     group.full ? "bg-[#fefefe]" : "border border-[#e7e3d8] bg-[#fefefe]"
                   }`}
                 >
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/explore/group/${group.id}`)}
-                    className="flex-1 text-left"
-                  >
+                  <div className="flex-1 text-left">
                     <p
                       className={`text-[15px] font-bold ${
                         group.full ? "text-[#bababa]" : "text-[#1f2a24]"
@@ -243,7 +256,7 @@ function ExplorePage() {
                       <span className={group.full ? "" : "text-[#d9573b]"}>♥</span>{" "}
                       1개 필요
                     </p>
-                  </button>
+                  </div>
                   <button
                     type="button"
                     disabled={group.full}
@@ -272,6 +285,13 @@ function ExplorePage() {
               className="mt-3 h-[50px] w-full rounded-[27.5px] bg-black text-[15px] font-bold text-white"
             >
               직접 그룹 만들기
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/group/join")}
+              className="mt-3 text-[12px] font-semibold text-[#6b7268] underline"
+            >
+              이미 초대 코드가 있나요? 코드로 참여하기
             </button>
           </div>
         </main>

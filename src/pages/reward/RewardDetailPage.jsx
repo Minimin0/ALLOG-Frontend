@@ -67,7 +67,7 @@ function RewardDetailPage() {
             <div className="flex h-[88px] w-[88px] items-center justify-center rounded-[20px] bg-[#f3efe4]">
               <img src={reward.icon} alt="" className="h-[44px] w-[44px]" />
             </div>
-            <p className="mt-4 text-[18px] font-bold text-black">
+            <p className="mt-4 whitespace-pre-line text-[18px] font-bold text-black">
               {reward.title}
             </p>
             <p className="mt-1.5 text-[12px] font-medium text-[#6b7268]">
@@ -126,7 +126,7 @@ function RewardDetailPage() {
             <p className="mt-4 text-[17px] font-bold text-black">
               구매가 완료됐어요!
             </p>
-            <p className="mt-2 text-[13px] font-bold text-black">
+            <p className="mt-2 whitespace-pre-line text-[13px] font-bold text-black">
               {reward.title}
             </p>
             <p className="mt-1 flex items-center justify-center gap-1 text-[13px] font-medium text-[#6b7268]">

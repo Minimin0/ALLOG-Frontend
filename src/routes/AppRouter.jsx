@@ -28,6 +28,7 @@ import GroupCreatedPage from "../pages/group/GroupCreatedPage";
 import WaitingRoomPage from "../pages/group/WaitingRoomPage";
 import JoinCompletePage from "../pages/group/JoinCompletePage";
 import InviteGroupPage from "../pages/group/InviteGroupPage";
+import JoinByCodePage from "../pages/group/JoinByCodePage";
 import AiCoachPage from "../pages/ai/AiCoachPage";
 
 // 내 그룹 (인증·랭킹) — bananayeon 브랜치에서 병합
@@ -93,6 +94,7 @@ function AppRouter() {
       />
       <Route path="/group/join-complete" element={<JoinCompletePage />} />
       <Route path="/group/invite" element={<InviteGroupPage />} />
+      <Route path="/group/join" element={<JoinByCodePage />} />
 
       {/* 내 그룹: 부모 레이아웃 아래 탭들을 중첩 (bananayeon) */}
       <Route path="/group/:groupId" element={<MyGroupPage />}>

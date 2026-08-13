@@ -35,7 +35,7 @@ function RewardPage() {
             </p>
             <div className="mt-2 flex items-end justify-between">
               <p className="flex items-center gap-1.5 text-[30px] font-bold text-[#e7e3d8]">
-                <img src="/images/리워드.svg" alt="" className="h-[22px] w-[22px]" />
+                <img src="/images/리워드.svg" alt="" className="bounce-once h-[22px] w-[22px]" />
                 {points}
               </p>
               <a
@@ -107,21 +107,22 @@ function RewardPage() {
             ) : null}
           </div>
 
-          <div className="animate-fade-in space-y-3">
-            {sortedRewards.map((reward) => {
+          <div className="space-y-3">
+            {sortedRewards.map((reward, i) => {
               const canAfford = points >= reward.cost;
               return (
                 <button
                   key={reward.id}
                   type="button"
                   onClick={() => navigate(`/reward/${reward.id}`)}
-                  className="flex w-full items-center gap-3 rounded-[13px] bg-[#fefefe] p-4 text-left"
+                  style={{ animationDelay: `${i * 80}ms` }}
+                  className="animate-fade-slide-up flex w-full items-center gap-3 rounded-[13px] bg-[#fefefe] p-4 text-left"
                 >
                   <div className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-[12px] bg-[#f3efe4]">
                     <img src={reward.icon} alt="" className="h-[26px] w-[26px]" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[15px] font-bold text-black">
+                    <p className="whitespace-pre-line text-[15px] font-bold text-black">
                       {reward.title}
                     </p>
                     <p className="mt-1 text-[10px] font-medium text-[#6b7268]">

@@ -22,16 +22,29 @@ export default function VerificationPage() {
     <div className="mx-auto flex min-h-full max-w-[402px] flex-col bg-bg p-5">
       <VerifyHeader />
 
-      {/* DAY 카드 (가로 축소) */}
+      {/* DAY 카드 (가로 축소) — Figma node 1:642 기준: 오늘 인증 현황(N/M명 + 진행 점)도 함께 표시 */}
       <div className="mx-auto w-[86%] rounded-card bg-surface p-5 text-center shadow-sm">
         <p className="text-label text-primary">DAY {mockGroup.day}</p>
         <h2 className="text-h2 font-bold text-ink">{mockGroup.title}</h2>
+        <p className="mt-1 text-caption text-muted">
+          오늘 {mockGroup.verifiedToday}/{mockGroup.totalMembers}명 인증완료
+        </p>
+        <div className="mt-3 flex justify-center gap-2">
+          {Array.from({ length: mockGroup.totalMembers }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-[21px] w-[21px] rounded-full ${
+                i < mockGroup.verifiedToday ? 'bg-primary' : 'bg-surface-alt'
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* 촬영 영역 (탭 → 카메라, 가이드 바로 위까지 세로로 채움) */}
+      {/* 촬영 영역 (탭 → 카메라) — Figma node 1:642 기준 297×396px, rounded-[51px] */}
       <button
         onClick={goCamera}
-        className="mx-auto mt-5 flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-card bg-line"
+        className="mx-auto mt-5 flex w-[297px] max-w-full h-[396px] flex-col items-center justify-center gap-3 rounded-[51px] bg-line"
       >
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-surface shadow">
           <svg viewBox="0 0 24 24" className="h-7 w-7 text-ink" fill="currentColor">

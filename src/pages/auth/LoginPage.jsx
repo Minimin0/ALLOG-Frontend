@@ -54,7 +54,7 @@ function LoginPage() {
         style={{ width: DESIGN_WIDTH * scale, height: DESIGN_HEIGHT * scale }}
       >
       <div
-        className="relative overflow-hidden bg-[#F7F6F3]"
+        className="animate-fade-in relative overflow-hidden bg-[#F7F6F3]"
         style={{
           width: DESIGN_WIDTH,
           height: DESIGN_HEIGHT,

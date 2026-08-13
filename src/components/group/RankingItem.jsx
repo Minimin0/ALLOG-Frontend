@@ -25,11 +25,16 @@ export default function RankingItem({ rank, name, caption, isMe = false, avatarU
         )}
       </div>
 
-      {/* 아바타 (이미지 없으면 회색 원 placeholder) */}
+      {/* 아바타 (이미지 없으면 회색 원 + 사람 아이콘 placeholder — Figma 기준) */}
       {avatarUrl ? (
         <img src={avatarUrl} alt={name} className="h-9 w-9 shrink-0 rounded-full object-cover" />
       ) : (
-        <div className="h-9 w-9 shrink-0 rounded-full bg-surface-alt" />
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-alt">
+          <svg viewBox="0 0 24 24" className="h-5 w-5 text-disabled" fill="currentColor">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+          </svg>
+        </div>
       )}
 
       {/* 이름 + 캡션 */}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { generateInviteCode } from "../../utils/format";
 
 const categories = ["수분케어", "식사", "운동", "수면"];
 const durations = ["7일", "14일", "30일"];
@@ -44,12 +45,12 @@ function CreateGroupPage() {
             type="button"
             onClick={() => navigate(-1)}
             aria-label="뒤로가기"
-            className="flex h-[43px] w-[43px] items-center justify-center rounded-full border border-[#e7e3d8] bg-[#fefefe]"
+            className="flex h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-black"
           >
             <svg viewBox="0 0 24 24" className="h-[16px] w-[16px]" fill="none">
               <path
                 d="M15 5l-7 7 7 7"
-                stroke="#000000"
+                stroke="#ffffff"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -64,7 +65,7 @@ function CreateGroupPage() {
             <p className="mb-2 text-[15px] font-bold text-black">
               카테고리 선택
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-4 gap-2">
               {categories.map((item) => {
                 const active = category === item;
                 return (
@@ -72,7 +73,7 @@ function CreateGroupPage() {
                     key={item}
                     type="button"
                     onClick={() => setCategory(item)}
-                    className={`rounded-full border px-4 py-2 text-[13px] font-semibold ${
+                    className={`rounded-full border py-2 text-center text-[13px] font-semibold ${
                       active
                         ? "border-[#14453a] bg-[#eaf4ec] text-black"
                         : "border-[#e7e3d8] bg-[#fefefe] text-[#4a4a4a]"
@@ -158,7 +159,9 @@ function CreateGroupPage() {
               {verificationTimes.map((slot, index) => (
                 <div
                   key={index}
-                  className="rounded-[15px] border border-[#e7e3d8] bg-[#fefefe] px-4 py-3"
+                  className={`rounded-[15px] border border-[#e7e3d8] bg-[#fefefe] px-4 py-3 ${
+                    index === 0 ? "" : "animate-fade-slide-up"
+                  }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[12px] font-bold text-[#6b7268]">
@@ -246,7 +249,18 @@ function CreateGroupPage() {
           <button
             type="button"
             disabled={!canSubmit}
-            onClick={() => navigate("/group/created")}
+            onClick={() =>
+              navigate("/group/created", {
+                state: {
+                  title: name,
+                  category,
+                  duration,
+                  capacity,
+                  visibility,
+                  code: generateInviteCode(),
+                },
+              })
+            }
             className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white disabled:opacity-40"
           >
             그룹 만들기

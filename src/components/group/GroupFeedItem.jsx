@@ -42,25 +42,27 @@ export default function GroupFeedItem({ name, status, timeAgo, image, onVerify, 
         isMe ? 'bg-primary-tint' : 'bg-surface'
       }`}
     >
-      <p className="whitespace-pre-line text-body font-bold text-ink">
+      <p className="whitespace-pre-line text-body font-bold leading-snug text-ink">
         {isMe ? '아직 오늘\n인증을 안했어요.' : '인증을\n기다리는 중이에요.'}
       </p>
 
-      {/* 버튼: 카드 정중앙 */}
+      {/* 버튼: 카드 정중앙 (위치 유지, 그림자로 입체감만 추가) */}
       <div className="flex flex-1 items-center justify-center">
         <button
           onClick={isMe ? onVerify : onCheer}
-          className="rounded-pill bg-ink px-5 py-2 text-caption font-bold text-white"
+          className="rounded-pill bg-ink px-6 py-2.5 text-caption font-bold text-white shadow-sm transition-transform active:scale-95"
         >
           {isMe ? '인증하기' : '응원하기'}
         </button>
       </div>
 
+      {/* 아바타: "나"는 아바타 안에 이미 표시되므로 옆에 같은 글자를 또 적지
+          않는다 — 자리는 그대로 두고 중복 표기만 정리. */}
       <div className="flex items-center gap-1.5">
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-white">
           {isMe ? '나' : name[0]}
         </span>
-        <span className="text-caption text-ink">{isMe ? '나' : name}</span>
+        {!isMe && <span className="text-caption text-ink">{name}</span>}
       </div>
     </div>
   );

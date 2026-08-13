@@ -1,10 +1,10 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function JoinCompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { groupId = "water-evening" } = useParams();
   const title = location.state?.title ?? "매일 물 1.5L 마시기";
+  const { capacity, existingCount } = location.state ?? {};
 
   return (
     <div className="min-h-screen bg-[#f7f6f3]">
@@ -46,7 +46,11 @@ function JoinCompletePage() {
         <div className="space-y-4 pb-8">
           <button
             type="button"
-            onClick={() => navigate(`/explore/group/${groupId}`)}
+            onClick={() =>
+              navigate("/group/waiting-room", {
+                state: { title, capacity, existingCount },
+              })
+            }
             className="h-[50px] w-full rounded-[27.5px] bg-black text-[15px] font-bold text-white"
           >
             그룹으로 이동

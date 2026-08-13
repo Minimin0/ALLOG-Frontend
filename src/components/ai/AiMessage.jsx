@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { getCoachStyleImage } from '@/utils/constants.js';
+import { getCoachStyle } from '@/utils/storage.js';
 
 // 마운트 직후 0 → 목표값으로 채워지는 애니메이션 트리거.
 // requestAnimationFrame은 미표시 프레임에서 안 불릴 수 있어 setTimeout으로 확실히 발화.
@@ -186,10 +188,11 @@ function CoachViz({ viz }) {
 // 세로 막대 차트(columns)는 가로 공간이 필요해 말풍선을 flex-1로 넓힌다(그 외엔 80% 유지).
 export default function AiMessage({ text, viz }) {
   const wideViz = viz?.type === 'columns';
+  const [coachImage] = useState(() => getCoachStyleImage(getCoachStyle()));
   return (
-    <div className="flex items-start gap-2">
+    <div className="animate-riseUp flex items-start gap-2">
       <img
-        src="/images/mascot.png"
+        src={coachImage}
         alt="AI 코치"
         className="h-9 w-9 shrink-0 rounded-full bg-primary-tint object-cover ring-1 ring-line"
       />

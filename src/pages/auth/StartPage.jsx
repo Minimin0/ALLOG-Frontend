@@ -5,7 +5,7 @@ function StartPage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f6f3f1]">
-      <div className="relative min-h-screen w-full max-w-[393px] overflow-hidden bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_81.25%,#F6F3EC_100%)]">
+      <div className="relative min-h-screen w-full max-w-[393px] overflow-hidden bg-white">
         <main className="flex flex-col items-center pt-[47px]">
           <img
             src="/images/Logo.svg"
