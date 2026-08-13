@@ -79,17 +79,18 @@ function GroupDetailPage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className="flex flex-1 flex-col items-center pt-3"
+                className="relative flex flex-1 flex-col items-center pb-3 pt-3"
               >
                 <span
-                  className={`border-b-2 pb-3 text-[14px] font-bold ${
-                    active
-                      ? "border-black text-black"
-                      : "border-transparent text-[#bababa]"
+                  className={`text-[14px] font-bold ${
+                    active ? "text-black" : "text-[#bababa]"
                   }`}
                 >
                   {tab.label}
                 </span>
+                {active && (
+                  <span className="absolute inset-x-0 -bottom-px h-0.5 bg-black" />
+                )}
               </button>
             );
           })}
