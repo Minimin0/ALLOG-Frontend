@@ -1,4 +1,6 @@
-﻿import { useNavigate } from "react-router-dom";
+﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { signInWithGoogle } from "../../services/authApi";
 
 const socialButtons = [
   {
@@ -15,6 +17,7 @@ const socialButtons = [
     label: "Google 로그인",
     src: "/images/Google.svg",
     alt: "Google 로그인",
+    provider: "google",
   },
   {
     label: "카카오 로그인",
@@ -25,6 +28,17 @@ const socialButtons = [
 
 function LoginPage() {
   const navigate = useNavigate();
+  const [googleError, setGoogleError] = useState("");
+
+  const handleGoogleLogin = async () => {
+    setGoogleError("");
+    try {
+      await signInWithGoogle();
+      navigate("/auth/firebase-debug");
+    } catch (error) {
+      setGoogleError(error.message || "구글 로그인에 실패했어요.");
+    }
+  };
 
   return (
     <div
@@ -35,38 +49,6 @@ function LoginPage() {
         className="relative overflow-hidden bg-[#F7F6F3]"
         style={{ width: "393px", height: "852px" }}
       >
-        <div
-          className="absolute text-[18px] font-bold leading-[41px] text-[#000000]"
-          style={{ left: "42px", top: "9px" }}
-        >
-          12:41
-        </div>
-
-        <svg
-          width="16"
-          height="12"
-          viewBox="0 0 16 12"
-          aria-label="Wi-Fi"
-          className="absolute"
-          style={{ left: "308px", top: "21px" }}
-        >
-          <path
-            d="M1 5.5C4.3 2.5 7.7 1.5 15 1.5"
-            fill="none"
-            stroke="#000000"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M4 8.2C6.2 6.3 9.8 6.3 12 8.2"
-            fill="none"
-            stroke="#000000"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-          />
-          <circle cx="8" cy="10.2" r="1.1" fill="#000000" />
-        </svg>
-
         <h1
           className="absolute text-center text-[40px] font-bold leading-[35px] tracking-[-0.04em] text-[#000000]"
           style={{
@@ -222,11 +204,21 @@ function LoginPage() {
               type="button"
               aria-label={provider.label}
               className="login2-social-button"
+              onClick={provider.provider === "google" ? handleGoogleLogin : undefined}
             >
               <img src={provider.src} alt={provider.alt} />
             </button>
           ))}
         </div>
+
+        {googleError ? (
+          <div
+            className="absolute text-center text-[12px] font-medium text-[#e75b5b]"
+            style={{ left: "49px", top: "612px", width: "296px" }}
+          >
+            {googleError}
+          </div>
+        ) : null}
       </div>
     </div>
   );

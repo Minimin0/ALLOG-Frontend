@@ -6,28 +6,7 @@ function StartPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f6f3f1]">
       <div className="relative h-[852px] w-[393px] overflow-hidden bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_81.25%,#F6F3EC_100%)]">
-        <header className="flex h-[47px] items-center justify-between px-[20px] pt-[10px] text-[18px] font-bold text-[#000000]">
-          <span className="leading-none">12:41</span>
-
-          <div className="flex items-center justify-center pr-[2px]">
-            <svg
-              viewBox="0 0 24 12"
-              className="h-[12px] w-[16px]"
-              aria-label="Wi‑Fi"
-              role="img"
-            >
-              <path
-                d="M3.5 6.6C6.5 3.6 11.5 3.6 14.5 6.6M6.4 9.4C8.1 7.8 9.9 7.8 11.6 9.4M9.4 12C9.4 11.5 9.4 11.5 9.4 12Z"
-                fill="none"
-                stroke="#000000"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
-        </header>
-
-        <main className="flex flex-col items-center">
+        <main className="flex flex-col items-center pt-[47px]">
           <img
             src="/images/Logo.svg"
             alt="ALLOG 로고"

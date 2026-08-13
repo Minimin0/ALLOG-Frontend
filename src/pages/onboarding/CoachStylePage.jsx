@@ -6,19 +6,19 @@ const coachOptions = [
   {
     name: "응원형",
     tone: "따뜻하게 격려해드려요",
-    image: "/images/응원형.png",
+    image: "/images/응원형.svg",
   },
   {
     name: "압박형",
-    tone: "강하게 동기부여해드려요",
-    image: "/images/압박형.png",
+    tone: "긴장감 있게 자극할게요",
+    image: "/images/압박형.svg",
   },
   {
     name: "팩트형",
-    tone: "수치와 사실로 알려드려요",
-    image: "/images/팩트형.png",
+    tone: "숫자와 근거로 말할게요",
+    image: "/images/팩트형.svg",
   },
-  { name: "유머형", tone: "재미있게 도와드려요", image: "/images/유머형.png" },
+  { name: "유머형", tone: "가볍고 재밌게 말할게요", image: "/images/유머형.svg" },
 ];
 
 function CoachStylePage() {
@@ -29,9 +29,8 @@ function CoachStylePage() {
     <OnboardingShell
       step={3}
       total={4}
-      title="어떤 방식으로"
-      subtitle="선택한 코칭 스타일에 따라 루틴이 맞춤 추천됩니다."
-      progress={75}
+      title="어떤 방식으로 응원받고 싶나요?"
+      subtitle="선택한 스타일로 AI 코치가 매일 말을 걸어드려요."
       onBack={() => navigate("/onboarding/habits")}
       onNext={() => navigate("/onboarding/lifestyle")}
       nextLabel="다음"
@@ -46,28 +45,23 @@ function CoachStylePage() {
               key={option.name}
               type="button"
               onClick={() => setSelected(option.name)}
-              className={`relative flex min-h-[150px] flex-col items-center justify-center rounded-[18px] border px-3 py-4 text-center transition ${
+              className={`relative flex h-[160px] flex-col items-center justify-center rounded-[15px] border px-3 py-3 text-center transition ${
                 active
-                  ? "border-[#8ab88d] bg-[#ebf8ee] shadow-[inset_0_0_0_1px_rgba(108,197,106,0.14)]"
-                  : "border-[#dfe2df] bg-[#f6f4f2]"
+                  ? "border-2 border-[#14453a] bg-[#eaf4ec]"
+                  : "border-[#e7e3d8] bg-[#fefefe]"
               }`}
             >
               <img
                 src={option.image}
                 alt={option.name}
-                className="mb-3 h-[80px] w-[80px] object-contain"
+                className="mb-2 h-[80px] w-[80px] object-contain"
               />
-              <div className="text-[18px] font-bold text-[#1b1b1b]">
+              <div className="text-[15px] font-bold text-black">
                 {option.name}
               </div>
-              <div className="mt-1 text-[12px] text-[#6f6a66]">
+              <div className="mt-1 text-[10px] font-medium text-[#4a4a4a]">
                 {option.tone}
               </div>
-              <img
-                src={active ? "/images/Black Check.png" : "/images/Check.png"}
-                alt={active ? "선택됨" : "선택 안 됨"}
-                className="absolute right-3 top-3 h-5 w-5 object-contain"
-              />
             </button>
           );
         })}

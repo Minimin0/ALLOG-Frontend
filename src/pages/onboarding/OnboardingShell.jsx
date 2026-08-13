@@ -3,31 +3,18 @@ function OnboardingShell({
   total,
   title,
   subtitle,
-  progress,
   onBack,
   onNext,
   nextLabel = "다음",
   canNext = true,
   children,
 }) {
-  const stepLabel = total ? `STEP ${step}/${total}` : `STEP ${step}`;
+  const stepLabel = `STEP ${step}`;
+  const segments = Array.from({ length: total || step }, (_, i) => i < step);
 
   return (
     <div className="onboarding-app">
       <div className="onboarding-phone">
-        <div className="onboarding-statusbar">
-          <div className="left">12:41</div>
-          <div className="right">
-            <span className="signal">
-              <span />
-              <span />
-              <span />
-              <span />
-            </span>
-            <span>◔</span>
-          </div>
-        </div>
-
         <div className="onboarding-content">
           <div className="onboarding-stephead">
             <button
@@ -42,10 +29,12 @@ function OnboardingShell({
           </div>
 
           <div className="onboarding-progress" aria-label="진행도">
-            <div
-              className="onboarding-progress-bar"
-              style={{ width: `${progress}%` }}
-            />
+            {segments.map((filled, i) => (
+              <div
+                key={i}
+                className={`onboarding-progress-segment ${filled ? "is-filled" : ""}`}
+              />
+            ))}
           </div>
 
           <h1 className="onboarding-title">{title}</h1>
