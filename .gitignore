@@ -46,3 +46,9 @@ coverage/
 
 # capacitor native (초기엔 커밋, 팀 규칙에 따라 조정)
 # android/
+
+# Expo / RN
+.expo/
+dist/
+web-build/
+*.orig

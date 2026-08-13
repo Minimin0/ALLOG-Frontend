@@ -1,11 +1,13 @@
-// 공통 버튼. 화면마다 반복되던 알약형 버튼 스타일을 한 곳으로 모음.
-// variant로 주요/보조/외곽선/위험 스타일을 고르고, disabled면 자동으로 비활성 색.
+import { Pressable, Text } from 'react-native';
+
+// 공통 버튼 (RN 포팅). 웹 API(variant/size/fullWidth/disabled) 유지.
+// 웹→RN: <button onClick> → <Pressable onPress>, 라벨은 반드시 <Text>로 감쌈.
 const VARIANTS = {
-  primary: 'bg-primary text-white',
-  secondary: 'bg-disabled text-white',
-  outline: 'border border-line bg-transparent text-ink',
-  danger: 'bg-danger text-white',
-  dark: 'bg-ink text-white',
+  primary: { box: 'bg-primary', label: 'text-white' },
+  secondary: { box: 'bg-disabled', label: 'text-white' },
+  outline: { box: 'border border-line bg-transparent', label: 'text-ink' },
+  danger: { box: 'bg-danger', label: 'text-white' },
+  dark: { box: 'bg-ink', label: 'text-white' },
 };
 
 export default function Button({
@@ -13,19 +15,23 @@ export default function Button({
   size = 'md',
   fullWidth = true,
   disabled = false,
-  type = 'button',
+  onPress,
   className = '',
   children,
-  ...rest
 }) {
   const pad = size === 'lg' ? 'py-4' : 'py-3';
-  const base = `rounded-pill ${pad} text-body font-semibold transition active:scale-[0.99]`;
-  const look = disabled ? 'bg-disabled text-white' : VARIANTS[variant];
-  const width = fullWidth ? 'w-full' : 'px-6';
+  const look = disabled ? VARIANTS.secondary : VARIANTS[variant];
+  const width = fullWidth ? 'w-full' : 'self-start px-6';
 
   return (
-    <button type={type} disabled={disabled} className={`${base} ${width} ${look} ${className}`} {...rest}>
-      {children}
-    </button>
+    <Pressable
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
+      className={`items-center justify-center rounded-pill ${pad} ${width} ${look.box} ${
+        disabled ? 'opacity-60' : 'active:opacity-90'
+      } ${className}`}
+    >
+      <Text className={`text-[15px] font-semibold ${look.label}`}>{children}</Text>
+    </Pressable>
   );
 }

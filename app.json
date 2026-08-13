@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "ALLOG",
+    "slug": "allog",
+    "scheme": "allog",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "backgroundColor": "#f7f6f3"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.allog.app"
+    },
+    "android": {
+      "package": "com.allog.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#f7f6f3"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "운동 인증 영상을 촬영하기 위해 카메라 접근이 필요합니다."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
