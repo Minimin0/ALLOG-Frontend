@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useViewportScale } from "../../hooks/useViewportScale";
+
+const DESIGN_WIDTH = 393;
+const DESIGN_HEIGHT = 852;
 
 function SignUpAccountPage() {
   const navigate = useNavigate();
+  const scale = useViewportScale(DESIGN_WIDTH);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -30,7 +35,7 @@ function SignUpAccountPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f6f3]">
+    <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
       <style>{`
         .signup2-screen {
           position: relative;
@@ -38,7 +43,6 @@ function SignUpAccountPage() {
           height: 852px;
           overflow: hidden;
           background: #f7f6f3;
-          margin: 0 auto;
         }
 
         .signup2-title {
@@ -174,7 +178,11 @@ function SignUpAccountPage() {
         }
       `}</style>
 
-      <div className="signup2-screen">
+      <div style={{ width: DESIGN_WIDTH * scale, height: DESIGN_HEIGHT * scale }}>
+      <div
+        className="signup2-screen"
+        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
         <h1 className="signup2-title">
           아이디와 비밀번호를
           <br />
@@ -238,6 +246,7 @@ function SignUpAccountPage() {
         >
           완료
         </button>
+      </div>
       </div>
     </div>
   );

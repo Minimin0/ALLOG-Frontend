@@ -5,7 +5,7 @@ function SettingsPage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col items-center justify-center gap-6 bg-[#f7f6f3] px-8 text-center">
+      <div className="flex min-h-screen w-full max-w-[402px] flex-col items-center justify-center gap-6 bg-[#f7f6f3] px-8 text-center">
         <h1 className="text-[19px] font-bold text-black">
           설정 화면
           <br />

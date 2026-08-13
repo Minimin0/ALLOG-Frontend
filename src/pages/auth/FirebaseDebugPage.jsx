@@ -63,7 +63,7 @@ function FirebaseDebugPage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="w-[402px] px-6 py-8">
+      <div className="w-full max-w-[402px] px-6 py-8">
         <button
           type="button"
           onClick={() => navigate("/auth/login")}

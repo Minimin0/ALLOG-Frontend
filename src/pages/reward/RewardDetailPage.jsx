@@ -14,7 +14,7 @@ function RewardDetailPage() {
   if (!reward) {
     return (
       <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-        <div className="flex min-h-screen w-[402px] flex-col items-center justify-center gap-6 bg-[#f7f6f3] px-8 text-center">
+        <div className="flex min-h-screen w-full max-w-[402px] flex-col items-center justify-center gap-6 bg-[#f7f6f3] px-8 text-center">
           <h1 className="text-[17px] font-bold text-black">
             존재하지 않는 리워드예요.
           </h1>
@@ -41,7 +41,7 @@ function RewardDetailPage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col bg-[#f7f6f3]">
+      <div className="flex min-h-screen w-full max-w-[402px] flex-col bg-[#f7f6f3]">
         <header className="flex items-center gap-3 px-5 py-3">
           <button
             type="button"

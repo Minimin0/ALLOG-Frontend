@@ -31,7 +31,7 @@ function GroupDetailPage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col bg-[#f7f6f3]">
+      <div className="flex min-h-screen w-full max-w-[402px] flex-col bg-[#f7f6f3]">
         <header className="flex items-center gap-3 px-5 py-3">
           <button
             type="button"
@@ -79,13 +79,17 @@ function GroupDetailPage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 border-b-2 py-3 text-center text-[14px] font-bold ${
-                  active
-                    ? "border-black text-black"
-                    : "border-transparent text-[#bababa]"
-                }`}
+                className="flex flex-1 flex-col items-center py-3"
               >
-                {tab.label}
+                <span
+                  className={`border-b-2 pb-1 text-[14px] font-bold ${
+                    active
+                      ? "border-black text-black"
+                      : "border-transparent text-[#bababa]"
+                  }`}
+                >
+                  {tab.label}
+                </span>
               </button>
             );
           })}

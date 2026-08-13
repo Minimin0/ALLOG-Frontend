@@ -104,7 +104,7 @@ function ExplorePage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col bg-[#f7f6f3]">
+      <div className="flex min-h-screen w-full max-w-[402px] flex-col bg-[#f7f6f3]">
         <header className="flex items-center justify-between px-[30px] pt-4">
           <h1 className="text-[28px] font-bold text-black">탐색</h1>
           <button

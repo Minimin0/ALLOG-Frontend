@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TermsAgreementModal from "../../components/auth/TermsAgreementModal";
+import { useViewportScale } from "../../hooks/useViewportScale";
+
+const DESIGN_WIDTH = 393;
+const DESIGN_HEIGHT = 852;
 
 function SignUpPhonePage() {
   const navigate = useNavigate();
+  const scale = useViewportScale(DESIGN_WIDTH);
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [termsOpen, setTermsOpen] = useState(false);
@@ -26,7 +31,7 @@ function SignUpPhonePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f6f3]">
+    <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
       <style>{`
         .signup1-screen {
           position: relative;
@@ -34,7 +39,6 @@ function SignUpPhonePage() {
           height: 852px;
           overflow: hidden;
           background: #f7f6f3;
-          margin: 0 auto;
         }
 
         .signup1-title {
@@ -219,7 +223,11 @@ function SignUpPhonePage() {
         }
       `}</style>
 
-      <div className="signup1-screen">
+      <div style={{ width: DESIGN_WIDTH * scale, height: DESIGN_HEIGHT * scale }}>
+      <div
+        className="signup1-screen"
+        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
         <h1 className="signup1-title">
           본인 확인을 위해
           <br />
@@ -283,6 +291,7 @@ function SignUpPhonePage() {
         >
           다음
         </button>
+      </div>
       </div>
 
       <TermsAgreementModal
