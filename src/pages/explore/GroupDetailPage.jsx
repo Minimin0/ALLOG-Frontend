@@ -115,7 +115,7 @@ function GroupDetailPage() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => navigate("/group/feed")}
+                        onClick={() => navigate(`/group/${groupId}/feed`)}
                         className="mt-1 text-left text-[10px] font-semibold text-[#4a4a4a]"
                       >
                         댓글, 재인증 요청
@@ -136,8 +136,8 @@ function GroupDetailPage() {
                         onClick={() =>
                           navigate(
                             member.isMe
-                              ? "/verification/camera"
-                              : "/group/feed",
+                              ? `/group/${groupId}/verify/camera`
+                              : `/group/${groupId}/feed`,
                           )
                         }
                         className="mt-2 rounded-full bg-black py-2 text-center text-[12px] font-bold text-white"

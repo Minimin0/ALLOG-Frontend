@@ -15,7 +15,7 @@ export default function PlaceholderPage({ title, note }) {
         onClick={() => navigate('/')}
         className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white"
       >
-        개발 홈으로
+        처음으로
       </button>
     </div>
   );

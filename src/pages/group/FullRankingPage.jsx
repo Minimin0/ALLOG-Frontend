@@ -1,26 +1,29 @@
-import { useNavigate } from "react-router-dom";
+import CoachMascotButton from '@/components/common/CoachMascotButton.jsx';
+import Header from '@/components/layout/Header.jsx';
+import RankingItem from '@/components/group/RankingItem.jsx';
+import { mockFullRanking } from '@/data/mockGroups.js';
+import { rankMembers } from '@/utils/ranking.js';
 
-function FullRankingPage() {
-  const navigate = useNavigate();
+// 전체(방 간 통합) 랭킹 화면.
+// RankingItem + rankMembers 재사용. 항목은 아래에서 위로 슬라이드(stagger) 등장.
+export default function FullRankingPage() {
+  const ranked = rankMembers(mockFullRanking);
 
   return (
-    <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col items-center justify-center gap-6 bg-[#f7f6f3] px-8 text-center">
-        <h1 className="text-[19px] font-bold text-black">
-          전체 랭킹 화면
-          <br />
-          (준비 중이에요)
-        </h1>
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
-        >
-          그룹으로 돌아가기
-        </button>
-      </div>
+    <div className="mx-auto min-h-full max-w-md bg-bg p-5">
+      <Header title="전체 랭킹" right={<CoachMascotButton className="h-10 w-10" />} />
+
+      <ul className="space-y-2.5">
+        {ranked.map((member, i) => (
+          <li
+            key={member.id}
+            className="animate-riseUp"
+            style={{ animationDelay: `${i * 70}ms` }}
+          >
+            <RankingItem rank={member.rank} name={member.name} isMe={member.isMe} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
-
-export default FullRankingPage;

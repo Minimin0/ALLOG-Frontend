@@ -4,7 +4,7 @@ const tabs = [
   {
     key: "my-group",
     label: "내 그룹",
-    path: "/group/my",
+    path: "/group/water-evening",
     icon: "/images/내 그룹.svg",
   },
   {
