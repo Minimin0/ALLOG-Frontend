@@ -3,12 +3,13 @@ import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
+import Icon from '@/components/common/Icon';
 
 const coaches = [
-  { name: '응원형', tone: '따뜻하게 격려해드려요', emoji: '🌱' },
-  { name: '압박형', tone: '긴장감 있게 자극할게요', emoji: '🔥' },
-  { name: '팩트형', tone: '숫자와 근거로 말할게요', emoji: '📊' },
-  { name: '유머형', tone: '가볍고 재밌게 말할게요', emoji: '😆' },
+  { name: '응원형', tone: '따뜻하게 격려해드려요', icon: 'coach' },
+  { name: '압박형', tone: '긴장감 있게 자극할게요', icon: 'pressure' },
+  { name: '팩트형', tone: '숫자와 근거로 말할게요', icon: 'fact' },
+  { name: '유머형', tone: '가볍고 재밌게 말할게요', icon: 'humor' },
 ];
 
 export default function CoachStyleScreen() {
@@ -35,7 +36,7 @@ export default function CoachStyleScreen() {
               style={{ width: '47%', height: 160 }}
               className={`items-center justify-center rounded-[15px] border px-3 py-3 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}
             >
-              <Text className="mb-2 text-5xl">{c.emoji}</Text>
+              <View className="mb-2"><Icon name={c.icon} size={72} /></View>
               <Text className="text-[15px] font-bold text-ink">{c.name}</Text>
               <Text className="mt-1 text-[10px] font-medium text-subtle">{c.tone}</Text>
             </Pressable>

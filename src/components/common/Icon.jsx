@@ -17,12 +17,17 @@ import Bell from '../../../assets/icons/bell.svg';
 import Privacy from '../../../assets/icons/privacy.svg';
 import Terms from '../../../assets/icons/terms.svg';
 import Support from '../../../assets/icons/support.svg';
+import Coach from '../../../assets/icons/coach.svg';
+import Pressure from '../../../assets/icons/pressure.svg';
+import Fact from '../../../assets/icons/fact.svg';
+import Humor from '../../../assets/icons/humor.svg';
 
 const ICONS = {
   heart: Heart, coin: Coin, chart: Chart, fire: Fire,
   exercise: Exercise, sleep: Sleep, meal: Meal, selfcare: Selfcare,
   search: Search, filter: Filter, ticket: Ticket, coupon: Coupon, shipping: Shipping,
   check: Check, bell: Bell, privacy: Privacy, terms: Terms, support: Support,
+  coach: Coach, pressure: Pressure, fact: Fact, humor: Humor,
 };
 
 export default function Icon({ name, size = 20, style }) {

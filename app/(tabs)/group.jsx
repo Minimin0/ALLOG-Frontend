@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import Mascot from '@/components/common/Mascot';
+import Icon from '@/components/common/Icon';
+import AnimatedGauge from '@/components/common/AnimatedGauge';
 import Confetti from '@/components/group/Confetti';
 import RankingItemRN from '@/components/group/RankingItemRN';
 import { mockGroup, mockGroupRanking, mockFeed } from '@/data/mockGroups.js';
@@ -115,7 +117,10 @@ function Podium({ items }) {
           <View key={rank} className="w-20 items-center">
             <Text className="text-2xl">{medal[rank]}</Text>
             <Text className="text-[12px] font-bold text-ink">{it.name}</Text>
-            <Text className="mb-1 text-[11px] font-semibold text-reward">🪙 {it.reward}</Text>
+            <View className="mb-1 flex-row items-center gap-1">
+              <Icon name="coin" size={11} />
+              <Text className="text-[11px] font-semibold text-reward">{it.reward}</Text>
+            </View>
             <View className="w-full rounded-t-xl bg-primary-tint" style={{ height: H[rank] }} />
           </View>
         );
@@ -164,7 +169,7 @@ function InfoView({ toast }) {
           <Text className="text-[25px] font-bold text-primary">{mockGroup.successRate}%</Text>
         </View>
         <View className="mt-2 h-2 w-full rounded-pill bg-disabled">
-          <View className="h-full rounded-pill bg-primary" style={{ width: `${mockGroup.successRate}%` }} />
+          <AnimatedGauge percent={mockGroup.successRate} color="#14453a" height={8} />
           <View className="absolute -top-1 h-4 w-0.5 bg-reward" style={{ left: `${mockGroup.goalRate}%` }} />
         </View>
         <View className="mt-1 flex-row justify-between">

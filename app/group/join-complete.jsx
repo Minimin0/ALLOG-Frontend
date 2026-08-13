@@ -2,6 +2,8 @@ import { View, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
+import Icon from '@/components/common/Icon';
+
 // 그룹 참가 완료 (웹 JoinCompletePage 포팅). title/groupId는 쿼리 파라미터로.
 export default function JoinCompleteScreen() {
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function JoinCompleteScreen() {
         <View className="mt-8 w-[243px] items-center rounded-full border border-line bg-surface py-6">
           <Text className="text-[15px] font-semibold text-[#d9573b]">잔여 하트 수</Text>
           <View className="mt-1 flex-row items-center gap-2">
-            <Text className="text-[20px] text-[#d9573b]">♥</Text>
+            <Icon name="heart" size={20} />
             <Text className="text-[18px] font-bold text-ink">2</Text>
           </View>
           <Pressable onPress={() => router.push('/heart-event')} className="mt-2">

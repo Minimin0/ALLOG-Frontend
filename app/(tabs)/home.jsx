@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 
 import Mascot from '@/components/common/Mascot';
 import Icon from '@/components/common/Icon';
+import AnimatedGauge from '@/components/common/AnimatedGauge';
 
 // 홈 화면 (웹 src/pages/home/HomePage.jsx 포팅).
 // TODO: 작은 아이콘(하트/리워드/차트/불 SVG)은 추후 실제 에셋으로 교체(지금은 이모지).
@@ -108,7 +109,7 @@ export default function HomeScreen() {
             <Text className="text-[20px] font-bold text-[#669884]">{SUCCESS_RATE}%</Text>
           </View>
           <View className="mt-3 h-[9px] w-full rounded-full bg-[#efefef]">
-            <View className="h-full rounded-full bg-[#669884]" style={{ width: `${SUCCESS_RATE}%` }} />
+            <AnimatedGauge percent={SUCCESS_RATE} color="#669884" height={9} />
             <View className="absolute top-[13px] -translate-x-1/2 items-center" style={{ left: `${SUCCESS_GOAL}%` }}>
               <Text className="text-[10px] leading-none text-reward">▲</Text>
             </View>

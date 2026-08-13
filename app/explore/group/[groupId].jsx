@@ -3,6 +3,8 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
+import Icon from '@/components/common/Icon';
+
 // 그룹 상세 (웹 explore/GroupDetailPage 포팅). 내부 탭: 인증/랭킹/정보 + 참가 버튼.
 const TABS = [
   { key: 'verify', label: '인증' },
@@ -71,7 +73,7 @@ export default function GroupDetailScreen() {
               <View key={m.name} style={{ width: '47%', minHeight: 176 }} className="justify-between rounded-[15px] border border-line bg-surface p-3">
                 {m.done ? (
                   <>
-                    <View className="h-[110px] items-center justify-center rounded-[10px] bg-primary-pale"><Text className="text-[26px]">✅</Text></View>
+                    <View className="h-[110px] items-center justify-center rounded-[10px] bg-primary-pale"><Icon name="check" size={30} /></View>
                     <View className="mt-2 flex-row items-center justify-between">
                       <Text className="text-[12px] font-bold text-ink">{m.isMe ? '나' : m.name}</Text>
                       <Text className="text-[10px] font-medium text-disabled">{m.time}</Text>
@@ -109,7 +111,7 @@ export default function GroupDetailScreen() {
               {rankReward.map((r) => (
                 <View key={r.rank} className="flex-row items-center justify-between py-1.5">
                   <Text className="text-[13px] font-semibold text-subtle">{r.rank}위 {r.name}</Text>
-                  <Text className="text-[13px] font-bold text-ink">🪙 {r.reward}</Text>
+                  <View className="flex-row items-center gap-1"><Icon name="coin" size={13} /><Text className="text-[13px] font-bold text-ink">{r.reward}</Text></View>
                 </View>
               ))}
             </View>

@@ -2,6 +2,8 @@ import { View, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Icon from '@/components/common/Icon';
+
 // 온보딩 완료 (웹 OnboardingCompletePage 포팅).
 export default function OnboardingCompleteScreen() {
   const router = useRouter();
@@ -16,9 +18,9 @@ export default function OnboardingCompleteScreen() {
         <Text className="mt-6 text-center text-[25px] font-bold text-ink" style={{ lineHeight: 32 }}>환영합니다!{'\n'}하트 3개를 받았어요.</Text>
 
         <View className="mt-6 flex-row gap-3">
-          <Text className="text-[34px] text-[#d9573b]">♥</Text>
-          <Text className="text-[34px] text-[#d9573b]">♥</Text>
-          <Text className="text-[34px] text-[#d9573b]">♥</Text>
+          <Icon name="heart" size={34} />
+          <Icon name="heart" size={34} />
+          <Icon name="heart" size={34} />
         </View>
 
         <Text className="mt-6 text-center text-[18px] font-semibold text-subtle">

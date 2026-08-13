@@ -2,6 +2,8 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Icon from '@/components/common/Icon';
+
 // 하트 이벤트 (웹 HeartEventPage 포팅).
 const events = [
   { key: 'verify', title: '오늘의 루틴 인증하기', path: '/verify' },
@@ -28,7 +30,7 @@ export default function HeartEventScreen() {
             <Text className="mt-3 text-[10px] font-medium text-subtle">하트 이벤트에 참여하고 하트를 다시 획득할 수 있어요.</Text>
           </View>
           <View className="w-[114px] items-center gap-1 rounded-[7px] border border-line bg-surface py-3">
-            <Text className="text-[18px] font-bold text-ink">❤️ 3</Text>
+            <View className="flex-row items-center gap-1.5"><Icon name="heart" size={17} /><Text className="text-[18px] font-bold text-ink">3</Text></View>
             <Text className="text-[12px] font-semibold text-[#d9573b]">보유 하트</Text>
           </View>
         </View>
@@ -37,12 +39,13 @@ export default function HeartEventScreen() {
           {events.map((e) => (
             <Pressable key={e.key} onPress={() => router.push(e.path)} className="h-[50px] flex-row items-center justify-between rounded-[13px] border border-line bg-white px-4">
               <View className="flex-row items-center gap-3">
-                <Text className="text-base">✅</Text>
+                <Icon name="check" size={20} />
                 <Text className="text-[13px] font-semibold text-ink">{e.title}</Text>
               </View>
-              <View className="flex-row items-center gap-1.5">
-                <Text className="text-[12px] font-semibold text-ink">❤️ +1</Text>
-                <Text className="text-[12px] text-disabled">›</Text>
+              <View className="flex-row items-center gap-1">
+                <Icon name="heart" size={12} />
+                <Text className="text-[12px] font-semibold text-ink">+1</Text>
+                <Text className="ml-1 text-[12px] text-disabled">›</Text>
               </View>
             </Pressable>
           ))}
