@@ -39,36 +39,36 @@ export default function VerificationPreviewPage() {
         <h2 className="text-h2 font-bold text-ink">{mockGroup.title}</h2>
       </div>
 
-      {/* 촬영 결과 (녹화 동영상) */}
+      {/* 촬영 결과 (녹화 동영상) — 3:4 비율 */}
       <div className="mb-4 overflow-hidden rounded-card">
         {media.type === 'video' ? (
           <video
             src={media.url}
             controls
             playsInline
-            className="aspect-square w-full bg-black object-cover"
+            className="aspect-[3/4] w-full bg-black object-cover"
           />
         ) : (
-          <img src={media.url} alt="촬영 결과" className="aspect-square w-full object-cover" />
+          <img src={media.url} alt="촬영 결과" className="aspect-[3/4] w-full object-cover" />
         )}
       </div>
 
-      {/* 인증 가이드 */}
-      <div className="mb-4 rounded-card bg-primary-tint p-4">
-        <p className="mb-2 text-label text-ink">인증 가이드</p>
-        <ul className="space-y-1.5 text-caption text-muted">
-          <li>• 오늘 촬영한 사진만 인증 가능합니다.</li>
-          <li>• 얼굴은 가려도 괜찮습니다.</li>
-          <li>• 운동하는 모습이 잘 보이도록 촬영해주세요.</li>
+      {/* 인증 가이드 (Figma: bg #edf2ec, border #e7e3d8, 제목 15 / 본문 12) */}
+      <div className="mb-4 rounded-card border border-line bg-primary-tint p-5">
+        <p className="mb-3 text-section font-bold text-ink">인증 가이드</p>
+        <ul className="list-disc space-y-2 pl-5 text-body text-muted marker:text-muted">
+          <li>오늘 촬영한 동영상만 인증 가능합니다.</li>
+          <li>얼굴은 가려도 괜찮습니다.</li>
+          <li>운동하는 모습이 잘 보이도록 촬영해주세요.</li>
         </ul>
       </div>
 
-      {/* 액션 */}
-      <div className="mt-auto flex flex-col gap-2.5">
-        <Button variant="dark" onClick={() => navigate(`/group/${groupId}/verify/loading`)}>
+      {/* 액션 (검정 인증하기 / 회색 다시 촬영하기, Figma 비율) */}
+      <div className="mt-auto flex flex-col gap-3">
+        <Button size="lg" variant="dark" onClick={() => navigate(`/group/${groupId}/verify/loading`)}>
           인증하기
         </Button>
-        <Button variant="secondary" onClick={retake}>
+        <Button size="lg" variant="secondary" onClick={retake}>
           다시 촬영하기
         </Button>
       </div>

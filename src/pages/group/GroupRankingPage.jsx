@@ -12,8 +12,12 @@ export default function GroupRankingPage() {
   return (
     <div className="p-5">
       <ul className="space-y-2.5">
-        {ranked.map((member) => (
-          <li key={member.id}>
+        {ranked.map((member, i) => (
+          <li
+            key={member.id}
+            className="animate-riseUp"
+            style={{ animationDelay: `${i * 90}ms` }}
+          >
             <RankingItem
               rank={member.rank}
               name={member.name}

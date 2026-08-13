@@ -74,9 +74,9 @@ export default function CameraPage() {
   };
 
   return (
-    <div className="flex min-h-full flex-col bg-black py-8">
+    <div className="flex h-[100dvh] flex-col bg-black">
       {/* 녹화 진행 점 3개 */}
-      <div className="flex justify-center gap-2">
+      <div className="flex shrink-0 justify-center gap-2 pt-6 pb-3">
         {[0, 1, 2].map((i) => (
           <span
             key={i}
@@ -87,21 +87,21 @@ export default function CameraPage() {
         ))}
       </div>
 
-      {/* 라이브 카메라 프리뷰 */}
-      <div className="flex flex-1 items-center justify-center px-6">
-        <div className="w-full overflow-hidden rounded-[44px]">
+      {/* 라이브 카메라 프리뷰 (남은 공간 = 화면 약 3/4) */}
+      <div className="min-h-0 flex-1 px-5">
+        <div className="h-full w-full overflow-hidden rounded-[44px]">
           {error ? (
-            <div className="flex aspect-[3/4] items-center justify-center bg-white/10 px-6 text-center text-caption text-white/70">
+            <div className="flex h-full w-full items-center justify-center bg-white/10 px-6 text-center text-caption text-white/70">
               {error}
             </div>
           ) : (
-            <video ref={videoRef} autoPlay muted playsInline className="aspect-[3/4] w-full object-cover" />
+            <video ref={videoRef} autoPlay muted playsInline className="h-full w-full object-cover" />
           )}
         </div>
       </div>
 
       {/* 촬영 버튼 */}
-      <div className="flex justify-center pb-2">
+      <div className="flex shrink-0 justify-center py-6">
         <button
           onClick={startRecording}
           disabled={recording || !!error}

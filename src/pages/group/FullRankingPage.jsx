@@ -1,3 +1,4 @@
+import CoachMascotButton from '@/components/common/CoachMascotButton.jsx';
 import Header from '@/components/layout/Header.jsx';
 import RankingItem from '@/components/group/RankingItem.jsx';
 import { mockFullRanking } from '@/data/mockGroups.js';
@@ -10,7 +11,7 @@ export default function FullRankingPage() {
 
   return (
     <div className="mx-auto min-h-full max-w-md bg-bg p-5">
-      <Header title="전체 랭킹" />
+      <Header title="전체 랭킹" right={<CoachMascotButton className="h-10 w-10" />} />
 
       <ul className="space-y-2.5">
         {ranked.map((member, i) => (

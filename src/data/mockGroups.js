@@ -18,6 +18,19 @@ export const mockGroup = {
   dday: 2, // 남은 기간 D-2
 };
 
+// 인증 성공 후 짧게 보여줄 패턴 피드백 (연속 성공 / 최근 자주 인증한 시간대).
+// 실제로는 서버가 사용자 인증 이력으로 계산해 내려준다.
+export const mockVerifyFeedback = {
+  streak: 3, // 연속 성공 일수
+  bestTime: '저녁 9시대', // 최근 자주 인증한 시간대
+};
+
+// 재인증 안내: "실패"만 알리지 않고 무엇이 확인되지 않았는지 + 다시 촬영하는 방법.
+export const mockRetryGuide = {
+  notConfirmed: ['운동 동작이 명확히 보이지 않았어요', '영상이 너무 짧았어요 (3초 미만)'],
+  tips: ['전신이 화면에 들어오게 촬영해요', '동작을 3초 이상 이어서 담아요', '밝은 곳에서 흔들림 없이 찍어요'],
+};
+
 // 인증(피드) 탭용 멤버별 오늘 인증 현황.
 // status: 'me'(내 미인증) | 'verified'(인증 완료) | 'waiting'(대기중)
 export const mockFeed = [

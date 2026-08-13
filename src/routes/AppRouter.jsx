@@ -22,6 +22,9 @@ import VerificationResultPage from '@/pages/verification/VerificationResultPage.
 // 재인증 / 신고
 import ReportPage from '@/pages/report/ReportPage.jsx';
 
+// AI 코칭
+import AiCoachPage from '@/pages/ai/AiCoachPage.jsx';
+
 export default function AppRouter() {
   return (
     <Routes>
@@ -54,6 +57,9 @@ export default function AppRouter() {
 
       {/* 재인증 / 신고 */}
       <Route path="/report" element={<ReportPage />} />
+
+      {/* AI 코칭 */}
+      <Route path="/ai" element={<AiCoachPage />} />
 
       {/* 404 */}
       <Route
