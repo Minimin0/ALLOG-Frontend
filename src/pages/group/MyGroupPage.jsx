@@ -56,7 +56,7 @@ export default function MyGroupPage() {
       {/* 탭 */}
       <nav className="mt-4 flex border-b border-line px-5">
         {TABS.map((tab) => (
-          <NavLink key={tab.to} to={tab.to} className="flex flex-1 flex-col items-center pb-2">
+          <NavLink key={tab.to} to={tab.to} className="flex flex-1 flex-col items-center">
             {({ isActive }) => (
               <span
                 className={`border-b-2 pb-2 text-section font-semibold ${

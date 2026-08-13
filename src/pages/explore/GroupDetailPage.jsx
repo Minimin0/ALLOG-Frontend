@@ -79,10 +79,10 @@ function GroupDetailPage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className="flex flex-1 flex-col items-center py-3"
+                className="flex flex-1 flex-col items-center pt-3"
               >
                 <span
-                  className={`border-b-2 pb-1 text-[14px] font-bold ${
+                  className={`border-b-2 pb-3 text-[14px] font-bold ${
                     active
                       ? "border-black text-black"
                       : "border-transparent text-[#bababa]"
