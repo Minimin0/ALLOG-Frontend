@@ -78,7 +78,7 @@ function FeedView({ toast }) {
             <FeedCard
               key={item.id}
               item={item}
-              onVerify={() => router.push('/group/g1/verify')}
+              onVerify={() => router.push('/verify')}
               onCheer={() => toast('응원을 보냈어요! 💚')}
               onReport={() => toast('재인증 요청이 전송되었어요!')}
             />

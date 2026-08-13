@@ -58,7 +58,7 @@ export default function HomeScreen() {
             <Text className="text-[13px] font-semibold text-primary">오늘의 루틴</Text>
             <Text className="mt-2 text-[20px] font-bold text-ink">하루 운동 30분</Text>
             <Pressable
-              onPress={() => router.push('/verification/camera')}
+              onPress={() => router.push('/verify')}
               className="mt-4 h-[35px] w-full items-center justify-center rounded-[15px] bg-primary"
             >
               <Text className="text-[12px] font-bold text-[#e5f4e8]">인증하러 하기</Text>
