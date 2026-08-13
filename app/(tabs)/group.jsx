@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
-import Confetti from '@/components/group/Confetti';
+import CheerOverlay from '@/components/group/CheerOverlay';
 import RankingItemRN from '@/components/group/RankingItemRN';
 import { mockGroup, mockGroupRanking, mockFeed } from '@/data/mockGroups.js';
 import { rankMembers } from '@/utils/ranking.js';
@@ -211,7 +211,7 @@ export default function GroupScreen() {
     setCheerKey((k) => k + 1);
     setCheerOn(true);
     toast('응원을 보냈어요! 💚');
-    setTimeout(() => setCheerOn(false), 1300);
+    setTimeout(() => setCheerOn(false), 1900);
   };
 
   return (
@@ -259,8 +259,8 @@ export default function GroupScreen() {
         {tab === 'info' && <InfoView toast={toast} />}
       </ScrollView>
 
-      {/* 응원 폭죽 */}
-      {cheerOn && <Confetti key={cheerKey} />}
+      {/* 응원 오버레이 (캐릭터 3개 + 폭죽) */}
+      {cheerOn && <CheerOverlay key={cheerKey} />}
 
       {/* 토스트 */}
       {!!toastMsg && (
