@@ -49,7 +49,7 @@ export default function ExploreScreen() {
   const confirmJoin = () => {
     const g = joinTarget;
     setJoinTarget(null);
-    router.push(`/group/join-complete/${g.id}`);
+    router.push({ pathname: '/group/join-complete', params: { groupId: g.id, title: g.title } });
   };
 
   return (
