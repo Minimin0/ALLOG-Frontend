@@ -1,9 +1,23 @@
-/* Pretendard Variable (Figma 지정 폰트) — @import는 반드시 파일 최상단 */
+/* Pretendard Variable + HW 온보딩 스타일 (@import는 반드시 최상단) */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+@import './onboarding.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* HW 페이지가 참조하는 토큰 보존 (원래 HW variables.css 값).
+   ⚠️ 통합 임시: 추후 ALLOG 팔레트(--color-*)로 통일 필요. */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --accent-primary: #4caf50;
+  --accent-secondary: #ff9800;
+  --error: #f44336;
+  --success: #4caf50;
+}
 
 html,
 body,
@@ -11,9 +25,13 @@ body,
   height: 100%;
 }
 
-/* 스크롤바 자리를 항상 예약 → 탭마다 스크롤바 유무가 달라져도 화면이 가로로 밀리지 않음 */
+/* 스크롤바 자리를 항상 예약 → 탭마다 스크롤바 유무로 화면이 가로로 밀리지 않음 */
 html {
   scrollbar-gutter: stable;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -23,4 +41,52 @@ body {
   font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes bounce-once {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-18%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  65% {
+    transform: translateY(-8%);
+  }
+  80% {
+    transform: translateY(0);
+  }
+}
+
+.bounce-once {
+  animation: bounce-once 0.6s ease-in-out;
 }
