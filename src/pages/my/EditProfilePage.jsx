@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SleepTimeDial from "../../components/common/SleepTimeDial";
+import { COACH_STYLES } from "../../utils/constants";
+import { getCoachStyle, setCoachStyle } from "../../utils/storage";
 
 const genders = ["여성", "남성", "선택 안함"];
-const coachStyles = [
-  { name: "응원형", image: "/images/응원형.svg" },
-  { name: "압박형", image: "/images/압박형.svg" },
-  { name: "팩트형", image: "/images/팩트형.svg" },
-  { name: "유머형", image: "/images/유머형.svg" },
-];
+const coachStyles = COACH_STYLES;
 const exerciseOptions = ["주 1회", "주 2회", "주 3회", "주 4회", "주 5회", "거의 안함"];
 const waterOptions = ["0.5L 미만", "0.5L~1L", "1L~1.5L", "1.5L~2L", "2L 이상"];
 
@@ -37,7 +34,9 @@ function EditProfilePage() {
   const [day, setDay] = useState("30");
   const [height, setHeight] = useState("165");
   const [weight, setWeight] = useState("50");
-  const [coachStyle, setCoachStyle] = useState("응원형");
+  const [coachStyle, setCoachStyleValue] = useState(
+    () => getCoachStyle() || coachStyles[0].name,
+  );
   const [exercise, setExercise] = useState("주 3회");
   const [water, setWater] = useState("1L~1.5L");
   const [sleepHours, setSleepHours] = useState(6);
@@ -202,7 +201,7 @@ function EditProfilePage() {
                   <button
                     key={item.name}
                     type="button"
-                    onClick={() => setCoachStyle(item.name)}
+                    onClick={() => setCoachStyleValue(item.name)}
                     className={`flex flex-col items-center gap-1 rounded-[15px] border px-3 py-3 ${
                       active
                         ? "border-2 border-[#14453a] bg-[#eaf4ec]"
@@ -286,7 +285,10 @@ function EditProfilePage() {
 
           <button
             type="button"
-            onClick={() => navigate("/my")}
+            onClick={() => {
+              setCoachStyle(coachStyle);
+              navigate("/my");
+            }}
             className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
           >
             저장하기

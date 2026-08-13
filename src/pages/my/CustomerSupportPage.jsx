@@ -91,11 +91,13 @@ function CustomerSupportPage() {
                         ⌄
                       </span>
                     </button>
-                    {open ? (
-                      <p className="px-5 pb-4 text-[12px] font-medium leading-relaxed text-[#6b7268]">
-                        {item.a}
-                      </p>
-                    ) : null}
+                    <div className={`accordion-content ${open ? "is-open" : ""}`}>
+                      <div>
+                        <p className="px-5 pb-4 text-[12px] font-medium leading-relaxed text-[#6b7268]">
+                          {item.a}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 );
               })}

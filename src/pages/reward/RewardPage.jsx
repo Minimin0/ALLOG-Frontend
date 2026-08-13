@@ -1,42 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/layout/BottomNav";
+import rewards from "../../data/mockRewards";
+import { getRewardPoints } from "../../utils/storage";
 
 const categories = ["체험", "상품", "기타", "전체"];
 
 const sortOptions = ["인기 높은 순", "가격 높은 순", "가격 낮은 순"];
-
-const points = 1540;
-
-const rewards = [
-  {
-    id: "serum-trial",
-    title: "AAC 시그니처 세럼 체험권",
-    cost: 1500,
-    note: "교환 후 30일 이내 사용",
-    icon: "/images/체험권.svg",
-  },
-  {
-    id: "discount-15",
-    title: "공식몰 15% 할인 쿠폰",
-    cost: 2000,
-    note: "교환 후 30일 이내 사용",
-    icon: "/images/할인쿠폰.svg",
-  },
-  {
-    id: "free-shipping",
-    title: "무료 배송 쿠폰(3만원 이상)",
-    cost: 2000,
-    note: "교환 후 30일 이내 사용",
-    icon: "/images/배송.svg",
-  },
-];
 
 function RewardPage() {
   const navigate = useNavigate();
   const [category, setCategory] = useState("전체");
   const [sort, setSort] = useState(sortOptions[0]);
   const [sortOpen, setSortOpen] = useState(false);
+  const [points] = useState(() => getRewardPoints());
 
   const sortedRewards = [...rewards].sort((a, b) => {
     if (sort === "가격 높은 순") return b.cost - a.cost;
@@ -84,7 +61,7 @@ function RewardPage() {
                   key={item}
                   type="button"
                   onClick={() => setCategory(item)}
-                  className={`rounded-[10px] bg-[#fefefe] py-2.5 text-[13px] font-semibold shadow-[0_0_2px_rgba(0,0,0,0.25)] ${
+                  className={`rounded-[10px] bg-[#fefefe] py-2.5 text-[13px] font-semibold shadow-[0_0_2px_rgba(0,0,0,0.25)] transition-colors duration-200 ${
                     active ? "text-black" : "text-[#6b7268]"
                   }`}
                 >
@@ -110,7 +87,7 @@ function RewardPage() {
             </button>
 
             {sortOpen ? (
-              <div className="absolute right-0 top-[36px] z-10 w-[128px] overflow-hidden rounded-[12px] bg-[#fefefe] py-1 shadow-[0_2px_10px_rgba(0,0,0,0.15)]">
+              <div className="animate-fade-slide-up absolute right-0 top-[36px] z-10 w-[128px] overflow-hidden rounded-[12px] bg-[#fefefe] py-1 shadow-[0_2px_10px_rgba(0,0,0,0.15)]">
                 {sortOptions.map((option) => (
                   <button
                     key={option}
@@ -130,7 +107,7 @@ function RewardPage() {
             ) : null}
           </div>
 
-          <div className="space-y-3">
+          <div className="animate-fade-in space-y-3">
             {sortedRewards.map((reward) => {
               const canAfford = points >= reward.cost;
               return (

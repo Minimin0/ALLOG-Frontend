@@ -34,3 +34,6 @@ logs/
 # Secrets
 *.pem
 *.key
+
+# Local Claude Code tooling config (machine-specific, not app code)
+.claude/

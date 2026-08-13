@@ -1,29 +1,14 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingShell from "./OnboardingShell";
+import { COACH_STYLES, DEFAULT_COACH_STYLE } from "../../utils/constants";
+import { setCoachStyle } from "../../utils/storage";
 
-const coachOptions = [
-  {
-    name: "응원형",
-    tone: "따뜻하게 격려해드려요",
-    image: "/images/응원형.svg",
-  },
-  {
-    name: "압박형",
-    tone: "긴장감 있게 자극할게요",
-    image: "/images/압박형.svg",
-  },
-  {
-    name: "팩트형",
-    tone: "숫자와 근거로 말할게요",
-    image: "/images/팩트형.svg",
-  },
-  { name: "유머형", tone: "가볍고 재밌게 말할게요", image: "/images/유머형.svg" },
-];
+const coachOptions = COACH_STYLES;
 
 function CoachStylePage() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState("응원형");
+  const [selected, setSelected] = useState(DEFAULT_COACH_STYLE);
 
   return (
     <OnboardingShell
@@ -32,7 +17,10 @@ function CoachStylePage() {
       title="어떤 방식으로 응원받고 싶나요?"
       subtitle="선택한 스타일로 AI 코치가 매일 말을 걸어드려요."
       onBack={() => navigate("/onboarding/habits")}
-      onNext={() => navigate("/onboarding/lifestyle")}
+      onNext={() => {
+        setCoachStyle(selected);
+        navigate("/onboarding/lifestyle");
+      }}
       nextLabel="다음"
       canNext={Boolean(selected)}
     >

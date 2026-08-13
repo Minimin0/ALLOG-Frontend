@@ -1,11 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TermsAgreementModal from "../../components/auth/TermsAgreementModal";
 
 function SignUpPhonePage() {
   const navigate = useNavigate();
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
-  const [agreed, setAgreed] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [agreements, setAgreements] = useState({
+    terms: false,
+    privacy: false,
+    marketing: false,
+  });
+
+  const agreed = agreements.terms && agreements.privacy;
+  const canNext = phone.trim() && code.trim() && agreed;
+
+  const toggleAgreement = (key) => {
+    setAgreements((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleAllAgreements = () => {
+    const next = !(agreements.terms && agreements.privacy && agreements.marketing);
+    setAgreements({ terms: next, privacy: next, marketing: next });
+  };
 
   return (
     <div className="min-h-screen bg-[#f7f6f3]">
@@ -27,9 +45,9 @@ function SignUpPhonePage() {
           height: 98px;
           margin: 0;
           font-size: 25px;
-          line-height: 35px;
-          font-weight: 900;
-          letter-spacing: -0.06em;
+          line-height: 1.3;
+          font-weight: 700;
+          letter-spacing: normal;
           color: #000000;
         }
 
@@ -246,7 +264,7 @@ function SignUpPhonePage() {
         <button
           type="button"
           className="signup1-agreement"
-          onClick={() => setAgreed((prev) => !prev)}
+          onClick={() => setTermsOpen(true)}
           aria-pressed={agreed}
         >
           <img
@@ -260,12 +278,21 @@ function SignUpPhonePage() {
         <button
           type="button"
           className="signup1-next"
-          disabled={!agreed}
+          disabled={!canNext}
           onClick={() => navigate("/auth/signup-account")}
         >
           다음
         </button>
       </div>
+
+      <TermsAgreementModal
+        open={termsOpen}
+        agreements={agreements}
+        onToggle={toggleAgreement}
+        onToggleAll={toggleAllAgreements}
+        onClose={() => setTermsOpen(false)}
+        onConfirm={() => setTermsOpen(false)}
+      />
     </div>
   );
 }

@@ -44,11 +44,11 @@ function BottomNav() {
         <img
           src={tab.icon}
           alt=""
-          className="h-[22px] w-[22px]"
+          className="h-[22px] w-[22px] transition-[filter] duration-200"
           style={active ? { filter: "brightness(0) saturate(100%)" } : undefined}
         />
         <span
-          className={`text-[10px] font-bold ${
+          className={`text-[10px] font-bold transition-colors duration-200 ${
             active ? "text-black" : "text-[#bababa]"
           }`}
         >
@@ -61,12 +61,12 @@ function BottomNav() {
   return (
     <div className="pointer-events-none sticky bottom-0 left-0 right-0 z-20 flex justify-center">
       <div className="pointer-events-auto relative w-full">
-        <div className="absolute left-1/2 top-0 z-10 flex h-[71px] w-[71px] -translate-x-1/2 -translate-y-[45px] items-center justify-center rounded-full bg-white">
+        <div className="absolute left-1/2 top-0 z-10 flex h-[71px] w-[71px] -translate-x-1/2 -translate-y-[25px] items-center justify-center rounded-full bg-white">
           <button
             type="button"
             onClick={() => navigate("/home")}
             aria-label="홈"
-            className={`flex h-[54px] w-[54px] items-center justify-center rounded-full ${
+            className={`flex h-[54px] w-[54px] items-center justify-center rounded-full transition-colors duration-200 ${
               homeActive ? "bg-black" : "bg-[#bababa]"
             }`}
           >

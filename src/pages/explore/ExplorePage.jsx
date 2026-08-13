@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/layout/BottomNav";
 import JoinGroupModal from "../../components/group/JoinGroupModal";
 import FilterModal from "../../components/explore/FilterModal";
+import { getCoachStyleImage } from "../../utils/constants";
+import { getCoachStyle } from "../../utils/storage";
 
 const categories = ["전체", "수분케어", "식사", "운동", "수면"];
 
@@ -53,6 +55,7 @@ function ExplorePage() {
   const [category, setCategory] = useState("수분케어");
   const [joinTarget, setJoinTarget] = useState(null);
   const [bouncing, setBouncing] = useState(false);
+  const [coachImage] = useState(() => getCoachStyleImage(getCoachStyle()));
 
   const [filterOpen, setFilterOpen] = useState(false);
   const [durationFilter, setDurationFilter] = useState("전체");
@@ -111,7 +114,7 @@ function ExplorePage() {
             className="h-[54px] w-[54px]"
           >
             <img
-              src="/images/응원형.svg"
+              src={coachImage}
               alt="AI 코치"
               className={`h-full w-full object-contain ${bouncing ? "bounce-once" : ""}`}
               onAnimationEnd={() => {

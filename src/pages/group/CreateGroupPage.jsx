@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const categories = ["수분케어", "식사", "운동", "수면"];
 const durations = ["7일", "14일", "30일"];
+const MAX_VERIFICATION_TIMES = 5;
 
 function CreateGroupPage() {
   const navigate = useNavigate();
@@ -11,8 +12,29 @@ function CreateGroupPage() {
   const [duration, setDuration] = useState("14일");
   const [capacity, setCapacity] = useState(5);
   const [visibility, setVisibility] = useState("public");
+  const [verificationTimes, setVerificationTimes] = useState([
+    { start: "07:00", end: "22:00" },
+  ]);
 
   const canSubmit = category && name.trim().length > 0;
+
+  const addVerificationTime = () => {
+    setVerificationTimes((prev) =>
+      prev.length >= MAX_VERIFICATION_TIMES
+        ? prev
+        : [...prev, { start: "07:00", end: "22:00" }],
+    );
+  };
+
+  const updateVerificationTime = (index, field, value) => {
+    setVerificationTimes((prev) =>
+      prev.map((slot, i) => (i === index ? { ...slot, [field]: value } : slot)),
+    );
+  };
+
+  const removeVerificationTime = (index) => {
+    setVerificationTimes((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
@@ -116,6 +138,74 @@ function CreateGroupPage() {
               >
                 +
               </button>
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-[15px] font-bold text-black">인증 시간 설정</p>
+              <button
+                type="button"
+                onClick={addVerificationTime}
+                disabled={verificationTimes.length >= MAX_VERIFICATION_TIMES}
+                aria-label="인증 시간 추가"
+                className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-black text-[15px] font-bold text-white disabled:opacity-30"
+              >
+                +
+              </button>
+            </div>
+            <div className="space-y-2">
+              {verificationTimes.map((slot, index) => (
+                <div
+                  key={index}
+                  className="rounded-[15px] border border-[#e7e3d8] bg-[#fefefe] px-4 py-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[12px] font-bold text-[#6b7268]">
+                      {index === 0 ? "" : `추가 ${index}`}
+                    </span>
+                    {verificationTimes.length > 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => removeVerificationTime(index)}
+                        aria-label="인증 시간 삭제"
+                        className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-[#f0eee8] text-[12px] font-bold text-[#6b7268]"
+                      >
+                        ×
+                      </button>
+                    ) : null}
+                  </div>
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="flex flex-1 items-center gap-2">
+                      <span className="shrink-0 text-[11px] font-semibold text-[#4a4a4a]">
+                        시작
+                      </span>
+                      <input
+                        type="time"
+                        value={slot.start}
+                        onChange={(event) =>
+                          updateVerificationTime(index, "start", event.target.value)
+                        }
+                        className="w-full bg-transparent text-[14px] font-semibold text-black outline-none"
+                      />
+                    </div>
+                    <span className="shrink-0 text-[12px] text-[#bababa]">~</span>
+                    <div className="flex flex-1 items-center gap-2">
+                      <span className="shrink-0 text-[11px] font-semibold text-[#4a4a4a]">
+                        마감
+                      </span>
+                      <input
+                        type="time"
+                        value={slot.end}
+                        onChange={(event) =>
+                          updateVerificationTime(index, "end", event.target.value)
+                        }
+                        className="w-full bg-transparent text-[14px] font-semibold text-black outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
 
