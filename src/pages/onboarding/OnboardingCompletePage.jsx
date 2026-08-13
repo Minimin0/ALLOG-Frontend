@@ -20,7 +20,7 @@ function OnboardingCompletePage() {
         </div>
 
         <div className="flex flex-1 flex-col items-center pt-16">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black text-[28px] text-white">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#14453a] text-[28px] text-white">
             ✓
           </div>
 
@@ -69,7 +69,7 @@ function OnboardingCompletePage() {
           <button
             type="button"
             onClick={() => navigate("/home")}
-            className="w-full rounded-[27.5px] bg-black px-4 py-[18px] text-[15px] font-bold text-white"
+            className="w-full rounded-[27.5px] bg-[#14453a] px-4 py-[18px] text-[15px] font-bold text-white"
           >
             홈으로 가기
           </button>

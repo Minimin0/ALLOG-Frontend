@@ -158,7 +158,7 @@ function RewardPage() {
                   <span
                     className={`shrink-0 rounded-full px-3.5 py-1.5 text-[10px] font-bold ${
                       canAfford
-                        ? "bg-black text-white"
+                        ? "bg-[#14453a] text-white"
                         : "bg-[#bababa] text-white"
                     }`}
                   >

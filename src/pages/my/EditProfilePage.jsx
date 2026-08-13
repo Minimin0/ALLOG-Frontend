@@ -75,7 +75,7 @@ function EditProfilePage() {
 
         <main className="min-w-0 flex-1 space-y-6 px-5 pb-10">
           <div className="flex flex-col items-center pt-2">
-            <div className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-black text-[22px] font-bold text-white">
+            <div className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-[#14453a] text-[22px] font-bold text-white">
               A
             </div>
             <button
@@ -287,7 +287,7 @@ function EditProfilePage() {
           <button
             type="button"
             onClick={() => navigate("/my")}
-            className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
+            className="w-full rounded-[27.5px] bg-[#14453a] py-4 text-[15px] font-bold text-white"
           >
             저장하기
           </button>

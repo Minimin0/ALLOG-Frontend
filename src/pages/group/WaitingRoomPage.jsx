@@ -14,7 +14,7 @@ function WaitingRoomPage() {
         <button
           type="button"
           onClick={() => navigate("/explore/group/water-evening")}
-          className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
+          className="w-full rounded-[27.5px] bg-[#14453a] py-4 text-[15px] font-bold text-white"
         >
           그룹 홈으로 이동
         </button>

@@ -28,7 +28,7 @@ function MyPage() {
         <main className="flex-1 space-y-5 px-[30px] pb-8 pt-4">
           <div className="rounded-[26px] border border-[#e7e3d8] bg-[#fefefe] p-5">
             <div className="flex items-center gap-4">
-              <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-black text-[20px] font-bold text-white">
+              <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#14453a] text-[20px] font-bold text-white">
                 A
               </div>
               <div className="flex-1">

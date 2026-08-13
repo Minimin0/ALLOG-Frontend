@@ -86,7 +86,7 @@ function HomePage() {
               <button
                 type="button"
                 onClick={() => navigate("/verification/camera")}
-                className="mt-4 h-[35px] w-full rounded-[15px] bg-black text-[12px] font-bold text-[#e5f4e8]"
+                className="mt-4 h-[35px] w-full rounded-[15px] bg-[#14453a] text-[12px] font-bold text-[#e5f4e8]"
               >
                 인증하러 하기
               </button>

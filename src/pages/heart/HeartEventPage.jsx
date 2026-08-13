@@ -19,7 +19,7 @@ function HeartEventPage() {
             type="button"
             onClick={() => navigate(-1)}
             aria-label="뒤로가기"
-            className="flex h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-black"
+            className="flex h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-[#14453a]"
           >
             <svg viewBox="0 0 24 24" className="h-[16px] w-[16px]" fill="none">
               <path

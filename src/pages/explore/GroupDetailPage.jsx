@@ -140,7 +140,7 @@ function GroupDetailPage() {
                               : "/group/feed",
                           )
                         }
-                        className="mt-2 rounded-full bg-black py-2 text-center text-[12px] font-bold text-white"
+                        className="mt-2 rounded-full bg-[#14453a] py-2 text-center text-[12px] font-bold text-white"
                       >
                         {member.isMe ? "인증하기" : "응원하기"}
                       </button>
@@ -293,7 +293,7 @@ function GroupDetailPage() {
                 setJoined(true);
                 navigate(`/group/join-complete/${groupId}`);
               }}
-              className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
+              className="w-full rounded-[27.5px] bg-[#14453a] py-4 text-[15px] font-bold text-white"
             >
               그룹 참가하기 (❤️ 1개 사용)
             </button>
@@ -304,7 +304,7 @@ function GroupDetailPage() {
           type="button"
           onClick={() => navigate("/ai-coach")}
           aria-label="AI 코칭"
-          className="fixed bottom-24 right-[calc(50%-181px)] flex h-[54px] w-[54px] flex-col items-center justify-center rounded-full bg-black text-[10px] font-bold text-white shadow-[0_6px_14px_rgba(0,0,0,0.25)]"
+          className="fixed bottom-24 right-[calc(50%-181px)] flex h-[54px] w-[54px] flex-col items-center justify-center rounded-full bg-[#14453a] text-[10px] font-bold text-white shadow-[0_6px_14px_rgba(0,0,0,0.25)]"
         >
           <span className="text-[16px]">🤖</span>
           AI 코칭

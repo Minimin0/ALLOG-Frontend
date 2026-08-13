@@ -34,7 +34,7 @@ function StartPage() {
           <button
             type="button"
             onClick={() => navigate("/auth/login")}
-            className="h-[50px] w-[296px] rounded-[20px] bg-[#000000] px-4 text-[18px] font-bold leading-[35px] tracking-[-0.03em] text-white"
+            className="h-[50px] w-[296px] rounded-[20px] bg-[#14453a] px-4 text-[18px] font-bold leading-[35px] tracking-[-0.03em] text-white"
           >
             시작하기
           </button>

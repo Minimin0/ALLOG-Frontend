@@ -6,7 +6,7 @@ function GroupCreatedPage() {
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
       <div className="flex min-h-screen w-[402px] flex-col items-center justify-center gap-6 bg-[#f7f6f3] px-8 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-black text-[28px] text-white">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#14453a] text-[28px] text-white">
           ✓
         </div>
         <h1 className="text-[19px] font-bold text-black">
@@ -17,7 +17,7 @@ function GroupCreatedPage() {
         <button
           type="button"
           onClick={() => navigate("/group/waiting-room")}
-          className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
+          className="w-full rounded-[27.5px] bg-[#14453a] py-4 text-[15px] font-bold text-white"
         >
           대기실로 이동
         </button>

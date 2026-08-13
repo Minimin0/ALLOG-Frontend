@@ -61,7 +61,7 @@ function CustomerSupportPage() {
             </p>
             <a
               href="mailto:support@allog.app"
-              className="mt-3 flex h-[44px] w-full items-center justify-center rounded-[13px] bg-black text-[13px] font-bold text-white"
+              className="mt-3 flex h-[44px] w-full items-center justify-center rounded-[13px] bg-[#14453a] text-[13px] font-bold text-white"
             >
               support@allog.app 로 문의하기
             </a>

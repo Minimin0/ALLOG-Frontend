@@ -25,7 +25,7 @@ function JoinGroupModal({ group, onClose, onConfirm }) {
           </p>
           <div className="mt-2 flex justify-center gap-1.5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <span key={i} className="h-[8px] w-[8px] rounded-full bg-black" />
+              <span key={i} className="h-[8px] w-[8px] rounded-full bg-[#14453a]" />
             ))}
           </div>
         </div>
@@ -46,7 +46,7 @@ function JoinGroupModal({ group, onClose, onConfirm }) {
         <button
           type="button"
           onClick={onConfirm}
-          className="mt-5 h-[42px] w-full rounded-[16px] bg-black text-[13px] font-bold text-[#e5f4e8]"
+          className="mt-5 h-[42px] w-full rounded-[16px] bg-[#14453a] text-[13px] font-bold text-[#e5f4e8]"
         >
           참가하기
         </button>

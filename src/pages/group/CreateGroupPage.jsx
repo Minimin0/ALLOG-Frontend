@@ -157,7 +157,7 @@ function CreateGroupPage() {
             type="button"
             disabled={!canSubmit}
             onClick={() => navigate("/group/created")}
-            className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white disabled:opacity-40"
+            className="w-full rounded-[27.5px] bg-[#14453a] py-4 text-[15px] font-bold text-white disabled:opacity-40"
           >
             그룹 만들기
           </button>

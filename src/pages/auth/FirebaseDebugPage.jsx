@@ -83,7 +83,7 @@ function FirebaseDebugPage() {
               type="button"
               disabled={calling}
               onClick={handleNormalCall}
-              className="h-[42px] w-full rounded-[12px] bg-black text-[13px] font-bold text-white disabled:opacity-40"
+              className="h-[42px] w-full rounded-[12px] bg-[#14453a] text-[13px] font-bold text-white disabled:opacity-40"
             >
               백엔드 API 호출 (정상 토큰) → GET /api/v1/users/me
             </button>

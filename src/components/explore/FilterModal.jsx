@@ -40,7 +40,7 @@ function FilterModal({
                   onClick={() => onChangeDuration(item)}
                   className={`rounded-[10px] border px-4 py-2.5 text-[13px] font-semibold ${
                     active
-                      ? "border-black bg-black text-white"
+                      ? "border-black bg-[#14453a] text-white"
                       : "border-[#e7e3d8] bg-[#fefefe] text-[#6b7268]"
                   }`}
                 >
@@ -63,7 +63,7 @@ function FilterModal({
                   onClick={() => onChangeStatus(item)}
                   className={`rounded-[10px] border px-4 py-2.5 text-[13px] font-semibold ${
                     active
-                      ? "border-black bg-black text-white"
+                      ? "border-black bg-[#14453a] text-white"
                       : "border-[#e7e3d8] bg-[#fefefe] text-[#6b7268]"
                   }`}
                 >
@@ -85,7 +85,7 @@ function FilterModal({
           <button
             type="button"
             onClick={onApply}
-            className="h-[48px] flex-1 rounded-[16px] bg-black text-[14px] font-bold text-[#e5f4e8]"
+            className="h-[48px] flex-1 rounded-[16px] bg-[#14453a] text-[14px] font-bold text-[#e5f4e8]"
           >
             필터 적용하기
           </button>

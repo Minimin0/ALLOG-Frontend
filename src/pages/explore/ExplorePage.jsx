@@ -136,7 +136,7 @@ function ExplorePage() {
               type="button"
               onClick={openFilter}
               aria-label="필터"
-              className="relative flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-[14px] bg-black"
+              className="relative flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-[14px] bg-[#14453a]"
             >
               <img src="/images/필터.svg" alt="" className="h-[18px] w-[18px]" />
               {hasActiveFilter ? (
@@ -155,7 +155,7 @@ function ExplorePage() {
                   onClick={() => setCategory(item)}
                   className={`shrink-0 rounded-[10px] border px-4 py-2.5 text-[13px] font-semibold ${
                     active
-                      ? "border-black bg-black text-[#fefefe]"
+                      ? "border-black bg-[#14453a] text-[#fefefe]"
                       : "border-[#e7e3d8] bg-[#fefefe] text-[#6b7268]"
                   }`}
                 >
@@ -266,7 +266,7 @@ function ExplorePage() {
             <button
               type="button"
               onClick={() => navigate("/group/create")}
-              className="mt-3 h-[50px] w-full rounded-[27.5px] bg-black text-[15px] font-bold text-white"
+              className="mt-3 h-[50px] w-full rounded-[27.5px] bg-[#14453a] text-[15px] font-bold text-white"
             >
               직접 그룹 만들기
             </button>

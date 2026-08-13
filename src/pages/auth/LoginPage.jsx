@@ -93,7 +93,7 @@ function LoginPage() {
 
         <button
           type="button"
-          className="absolute bg-[#000000] text-[18px] font-bold leading-[35px] text-[#FFFFFF]"
+          className="absolute bg-[#14453a] text-[18px] font-bold leading-[35px] text-[#FFFFFF]"
           style={{
             left: "44px",
             top: "346px",

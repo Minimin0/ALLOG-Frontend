@@ -14,7 +14,7 @@ function SettingsPage() {
         <button
           type="button"
           onClick={() => navigate("/my")}
-          className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
+          className="w-full rounded-[27.5px] bg-[#14453a] py-4 text-[15px] font-bold text-white"
         >
           마이페이지로 돌아가기
         </button>

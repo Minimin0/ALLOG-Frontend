@@ -17,7 +17,7 @@ function RewardDetailPage() {
         <button
           type="button"
           onClick={() => navigate("/reward")}
-          className="w-full rounded-[27.5px] bg-black py-4 text-[15px] font-bold text-white"
+          className="w-full rounded-[27.5px] bg-[#14453a] py-4 text-[15px] font-bold text-white"
         >
           리워드 목록으로
         </button>
