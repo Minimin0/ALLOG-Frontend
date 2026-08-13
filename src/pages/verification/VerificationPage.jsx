@@ -19,7 +19,7 @@ export default function VerificationPage() {
   const goCamera = () => navigate(`/group/${groupId}/verify/camera`);
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col bg-bg p-5">
+    <div className="mx-auto flex min-h-full max-w-[402px] flex-col bg-bg p-5">
       <VerifyHeader />
 
       {/* DAY 카드 (가로 축소) */}

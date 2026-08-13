@@ -63,7 +63,7 @@ export default function VerificationLoadingPage() {
   }, [step, media, groupId, navigate, setResult]);
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col bg-gradient-to-b from-white to-primary-tint p-5">
+    <div className="mx-auto flex min-h-full max-w-[402px] flex-col bg-gradient-to-b from-white to-primary-tint p-5">
       {/* 헤더 (초록 뒤로가기) — Figma: 버튼 43px·rounded 9, 타이틀 22px SemiBold */}
       <header className="relative mb-9 flex h-[43px] items-center justify-center">
         <button

@@ -20,7 +20,7 @@ export default function MyGroupPage() {
   const coachSource = location.pathname.endsWith('/feed') ? 'feed' : 'ranking';
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col bg-bg">
+    <div className="mx-auto flex min-h-full max-w-[402px] flex-col bg-bg">
       <header className="flex items-center justify-between px-5 pt-6">
         <h1 className="text-display font-bold text-ink">내 그룹</h1>
         {/* 우측 상단 캐릭터 → 누르면 폴짝 → AI 코칭 (정보 탭 제외).
@@ -53,18 +53,31 @@ export default function MyGroupPage() {
         </div>
       </div>
 
-      {/* 탭 */}
+      {/* 탭
+          밑줄(active indicator)은 텍스트에 붙는 border가 아니라 탭 컬럼 바닥에
+          absolute로 고정 → 텍스트 높이/줄바꿈과 무관하게 항상 하단 구분선과
+          같은 위치에 딱 붙는다 (이전엔 border-b + pb-2로 텍스트에 붙어 있어
+          하단 구분선보다 위로 살짝 떠 보였음). */}
       <nav className="mt-4 flex border-b border-line px-5">
         {TABS.map((tab) => (
-          <NavLink key={tab.to} to={tab.to} className="flex flex-1 flex-col items-center">
+          <NavLink
+            key={tab.to}
+            to={tab.to}
+            className="relative flex flex-1 justify-center pb-2.5"
+          >
             {({ isActive }) => (
-              <span
-                className={`border-b-2 pb-2 text-section font-semibold ${
-                  isActive ? 'border-ink text-ink' : 'border-transparent text-muted'
-                }`}
-              >
-                {tab.label}
-              </span>
+              <>
+                <span
+                  className={`text-section font-semibold ${
+                    isActive ? 'text-ink' : 'text-muted'
+                  }`}
+                >
+                  {tab.label}
+                </span>
+                {isActive && (
+                  <span className="absolute inset-x-0 -bottom-px h-0.5 bg-ink" />
+                )}
+              </>
             )}
           </NavLink>
         ))}

@@ -25,7 +25,7 @@ export default function ReportPage() {
   // 제출 완료 상태
   if (submitted) {
     return (
-      <div className="mx-auto flex min-h-full max-w-md flex-col items-center justify-center gap-4 p-6 text-center">
+      <div className="mx-auto flex min-h-full max-w-[402px] flex-col items-center justify-center gap-4 p-6 text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success text-3xl text-white">
           ✓
         </div>
@@ -39,7 +39,7 @@ export default function ReportPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col p-5">
+    <div className="mx-auto flex min-h-full max-w-[402px] flex-col p-5">
       <Header title="재인증 요청 · 신고" />
 
       <p className="mb-4 text-body text-muted">사유를 선택해 주세요.</p>

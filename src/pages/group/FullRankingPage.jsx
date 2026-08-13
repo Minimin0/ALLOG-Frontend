@@ -10,7 +10,7 @@ export default function FullRankingPage() {
   const ranked = rankMembers(mockFullRanking);
 
   return (
-    <div className="mx-auto min-h-full max-w-md bg-bg p-5">
+    <div className="mx-auto min-h-full max-w-[402px] bg-bg p-5">
       <Header title="전체 랭킹" right={<CoachMascotButton className="h-10 w-10" />} />
 
       <ul className="space-y-2.5">

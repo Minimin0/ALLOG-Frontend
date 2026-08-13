@@ -15,7 +15,7 @@ export default function VerificationPreviewPage() {
   // 직접 진입/새로고침으로 촬영 결과가 없으면 카메라로
   if (!media) {
     return (
-      <div className="mx-auto flex min-h-full max-w-md flex-col items-center justify-center gap-4 p-6 text-center">
+      <div className="mx-auto flex min-h-full max-w-[402px] flex-col items-center justify-center gap-4 p-6 text-center">
         <p className="text-body text-muted">촬영된 결과가 없어요.</p>
         <Button fullWidth={false} onClick={() => navigate(`/group/${groupId}/verify/camera`)}>
           촬영하러 가기
@@ -30,7 +30,7 @@ export default function VerificationPreviewPage() {
   };
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col bg-bg p-5">
+    <div className="mx-auto flex min-h-full max-w-[402px] flex-col bg-bg p-5">
       <VerifyHeader />
 
       {/* DAY 카드 */}
