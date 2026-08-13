@@ -10,5 +10,5 @@
     "moduleResolution": "Bundler",
     "target": "ESNext"
   },
-  "include": ["src"]
+  "include": ["src", "app"]
 }

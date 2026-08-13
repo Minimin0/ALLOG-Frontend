@@ -34,7 +34,7 @@ export default function StartScreen() {
 
         <View className="pb-10">
           <Pressable
-            onPress={() => router.push('/auth/login')}
+            onPress={() => router.push('/home')}
             className="h-[50px] items-center justify-center rounded-[20px] bg-primary active:opacity-90"
           >
             <Text className="text-[18px] font-bold text-white">시작하기</Text>
@@ -42,7 +42,7 @@ export default function StartScreen() {
 
           <View className="mt-3 flex-row items-center justify-center">
             <Text className="text-[13px] font-medium text-ink">이미 계정이 있으신가요? </Text>
-            <Pressable onPress={() => router.push('/auth/login')} hitSlop={8}>
+            <Pressable onPress={() => router.push('/home')} hitSlop={8}>
               <Text className="text-[15px] font-bold text-ink underline">로그인</Text>
             </Pressable>
           </View>
