@@ -3,12 +3,13 @@ import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
+import Icon from '@/components/common/Icon';
 
 const habits = [
-  { label: '수분케어', subtitle: '충분한 수분 섭취', emoji: '💧' },
-  { label: '운동', subtitle: '꾸준한 신체 운동', emoji: '🏃' },
-  { label: '식사', subtitle: '균형 잡힌 식단 유지', emoji: '🍽️' },
-  { label: '수면', subtitle: '규칙적인 수면 패턴', emoji: '😴' },
+  { label: '수분케어', subtitle: '충분한 수분 섭취', icon: 'selfcare' },
+  { label: '운동', subtitle: '꾸준한 신체 운동', icon: 'exercise' },
+  { label: '식사', subtitle: '균형 잡힌 식단 유지', icon: 'meal' },
+  { label: '수면', subtitle: '규칙적인 수면 패턴', icon: 'sleep' },
 ];
 
 export default function HabitsScreen() {
@@ -36,7 +37,7 @@ export default function HabitsScreen() {
               style={{ width: '47%' }}
               className={`items-center gap-1 rounded-[15px] border px-3 py-4 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}
             >
-              <Text className="mb-1 text-2xl">{h.emoji}</Text>
+              <View className="mb-1"><Icon name={h.icon} size={24} /></View>
               <Text className="text-[15px] font-bold text-ink">{h.label}</Text>
               <Text className="text-[10px] font-medium text-subtle">{h.subtitle}</Text>
             </Pressable>

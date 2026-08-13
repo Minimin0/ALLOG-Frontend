@@ -3,14 +3,16 @@ import { View, Text, Pressable, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-// 리워드 화면 (웹 src/pages/reward/RewardPage.jsx 포팅). TODO: 아이콘 실제 에셋 교체(현재 이모지).
+import Icon from '@/components/common/Icon';
+
+// 리워드 화면 (웹 src/pages/reward/RewardPage.jsx 포팅).
 const categories = ['체험', '상품', '기타', '전체'];
 const sortOptions = ['인기 높은 순', '가격 높은 순', '가격 낮은 순'];
 const points = 1540;
 const rewards = [
-  { id: 'serum-trial', title: 'AAC 시그니처 세럼 체험권', cost: 1500, note: '교환 후 30일 이내 사용', emoji: '🎟️' },
-  { id: 'discount-15', title: '공식몰 15% 할인 쿠폰', cost: 2000, note: '교환 후 30일 이내 사용', emoji: '🏷️' },
-  { id: 'free-shipping', title: '무료 배송 쿠폰(3만원 이상)', cost: 2000, note: '교환 후 30일 이내 사용', emoji: '📦' },
+  { id: 'serum-trial', title: 'AAC 시그니처 세럼 체험권', cost: 1500, note: '교환 후 30일 이내 사용', icon: 'ticket' },
+  { id: 'discount-15', title: '공식몰 15% 할인 쿠폰', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'coupon' },
+  { id: 'free-shipping', title: '무료 배송 쿠폰(3만원 이상)', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'shipping' },
 ];
 
 export default function RewardScreen() {
@@ -36,7 +38,10 @@ export default function RewardScreen() {
         <View className="rounded-[13px] bg-[#4a3a18] p-5">
           <Text className="text-[15px] font-semibold text-[#e7e3d8]">사용가능한 리워드 포인트</Text>
           <View className="mt-2 flex-row items-end justify-between">
-            <Text className="text-[30px] font-bold text-[#e7e3d8]">🪙 {points}</Text>
+            <View className="flex-row items-center gap-2">
+              <Icon name="coin" size={24} />
+              <Text className="text-[30px] font-bold text-[#e7e3d8]">{points}</Text>
+            </View>
             <Pressable onPress={() => Linking.openURL('https://anti-agingclub.kr/')}>
               <Text className="pb-1 text-[12px] font-bold text-surface">AAC 홈페이지 바로가기</Text>
             </Pressable>
@@ -99,12 +104,15 @@ export default function RewardScreen() {
                 className="flex-row items-center gap-3 rounded-[13px] bg-surface p-4"
               >
                 <View className="h-[54px] w-[54px] items-center justify-center rounded-[12px] bg-[#f3efe4]">
-                  <Text className="text-2xl">{reward.emoji}</Text>
+                  <Icon name={reward.icon} size={26} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-[15px] font-bold text-ink">{reward.title}</Text>
                   <Text className="mt-1 text-[10px] font-medium text-muted">{reward.note}</Text>
-                  <Text className="mt-1.5 text-[15px] font-bold text-ink">🪙 {reward.cost}</Text>
+                  <View className="mt-1.5 flex-row items-center gap-1">
+                    <Icon name="coin" size={14} />
+                    <Text className="text-[15px] font-bold text-ink">{reward.cost}</Text>
+                  </View>
                 </View>
                 <View className={`rounded-full px-3.5 py-1.5 ${canAfford ? 'bg-primary' : 'bg-disabled'}`}>
                   <Text className="text-[10px] font-bold text-white">{canAfford ? '교환하기' : '포인트 부족'}</Text>

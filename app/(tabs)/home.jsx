@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import Mascot from '@/components/common/Mascot';
+import Icon from '@/components/common/Icon';
 
 // 홈 화면 (웹 src/pages/home/HomePage.jsx 포팅).
 // TODO: 작은 아이콘(하트/리워드/차트/불 SVG)은 추후 실제 에셋으로 교체(지금은 이모지).
@@ -34,7 +35,7 @@ export default function HomeScreen() {
             className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3"
           >
             <View className="flex-row items-center gap-2">
-              <Text className="text-base">❤️</Text>
+              <Icon name="heart" size={18} />
               <Text className="text-[18px] font-bold text-ink">3</Text>
             </View>
             <Text className="mt-2 text-[12px] font-semibold text-[#d9573b]">보유 하트</Text>
@@ -46,7 +47,7 @@ export default function HomeScreen() {
             className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3"
           >
             <View className="flex-row items-center gap-2">
-              <Text className="text-base">🪙</Text>
+              <Icon name="coin" size={18} />
               <Text className="text-[18px] font-bold text-ink">1540</Text>
             </View>
             <Text className="mt-2 text-[12px] font-semibold text-reward">포인트</Text>
@@ -77,7 +78,7 @@ export default function HomeScreen() {
         <View className="h-[81px] flex-row items-center rounded-[15px] border border-line bg-surface">
           <Pressable onPress={() => router.push('/my')} className="flex-1 items-center gap-1">
             <View className="flex-row items-center gap-1.5">
-              <Text className="text-xs">📊</Text>
+              <Icon name="chart" size={16} />
               <Text className="text-[12px] font-bold text-ink">개인 순위</Text>
             </View>
             <Text>
@@ -90,7 +91,7 @@ export default function HomeScreen() {
 
           <Pressable onPress={() => router.push('/my')} className="flex-1 items-center gap-1">
             <View className="flex-row items-center gap-1.5">
-              <Text className="text-xs">🔥</Text>
+              <Icon name="fire" size={16} />
               <Text className="text-[12px] font-bold text-ink">연속 성공</Text>
             </View>
             <Text>

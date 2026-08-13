@@ -53,7 +53,7 @@ export default function LoginScreen() {
           {socials.map((s) => (
             <Pressable
               key={s.key}
-              onPress={() => router.replace('/onboarding/basic-info')}
+              onPress={() => router.push(s.key === 'google' ? '/auth/firebase-debug' : '/onboarding/basic-info')}
               className="h-[42px] w-[42px] items-center justify-center rounded-full"
               style={{ backgroundColor: s.bg, borderWidth: s.border ? 1 : 0, borderColor: '#e7e3d8' }}
             >

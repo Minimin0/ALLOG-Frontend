@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import Mascot from '@/components/common/Mascot';
+import Icon from '@/components/common/Icon';
 
 // 탐색 화면 (웹 src/pages/explore/ExplorePage.jsx 포팅). 참가/필터 모달은 RN Modal로.
 const categories = ['전체', '수분케어', '식사', '운동', '수면'];
@@ -71,7 +72,7 @@ export default function ExploreScreen() {
         {/* 검색 + 필터 */}
         <View className="flex-row items-center gap-2">
           <View className="h-[45px] flex-1 flex-row items-center gap-2 rounded-[14px] border border-line bg-surface px-4">
-            <Text>🔍</Text>
+            <Icon name="search" size={16} />
             <TextInput
               placeholder="그룹 또는 루틴 검색..."
               placeholderTextColor="#6b7268"
@@ -82,7 +83,7 @@ export default function ExploreScreen() {
             onPress={openFilter}
             className="h-[45px] w-[45px] items-center justify-center rounded-[14px] bg-primary"
           >
-            <Text className="text-base">🎚️</Text>
+            <Icon name="filter" size={18} />
             {hasActiveFilter && <View className="absolute right-[6px] top-[6px] h-[8px] w-[8px] rounded-full bg-[#d9573b]" />}
           </Pressable>
         </View>
