@@ -1,4 +1,5 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, ScrollView, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
@@ -20,6 +21,12 @@ const menuItems = [
 
 export default function MyScreen() {
   const router = useRouter();
+  const [logoutOpen, setLogoutOpen] = useState(false);
+
+  const confirmLogout = () => {
+    setLogoutOpen(false);
+    router.replace('/');
+  };
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-bg">
@@ -96,10 +103,27 @@ export default function MyScreen() {
         </View>
 
         {/* 로그아웃 */}
-        <Pressable className="h-[50px] items-center justify-center rounded-[13px] border border-[#d9573b] bg-surface">
+        <Pressable onPress={() => setLogoutOpen(true)} className="h-[50px] items-center justify-center rounded-[13px] border border-[#d9573b] bg-surface">
           <Text className="text-[15px] font-bold text-[#d9573b]">로그아웃</Text>
         </Pressable>
       </ScrollView>
+
+      {/* 로그아웃 확인 바텀시트 — 반투명 배경 + 아래에서 위로 */}
+      <Modal visible={logoutOpen} transparent animationType="slide" onRequestClose={() => setLogoutOpen(false)}>
+        <Pressable className="flex-1 justify-end bg-black/40" onPress={() => setLogoutOpen(false)}>
+          <Pressable className="rounded-t-[24px] bg-surface px-6 pb-8 pt-6" onPress={() => {}}>
+            <Text className="text-center text-[17px] font-bold text-ink">정말 로그아웃 하시겠어요?</Text>
+            <View className="mt-6 flex-row gap-3">
+              <Pressable onPress={() => setLogoutOpen(false)} className="flex-1 items-center justify-center rounded-[14px] border border-line bg-surface py-3.5">
+                <Text className="text-[14px] font-bold text-ink">아니오</Text>
+              </Pressable>
+              <Pressable onPress={confirmLogout} className="flex-1 items-center justify-center rounded-[14px] bg-[#d9573b] py-3.5">
+                <Text className="text-[14px] font-bold text-white">네</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }

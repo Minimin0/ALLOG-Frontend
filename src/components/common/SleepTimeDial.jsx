@@ -1,115 +1,61 @@
-import { useEffect, useRef } from "react";
+import { useRef, useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 
+// 수면 시간 다이얼 (웹 SleepTimeDial 포팅) — 가로 스크롤 눈금 + 스냅.
 const TICK_GAP = 28;
 
 function buildTicks(min, max, step) {
   const ticks = [];
   const count = Math.round((max - min) / step);
-  for (let i = 0; i <= count; i += 1) {
-    ticks.push(Math.round((min + i * step) * 100) / 100);
-  }
+  for (let i = 0; i <= count; i += 1) ticks.push(Math.round((min + i * step) * 100) / 100);
   return ticks;
 }
 
-function SleepTimeDial({ value, onChange, min = 4, max = 10, step = 0.5 }) {
-  const trackRef = useRef(null);
-  const dragRef = useRef({ dragging: false, startX: 0, startScroll: 0 });
-  const scrollTimeoutRef = useRef(null);
+export default function SleepTimeDial({ value, onChange, min = 4, max = 10, step = 0.5 }) {
   const ticks = buildTicks(min, max, step);
+  const scrollRef = useRef(null);
+  const [trackW, setTrackW] = useState(0);
+  const pad = trackW > 0 ? (trackW - TICK_GAP) / 2 : 0;
 
-  const scrollToValue = (val, behavior = "auto") => {
-    const idx = ticks.findIndex((tick) => Math.abs(tick - val) < 1e-6);
-    if (idx < 0 || !trackRef.current) return;
-    trackRef.current.scrollTo({ left: idx * TICK_GAP, behavior });
-  };
-
-  useEffect(() => {
-    scrollToValue(value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const commitFromScroll = () => {
-    if (!trackRef.current) return;
-    const idx = Math.round(trackRef.current.scrollLeft / TICK_GAP);
-    const clamped = Math.max(0, Math.min(ticks.length - 1, idx));
-    const newValue = ticks[clamped];
-    trackRef.current.scrollTo({ left: clamped * TICK_GAP, behavior: "smooth" });
-    if (newValue !== value) onChange(newValue);
-  };
-
-  const handleScroll = () => {
-    if (dragRef.current.dragging) return;
-    clearTimeout(scrollTimeoutRef.current);
-    scrollTimeoutRef.current = setTimeout(commitFromScroll, 100);
-  };
-
-  const handlePointerDown = (event) => {
-    if (!trackRef.current) return;
-    dragRef.current = {
-      dragging: true,
-      startX: event.clientX,
-      startScroll: trackRef.current.scrollLeft,
-    };
-    trackRef.current.setPointerCapture(event.pointerId);
-  };
-
-  const handlePointerMove = (event) => {
-    if (!dragRef.current.dragging || !trackRef.current) return;
-    const delta = event.clientX - dragRef.current.startX;
-    trackRef.current.scrollLeft = dragRef.current.startScroll - delta;
-  };
-
-  const endDrag = () => {
-    if (!dragRef.current.dragging) return;
-    dragRef.current.dragging = false;
-    commitFromScroll();
+  // 스크롤이 멈추면 가장 가까운 눈금으로 스냅 + 값 반영.
+  const handleEnd = (event) => {
+    const x = event.nativeEvent.contentOffset.x;
+    const idx = Math.max(0, Math.min(ticks.length - 1, Math.round(x / TICK_GAP)));
+    const next = ticks[idx];
+    scrollRef.current?.scrollTo({ x: idx * TICK_GAP, animated: true });
+    if (next !== value) onChange(next);
   };
 
   return (
-    <div className="w-full min-w-0 overflow-hidden">
-      <div
-        ref={trackRef}
-        onScroll={handleScroll}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-        onPointerLeave={endDrag}
-        className="no-scrollbar flex w-full min-w-0 cursor-grab select-none overflow-x-scroll active:cursor-grabbing"
-        style={{ scrollSnapType: "x mandatory", touchAction: "pan-x" }}
+    <View className="w-full" onLayout={(e) => setTrackW(e.nativeEvent.layout.width)}>
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={TICK_GAP}
+        decelerationRate="fast"
+        onMomentumScrollEnd={handleEnd}
+        onScrollEndDrag={handleEnd}
+        contentContainerStyle={{ paddingHorizontal: pad }}
       >
-        <div style={{ flex: `0 0 calc(50% - ${TICK_GAP / 2}px)` }} />
         {ticks.map((tick) => {
-          const isSelected = Math.abs(tick - value) < 1e-6;
+          const selected = Math.abs(tick - value) < 1e-6;
           const isHour = Number.isInteger(tick);
           return (
-            <div
-              key={tick}
-              style={{ flex: `0 0 ${TICK_GAP}px`, scrollSnapAlign: "center" }}
-              className="flex flex-col items-center"
-            >
-              <div className="flex h-[54px] w-full items-end justify-center">
-                <div
-                  className={`rounded-full ${isSelected ? "bg-[#14453a]" : "bg-[#bababa]"}`}
-                  style={{
-                    width: isSelected ? "4px" : "3px",
-                    height: isSelected ? "54px" : isHour ? "37px" : "20px",
-                  }}
+            <View key={tick} style={{ width: TICK_GAP }} className="items-center">
+              <View className="h-[54px] w-full items-center justify-end">
+                <View
+                  className={`rounded-full ${selected ? 'bg-primary' : 'bg-disabled'}`}
+                  style={{ width: selected ? 4 : 3, height: selected ? 54 : isHour ? 37 : 20 }}
                 />
-              </div>
-              <span
-                className="mt-2 text-[13px] font-medium text-[#bababa]"
-                style={{ visibility: isHour ? "visible" : "hidden" }}
-              >
+              </View>
+              <Text className="mt-2 text-[13px] font-medium text-disabled" style={{ opacity: isHour ? 1 : 0 }}>
                 {Math.floor(tick)}
-              </span>
-            </div>
+              </Text>
+            </View>
           );
         })}
-        <div style={{ flex: `0 0 calc(50% - ${TICK_GAP / 2}px)` }} />
-      </div>
-    </div>
+      </ScrollView>
+    </View>
   );
 }
-
-export default SleepTimeDial;

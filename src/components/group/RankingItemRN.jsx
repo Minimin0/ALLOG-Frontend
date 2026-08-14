@@ -13,7 +13,7 @@ export default function RankingItemRN({ rank, name, caption, isMe = false }) {
   return (
     <View
       className="flex-row items-center gap-3 rounded-item bg-surface px-4 py-3"
-      style={tier ? { borderWidth: 2, borderColor: tier.border } : { borderWidth: 1, borderColor: '#e7e3d8' }}
+      style={tier ? { borderWidth: 1, borderColor: tier.border } : { borderWidth: 1, borderColor: '#e7e3d8' }}
     >
       <View className="w-7 items-center">
         {tier ? (

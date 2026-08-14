@@ -282,7 +282,7 @@ export default function GroupScreen() {
 
       {/* 토스트 */}
       {!!toastMsg && (
-        <View className="absolute left-0 right-0 top-1/2 items-center">
+        <View className="absolute left-0 right-0 top-2/3 items-center">
           <View className="rounded-pill bg-surface px-6 py-3 shadow" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
             <Text className="text-[15px] font-semibold text-primary">{toastMsg}</Text>
           </View>
