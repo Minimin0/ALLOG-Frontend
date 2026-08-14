@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
 // 랭킹 한 줄 (웹 RankingItem 포팅). 1·2·3위 메달 + 테두리, 그 외 숫자.
 // score를 주면(전체 랭킹) 우측에 점수를 표시한다.
@@ -14,7 +14,7 @@ export default function RankingItemRN({ rank, name, caption, isMe = false, score
   return (
     <View
       className="flex-row items-center gap-3 rounded-item bg-surface px-4 py-3"
-      style={{ borderWidth: StyleSheet.hairlineWidth, borderColor: tier ? tier.border : '#e7e3d8' }}
+      style={{ borderWidth: tier ? 2 : 1, borderColor: tier ? tier.border : '#e7e3d8' }}
     >
       <View className="w-7 items-center">
         {tier ? (

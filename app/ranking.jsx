@@ -1,8 +1,8 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 
-import CoachMascotButton from '@/components/common/CoachMascotButton';
 import RankingItemRN from '@/components/group/RankingItemRN';
 import { mockFullRanking } from '@/data/mockGroups.js';
 import { rankMembers } from '@/utils/ranking.js';
@@ -19,14 +19,13 @@ export default function FullRankingScreen() {
           <Text className="text-lg text-white">‹</Text>
         </Pressable>
         <Text className="text-[20px] font-bold text-ink">전체 랭킹</Text>
-        <View className="absolute right-5">
-          <CoachMascotButton to="/ai" circle={44} size={36} />
-        </View>
       </View>
 
       <ScrollView className="flex-1 px-5" contentContainerClassName="gap-2.5 pb-8 pt-2">
-        {ranked.map((m) => (
-          <RankingItemRN key={m.id} rank={m.rank} name={m.name} caption={m.group} isMe={m.isMe} score={m.score} />
+        {ranked.map((m, i) => (
+          <Animated.View key={m.id} entering={FadeInUp.delay(i * 70).duration(320)}>
+            <RankingItemRN rank={m.rank} name={m.name} caption={m.group} isMe={m.isMe} score={m.score} />
+          </Animated.View>
         ))}
       </ScrollView>
     </SafeAreaView>

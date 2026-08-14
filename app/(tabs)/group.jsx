@@ -1,8 +1,13 @@
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView, Image } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
+import Animated, { FadeInUp, FadeIn, FadeOut } from 'react-native-reanimated';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
@@ -37,8 +42,10 @@ function RankingView() {
   const ranked = rankMembers(mockGroupRanking.map((m) => ({ ...m, score: m.minutes })));
   return (
     <View className="gap-2.5 p-5">
-      {ranked.map((m) => (
-        <RankingItemRN key={m.id} rank={m.rank} name={m.name} caption={`누적 운동 시간 ${m.score}분`} isMe={m.isMe} />
+      {ranked.map((m, i) => (
+        <Animated.View key={m.id} entering={FadeInUp.delay(i * 70).duration(320)}>
+          <RankingItemRN rank={m.rank} name={m.name} caption={`누적 운동 시간 ${m.score}분`} isMe={m.isMe} />
+        </Animated.View>
       ))}
       <Pressable onPress={() => router.push('/ranking')} className="items-center rounded-item border border-line bg-surface py-3">
         <Text className="text-[13px] font-bold text-ink">전체 랭킹 보기</Text>
@@ -139,6 +146,8 @@ function Podium({ items }) {
   const H = { 1: 120, 2: 92, 3: 62 };
   const order = [2, 1, 3]; // 은-금-동 배치
   const medal = { 1: '🥇', 2: '🥈', 3: '🥉' };
+  // 순위별 바 색(금/은/동) — 메달 색과 맞춰 한눈에 구분되도록.
+  const BAR_BG = { 1: '#fbe6ab', 2: '#e6e6e6', 3: '#ecd2ac' };
   return (
     <View className="mt-2 flex-row items-end justify-center gap-3">
       {order.map((rank) => {
@@ -152,7 +161,7 @@ function Podium({ items }) {
               <Icon name="coin" size={11} />
               <Text className="text-[11px] font-semibold text-reward">{it.reward}</Text>
             </View>
-            <View className="w-full rounded-t-xl bg-primary-tint" style={{ height: H[rank] }} />
+            <View className="w-full rounded-t-xl" style={{ height: H[rank], backgroundColor: BAR_BG[rank] }} />
           </View>
         );
       })}
@@ -172,7 +181,13 @@ function InfoView({ toast }) {
       <View>
         <InfoRow label="그룹명" value={mockGroup.title} />
         <InfoRow label="기간" value={mockGroup.periodText} />
-        <Pressable onPress={() => setMembersOpen((o) => !o)} className="flex-row items-center justify-between border-b border-line py-3">
+        <Pressable
+          onPress={() => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            setMembersOpen((o) => !o);
+          }}
+          className="flex-row items-center justify-between border-b border-line py-3"
+        >
           <Text className="text-[15px] text-muted">현재 인원</Text>
           <Text className="text-[15px] font-semibold text-ink">{mockGroup.totalMembers} 명 {membersOpen ? '⌄' : '›'}</Text>
         </Pressable>
@@ -297,12 +312,17 @@ export default function GroupScreen() {
       {/* 응원 오버레이 (캐릭터 3개, 응원할수록 하트→플레인) */}
       {cheerOn && <CheerOverlay key={cheerKey} usedCount={cheerCount} />}
 
-      {/* 토스트 (화면 정중앙) */}
+      {/* 토스트 (화면 정중앙, 부드럽게 페이드 인/아웃) */}
       {!!toastMsg && (
         <View pointerEvents="none" className="absolute inset-0 items-center justify-center">
-          <View className="rounded-pill bg-surface px-6 py-3 shadow" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
+          <Animated.View
+            entering={FadeIn.duration(220)}
+            exiting={FadeOut.duration(320)}
+            className="rounded-pill bg-surface px-6 py-3 shadow"
+            style={{ borderWidth: 1, borderColor: '#e7e3d8' }}
+          >
             <Text className="text-[15px] font-semibold text-primary">{toastMsg}</Text>
-          </View>
+          </Animated.View>
         </View>
       )}
     </SafeAreaView>
