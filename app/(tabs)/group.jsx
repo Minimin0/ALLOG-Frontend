@@ -255,7 +255,7 @@ export default function GroupScreen() {
       <View className="flex-row items-center justify-between px-5 pt-2">
         <Text className="text-[28px] font-bold text-ink">내 그룹</Text>
         {tab !== 'info' ? (
-          <CoachMascotButton to={`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`} circle={56} size={44} />
+          <CoachMascotButton to={`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`} circle={54} size={44} />
         ) : (
           <View className="h-14 w-14" />
         )}
