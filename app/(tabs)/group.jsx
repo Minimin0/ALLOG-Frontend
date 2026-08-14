@@ -51,7 +51,7 @@ function RankingView() {
 function FeedCard({ item, onVerify, onCheer, onReport }) {
   if (item.status === 'verified') {
     return (
-      <View style={{ aspectRatio: 3 / 4, minWidth: 0 }} className="flex-1 overflow-hidden rounded-card bg-ink">
+      <View style={{ width: '47%', aspectRatio: 3 / 4 }} className="overflow-hidden rounded-card bg-ink">
         {/* 사용자가 업로드한 인증 영상 화면 */}
         <Image source={WORKOUT} resizeMode="cover" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
         {/* 우측 상단 점3개 → 재인증 요청 */}
@@ -72,7 +72,7 @@ function FeedCard({ item, onVerify, onCheer, onReport }) {
   }
   const isMe = item.status === 'me';
   return (
-    <View style={{ aspectRatio: 3 / 4, minWidth: 0 }} className={`flex-1 rounded-card border border-line p-4 ${isMe ? 'bg-primary-tint' : 'bg-surface'}`}>
+    <View style={{ width: '47%', aspectRatio: 3 / 4 }} className={`rounded-card border border-line p-4 ${isMe ? 'bg-primary-tint' : 'bg-surface'}`}>
       <Text className="text-[15px] font-bold text-ink">{isMe ? '아직 오늘\n인증을 안했어요.' : '인증을\n기다리는 중이에요.'}</Text>
       <View className="flex-1 items-center justify-center">
         <Pressable onPress={isMe ? onVerify : onCheer} className="rounded-pill bg-ink px-5 py-2">
@@ -98,7 +98,7 @@ function FeedView({ toast, cheer }) {
   return (
     <View className="gap-3 p-5">
       {rows.map((row, ri) => (
-        <View key={ri} className="flex-row gap-3">
+        <View key={ri} className="flex-row justify-between">
           {row.map((item) => (
             <FeedCard
               key={item.id}
@@ -108,7 +108,7 @@ function FeedView({ toast, cheer }) {
               onReport={() => setReportTarget(item.name)}
             />
           ))}
-          {row.length === 1 && <View className="flex-1" />}
+          {row.length === 1 && <View style={{ width: '47%' }} />}
         </View>
       ))}
 
