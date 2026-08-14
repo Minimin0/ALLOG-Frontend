@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, Pressable, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Svg, { Path } from 'react-native-svg';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
@@ -21,14 +22,27 @@ const TABS = [
   { key: 'info', label: '정보' },
 ];
 
+// 클립 아이콘 (SVG — 이모지는 기기별 폰트 미지원 시 깨진 도형으로 보일 수 있어 벡터로 대체).
+function ClipIcon({ size = 14, color = '#111111' }) {
+  return (
+    <Svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <Path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+    </Svg>
+  );
+}
+
 // ── 랭킹 탭 ──
 function RankingView() {
+  const router = useRouter();
   const ranked = rankMembers(mockGroupRanking.map((m) => ({ ...m, score: m.minutes })));
   return (
     <View className="gap-2.5 p-5">
       {ranked.map((m) => (
         <RankingItemRN key={m.id} rank={m.rank} name={m.name} caption={`누적 운동 시간 ${m.score}분`} isMe={m.isMe} />
       ))}
+      <Pressable onPress={() => router.push('/ranking')} className="items-center rounded-item border border-line bg-surface py-3">
+        <Text className="text-[13px] font-bold text-ink">전체 랭킹 보기</Text>
+      </Pressable>
     </View>
   );
 }
@@ -176,7 +190,10 @@ function InfoView({ toast }) {
         )}
         <Pressable onPress={() => toast('복사 되었어요! 🌱')} className="flex-row items-center justify-between border-b border-line py-3">
           <Text className="text-[15px] text-muted">초대 코드</Text>
-          <Text className="text-[15px] font-semibold text-ink">🔗 {mockGroup.inviteCode}</Text>
+          <View className="flex-row items-center gap-1.5">
+            <ClipIcon size={14} color="#111111" />
+            <Text className="text-[15px] font-semibold text-ink">{mockGroup.inviteCode}</Text>
+          </View>
         </Pressable>
       </View>
 
@@ -198,11 +215,11 @@ function InfoView({ toast }) {
       <View className="flex-row rounded-item border border-line bg-surface py-4">
         <View className="flex-1 items-center border-r border-line">
           <Text className="text-[12px] font-bold text-ink">남은 기간</Text>
-          <Text className="mt-1 text-[25px] font-bold text-primary">D-{mockGroup.dday}</Text>
+          <Text className="mt-1 text-[30px] font-bold text-primary">D-{mockGroup.dday}</Text>
         </View>
         <View className="flex-1 items-center">
           <Text className="text-[12px] font-bold text-ink">내 순위</Text>
-          <Text className="mt-1 text-[25px] font-bold text-primary">{me?.rank}위</Text>
+          <Text className="mt-1 text-[30px] font-bold text-primary">{me?.rank}위</Text>
         </View>
       </View>
 
@@ -280,9 +297,9 @@ export default function GroupScreen() {
       {/* 응원 오버레이 (캐릭터 3개, 응원할수록 하트→플레인) */}
       {cheerOn && <CheerOverlay key={cheerKey} usedCount={cheerCount} />}
 
-      {/* 토스트 */}
+      {/* 토스트 (화면 정중앙) */}
       {!!toastMsg && (
-        <View className="absolute left-0 right-0 top-2/3 items-center">
+        <View pointerEvents="none" className="absolute inset-0 items-center justify-center">
           <View className="rounded-pill bg-surface px-6 py-3 shadow" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
             <Text className="text-[15px] font-semibold text-primary">{toastMsg}</Text>
           </View>

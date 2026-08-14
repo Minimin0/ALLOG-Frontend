@@ -1,19 +1,20 @@
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 // 랭킹 한 줄 (웹 RankingItem 포팅). 1·2·3위 메달 + 테두리, 그 외 숫자.
+// score를 주면(전체 랭킹) 우측에 점수를 표시한다.
 const TIER = {
   1: { medal: '🥇', border: '#f6b424' },
   2: { medal: '🥈', border: '#bababa' },
   3: { medal: '🥉', border: '#cba04d' },
 };
 
-export default function RankingItemRN({ rank, name, caption, isMe = false }) {
+export default function RankingItemRN({ rank, name, caption, isMe = false, score }) {
   const tier = TIER[rank];
 
   return (
     <View
       className="flex-row items-center gap-3 rounded-item bg-surface px-4 py-3"
-      style={tier ? { borderWidth: 1, borderColor: tier.border } : { borderWidth: 1, borderColor: '#e7e3d8' }}
+      style={{ borderWidth: StyleSheet.hairlineWidth, borderColor: tier ? tier.border : '#e7e3d8' }}
     >
       <View className="w-7 items-center">
         {tier ? (
@@ -36,6 +37,8 @@ export default function RankingItemRN({ rank, name, caption, isMe = false }) {
         </View>
         {caption ? <Text className="text-[11px] text-muted">{caption}</Text> : null}
       </View>
+
+      {score != null && <Text className="text-[15px] font-bold text-ink">{score}점</Text>}
     </View>
   );
 }
