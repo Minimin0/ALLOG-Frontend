@@ -1,13 +1,9 @@
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView, Image, LayoutAnimation, Platform, UIManager } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
-import Animated, { FadeInUp, FadeIn, FadeOut } from 'react-native-reanimated';
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import Animated, { FadeInUp, FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
@@ -177,22 +173,23 @@ function InfoView({ toast }) {
   const me = ranked.find((m) => m.isMe);
 
   return (
-    <View className="gap-6 p-5">
+    <View className="gap-6 px-5 pb-5 pt-8">
       <View>
         <InfoRow label="그룹명" value={mockGroup.title} />
         <InfoRow label="기간" value={mockGroup.periodText} />
         <Pressable
-          onPress={() => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            setMembersOpen((o) => !o);
-          }}
+          onPress={() => setMembersOpen((o) => !o)}
           className="flex-row items-center justify-between border-b border-line py-3"
         >
           <Text className="text-[15px] text-muted">현재 인원</Text>
           <Text className="text-[15px] font-semibold text-ink">{mockGroup.totalMembers} 명 {membersOpen ? '⌄' : '›'}</Text>
         </Pressable>
         {membersOpen && (
-          <View className="flex-row flex-wrap gap-3 border-b border-line py-4">
+          <Animated.View
+            entering={FadeIn.duration(240)}
+            exiting={FadeOut.duration(180)}
+            className="flex-row flex-wrap gap-3 border-b border-line py-4"
+          >
             {ranked.map((m) => (
               <View key={m.id} className="w-12 items-center gap-1">
                 <View className="h-10 w-10 items-center justify-center rounded-full bg-ink">
@@ -201,15 +198,17 @@ function InfoView({ toast }) {
                 <Text className="text-[10px] text-ink">{m.isMe ? '나' : m.name}</Text>
               </View>
             ))}
-          </View>
+          </Animated.View>
         )}
-        <Pressable onPress={() => toast('복사 되었어요! 🌱')} className="flex-row items-center justify-between border-b border-line py-3">
-          <Text className="text-[15px] text-muted">초대 코드</Text>
-          <View className="flex-row items-center gap-1.5">
-            <ClipIcon size={14} color="#111111" />
-            <Text className="text-[15px] font-semibold text-ink">{mockGroup.inviteCode}</Text>
-          </View>
-        </Pressable>
+        <Animated.View layout={LinearTransition.duration(240)}>
+          <Pressable onPress={() => toast('복사 되었어요! 🌱')} className="flex-row items-center justify-between border-b border-line py-3">
+            <Text className="text-[15px] text-muted">초대 코드</Text>
+            <View className="flex-row items-center gap-1.5">
+              <ClipIcon size={14} color="#111111" />
+              <Text className="text-[15px] font-semibold text-ink">{mockGroup.inviteCode}</Text>
+            </View>
+          </Pressable>
+        </Animated.View>
       </View>
 
       <View className="rounded-item border border-line bg-surface p-4">

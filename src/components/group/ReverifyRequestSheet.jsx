@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, Pressable, TextInput, Modal, ScrollView } from 'react-native';
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 
 import { REVERIFY_REASONS } from '@/utils/constants.js';
 
@@ -7,8 +8,19 @@ import { REVERIFY_REASONS } from '@/utils/constants.js';
 export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetName }) {
   const [reasonId, setReasonId] = useState(REVERIFY_REASONS[0].id); // 첫 사유 기본 선택
   const [etcText, setEtcText] = useState('');
+  const [error, setError] = useState('');
+
+  const selectReason = (id) => {
+    setReasonId(id);
+    setError('');
+  };
 
   const handleSubmit = () => {
+    if (reasonId === 'etc' && etcText.trim().length === 0) {
+      setError('사유를 입력해주세요');
+      return;
+    }
+    setError('');
     // TODO: reportApi.reverify({ targetName, reasonId, etcText }) 연결
     onSubmit?.({ reasonId, etcText });
   };
@@ -27,9 +39,9 @@ export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetNa
             {REVERIFY_REASONS.map((r) => {
               const selected = reasonId === r.id;
               return (
-                <View key={r.id}>
+                <Animated.View key={r.id} layout={LinearTransition.duration(220)}>
                   <Pressable
-                    onPress={() => setReasonId(r.id)}
+                    onPress={() => selectReason(r.id)}
                     className={`flex-row items-center gap-3 rounded-[15px] border px-4 py-3 ${
                       selected ? 'border-primary bg-primary-tint' : 'border-line bg-surface'
                     }`}
@@ -44,21 +56,27 @@ export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetNa
                     <Text className={`text-[13px] ${selected ? 'font-semibold text-ink' : 'text-subtle'}`}>{r.label}</Text>
                   </Pressable>
 
-                  {/* 기타 선택 시: 바로 밑에 직접 입력칸 */}
+                  {/* 기타 선택 시: 바로 밑에 직접 입력칸 (부드럽게 나타났다 사라짐) */}
                   {r.id === 'etc' && reasonId === 'etc' && (
-                    <TextInput
-                      value={etcText}
-                      onChangeText={setEtcText}
-                      placeholder="사유를 직접 입력해주세요"
-                      placeholderTextColor="#bababa"
-                      multiline
-                      numberOfLines={3}
-                      className="mt-2 rounded-[15px] border border-line bg-surface p-3 text-[13px] text-ink"
-                      style={{ height: 72 }}
-                      textAlignVertical="top"
-                    />
+                    <Animated.View entering={FadeIn.duration(220)} exiting={FadeOut.duration(160)}>
+                      <TextInput
+                        value={etcText}
+                        onChangeText={(t) => {
+                          setEtcText(t);
+                          if (error) setError('');
+                        }}
+                        placeholder="사유를 직접 입력해주세요"
+                        placeholderTextColor="#bababa"
+                        multiline
+                        numberOfLines={3}
+                        className={`mt-2 rounded-[15px] border bg-surface p-3 text-[13px] text-ink ${error ? 'border-danger' : 'border-line'}`}
+                        style={{ height: 72 }}
+                        textAlignVertical="top"
+                      />
+                      {error ? <Text className="mt-1.5 text-[11px] font-semibold text-danger">{error}</Text> : null}
+                    </Animated.View>
                   )}
-                </View>
+                </Animated.View>
               );
             })}
           </View>
