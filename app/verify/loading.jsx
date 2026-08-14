@@ -27,8 +27,8 @@ function MascotRing() {
           <Circle cx={88} cy={88} r={R} stroke="#14453a" strokeWidth={6} fill="none" strokeLinecap="round" strokeDasharray={`${CIRC * 0.82} ${CIRC}`} />
         </Svg>
       </Animated.View>
-      <View className="h-[150px] w-[150px] items-center justify-center overflow-hidden rounded-full bg-primary-tint">
-        <Mascot size={120} animated />
+      <View className="h-[128px] w-[128px] items-center justify-center overflow-hidden rounded-full bg-primary-tint">
+        <Mascot size={92} animated />
       </View>
     </View>
   );

@@ -1,10 +1,21 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Svg, { Path } from 'react-native-svg';
 
 import BottomNavBar from '@/components/nav/BottomNavBar';
 import { mockGroup } from '@/data/mockGroups.js';
 import { useVerificationStore } from '@/stores/verificationStore.js';
+
+// 캠코더 아이콘 (웹 VerificationPage의 SVG 그대로 포팅). 이모지 대신 SVG를 써야
+// 기기별 이모지 폰트 미지원으로 깨진 도형이 보이는 문제가 없다.
+function CamcorderIcon({ size = 24, color = '#111111' }) {
+  return (
+    <Svg viewBox="0 0 24 24" width={size} height={size} fill={color}>
+      <Path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z" />
+    </Svg>
+  );
+}
 
 // 오늘의 인증(시작) 화면 (웹 VerificationPage 포팅).
 export default function VerifyStartScreen() {
@@ -36,7 +47,7 @@ export default function VerifyStartScreen() {
         {/* 촬영 영역 (탭 → 카메라) */}
         <Pressable onPress={goCamera} className="mt-5 h-[320px] items-center justify-center gap-3 rounded-card bg-line">
           <View className="h-16 w-16 items-center justify-center rounded-full bg-surface">
-            <Text className="text-2xl">🎥</Text>
+            <CamcorderIcon size={28} color="#111111" />
           </View>
           <Text className="text-[15px] font-medium text-ink">동영상 촬영</Text>
         </Pressable>
@@ -50,8 +61,8 @@ export default function VerifyStartScreen() {
             <Text className="text-[15px] text-muted">• 운동하는 모습이 잘 보이도록 촬영해주세요.</Text>
           </View>
           <View className="mt-3 flex-row items-center gap-2 rounded-item bg-surface px-3 py-2">
-            <Text>🎬</Text>
-            <Text className="text-[11px] text-muted">기록은 <Text className="font-bold text-primary">3초 내외 짧은 동영상</Text>으로 저장돼요.</Text>
+            <CamcorderIcon size={16} color="#14453a" />
+            <Text className="flex-1 text-[11px] text-muted">기록은 <Text className="font-bold text-primary">3초 내외 짧은 동영상</Text>으로 저장돼요.</Text>
           </View>
         </View>
 

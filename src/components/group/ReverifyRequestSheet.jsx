@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, TextInput, Modal } from 'react-native';
+import { View, Text, Pressable, TextInput, Modal, ScrollView } from 'react-native';
 
 import { REVERIFY_REASONS } from '@/utils/constants.js';
 
@@ -16,12 +16,13 @@ export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetNa
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable className="flex-1 justify-end bg-black/40" onPress={onClose}>
-        <Pressable className="rounded-t-[24px] bg-bg p-6" onPress={() => {}}>
+        <Pressable className="rounded-t-[24px] bg-bg p-6" onPress={() => {}} style={{ maxHeight: '85%' }}>
           <Text className="text-center text-[17px] font-bold text-ink">재인증 요청</Text>
           <Text className="mt-1 text-center text-[12px] text-muted">
             {targetName ? `${targetName}님의 ` : ''}재인증을 요청하려는 사유를 선택해주세요.
           </Text>
 
+          <ScrollView style={{ maxHeight: 360 }} showsVerticalScrollIndicator={false}>
           <View className="mt-5 gap-2">
             {REVERIFY_REASONS.map((r) => {
               const selected = reasonId === r.id;
@@ -52,7 +53,8 @@ export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetNa
                       placeholderTextColor="#bababa"
                       multiline
                       numberOfLines={3}
-                      className="mt-2 min-h-[72px] rounded-[15px] border border-line bg-surface p-3 text-[13px] text-ink"
+                      className="mt-2 rounded-[15px] border border-line bg-surface p-3 text-[13px] text-ink"
+                      style={{ height: 72 }}
                       textAlignVertical="top"
                     />
                   )}
@@ -60,6 +62,7 @@ export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetNa
               );
             })}
           </View>
+          </ScrollView>
 
           <Pressable
             onPress={handleSubmit}

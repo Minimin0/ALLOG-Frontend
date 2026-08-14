@@ -1,11 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, Easing } from 'react-native-reanimated';
 
 import Mascot from '@/components/common/Mascot';
 import { mockRetryGuide, mockVerifyFeedback } from '@/data/mockGroups.js';
 import { useVerificationStore } from '@/stores/verificationStore.js';
+
+// 성공 화면 진입 시 마스코트가 한 번 폴짝 뛰는 연출. 착지 후엔 Mascot의 continuous sway로 이어짐.
+function HopMascot({ size }) {
+  const y = useSharedValue(0);
+  useEffect(() => {
+    y.value = withSequence(
+      withTiming(-24, { duration: 240, easing: Easing.out(Easing.quad) }),
+      withTiming(0, { duration: 280, easing: Easing.bounce }),
+    );
+  }, []);
+  const style = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
+  return (
+    <Animated.View style={style}>
+      <Mascot size={size} animated />
+    </Animated.View>
+  );
+}
 
 const PRAISES = [
   '오늘도 해냈어요! 🌱', '역시 최고예요! 👏', '꾸준함이 멋져요! ✨', '완벽한 인증이에요! 🎉',
@@ -37,9 +55,9 @@ export default function ResultScreen() {
               <Text className="text-[15px] font-semibold text-ink">{praise}</Text>
             </View>
 
-            {/* 마스코트 */}
+            {/* 마스코트 (등장 시 한 번 폴짝) */}
             <View className="h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-primary-tint">
-              <Mascot size={120} animated />
+              <HopMascot size={120} />
             </View>
             <Text className="text-[22px] font-bold text-ink">인증 성공!</Text>
 
