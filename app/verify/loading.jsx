@@ -3,7 +3,7 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, Easing } from 'react-native-reanimated';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Circle, Rect, Path } from 'react-native-svg';
 
 import Mascot from '@/components/common/Mascot';
 import { useVerificationStore } from '@/stores/verificationStore.js';
@@ -35,11 +35,46 @@ function MascotRing() {
 }
 
 const MOCK_RESULT = 'success'; // 'success' | 'retry'
+
+// 검사 항목 아이콘 (웹 VerificationLoadingPage 의 SVG outline 아이콘 그대로 포팅).
+const IconSvg = ({ children }) => (
+  <Svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="#111111" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+    {children}
+  </Svg>
+);
+const PictureIcon = () => (
+  <IconSvg>
+    <Rect x={3} y={4} width={18} height={16} rx={2.5} />
+    <Circle cx={8.5} cy={9} r={1.4} />
+    <Path d="M4 17l4.5-4.5 3.5 3.5 3-3 5 5" />
+  </IconSvg>
+);
+const FlagIcon = () => (
+  <IconSvg>
+    <Path d="M6 21V4" />
+    <Path d="M6 5h11l-2.5 3.5L17 12H6" />
+  </IconSvg>
+);
+const ClockIcon = () => (
+  <IconSvg>
+    <Circle cx={12} cy={12} r={8.5} />
+    <Path d="M12 7.5V12l3 2" />
+  </IconSvg>
+);
+const ImagePlusIcon = () => (
+  <IconSvg>
+    <Rect x={3} y={5} width={13} height={13} rx={2.5} />
+    <Circle cx={7.5} cy={9.5} r={1.2} />
+    <Path d="M4 16l3.5-3.5 3 3" />
+    <Path d="M18.5 5.5v5M16 8h5" />
+  </IconSvg>
+);
+
 const CHECK_ITEMS = [
-  { emoji: '🖼️', title: '영상 품질 확인', sub: '선명도와 구도 확인' },
-  { emoji: '🚩', title: '챌린지 일치 여부 확인', sub: '챌린지 조건 확인' },
-  { emoji: '🕐', title: '촬영 시간 확인', sub: '오늘 촬영된 동영상인지 확인' },
-  { emoji: '🧩', title: '중복 이미지 검사', sub: '이전에 제출한 사진과 비교' },
+  { Icon: PictureIcon, title: '영상 품질 확인', sub: '선명도와 구도 확인' },
+  { Icon: FlagIcon, title: '챌린지 일치 여부 확인', sub: '챌린지 조건 확인' },
+  { Icon: ClockIcon, title: '촬영 시간 확인', sub: '오늘 촬영된 동영상인지 확인' },
+  { Icon: ImagePlusIcon, title: '중복 이미지 검사', sub: '이전에 제출한 사진과 비교' },
 ];
 
 // AI 분석 화면 (웹 VerificationLoadingPage 포팅). 4개 항목이 순차 완료 → 결과로.
@@ -70,18 +105,18 @@ export default function LoadingScreen() {
 
       {/* 검사 항목 카드 */}
       <View className="mt-8 rounded-[35px] border border-line bg-surface px-2">
-        {CHECK_ITEMS.map((item, i) => {
+        {CHECK_ITEMS.map(({ Icon, title, sub }, i) => {
           const done = i < step;
           const loading = i === step;
           return (
             <View
-              key={item.title}
+              key={title}
               className={`flex-row items-center gap-3 px-3 py-4 ${i < CHECK_ITEMS.length - 1 ? 'border-b border-line' : ''}`}
             >
-              <Text className="text-xl">{item.emoji}</Text>
+              <Icon />
               <View className="flex-1">
-                <Text className="text-[15px] font-semibold text-ink">{item.title}</Text>
-                <Text className="text-[10px] font-medium text-muted">{item.sub}</Text>
+                <Text className="text-[15px] font-semibold text-ink">{title}</Text>
+                <Text className="text-[10px] font-medium text-muted">{sub}</Text>
               </View>
               {done ? (
                 <View className="h-6 w-6 items-center justify-center rounded-full bg-primary">

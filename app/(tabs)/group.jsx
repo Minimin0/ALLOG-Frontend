@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
@@ -7,7 +7,10 @@ import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
 import CheerOverlay from '@/components/group/CheerOverlay';
+import ReverifyRequestSheet from '@/components/group/ReverifyRequestSheet';
 import RankingItemRN from '@/components/group/RankingItemRN';
+
+const WORKOUT = require('../../assets/images/workout-verify.png');
 import { mockGroup, mockGroupRanking, mockFeed } from '@/data/mockGroups.js';
 import { rankMembers } from '@/utils/ranking.js';
 import { calcScore, rewardFromScore } from '@/utils/score.js';
@@ -34,11 +37,14 @@ function RankingView() {
 function FeedCard({ item, onVerify, onCheer, onReport }) {
   if (item.status === 'verified') {
     return (
-      <View className="aspect-[3/4] flex-1 justify-end overflow-hidden rounded-card bg-ink p-2">
-        <Pressable onPress={onReport} className="absolute right-2 top-1">
-          <Text className="text-lg text-white/90">⋯</Text>
+      <View style={{ aspectRatio: 3 / 4 }} className="flex-1 overflow-hidden rounded-card bg-ink">
+        {/* 사용자가 업로드한 인증 영상 화면 */}
+        <Image source={WORKOUT} resizeMode="cover" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+        {/* 우측 상단 점3개 → 재인증 요청 */}
+        <Pressable onPress={onReport} hitSlop={8} className="absolute right-1 top-0 h-8 w-8 items-center justify-center">
+          <Text className="text-xl font-bold text-white">⋯</Text>
         </Pressable>
-        <View className="flex-row items-center gap-1.5">
+        <View className="absolute bottom-2 left-2 flex-row items-center gap-1.5">
           <View className="h-6 w-6 items-center justify-center rounded-full bg-surface">
             <Text className="text-[10px] font-semibold text-ink">{item.name[0]}</Text>
           </View>
@@ -52,7 +58,7 @@ function FeedCard({ item, onVerify, onCheer, onReport }) {
   }
   const isMe = item.status === 'me';
   return (
-    <View className={`aspect-[3/4] flex-1 rounded-card border border-line p-4 ${isMe ? 'bg-primary-tint' : 'bg-surface'}`}>
+    <View style={{ aspectRatio: 3 / 4 }} className={`flex-1 rounded-card border border-line p-4 ${isMe ? 'bg-primary-tint' : 'bg-surface'}`}>
       <Text className="text-[15px] font-bold text-ink">{isMe ? '아직 오늘\n인증을 안했어요.' : '인증을\n기다리는 중이에요.'}</Text>
       <View className="flex-1 items-center justify-center">
         <Pressable onPress={isMe ? onVerify : onCheer} className="rounded-pill bg-ink px-5 py-2">
@@ -71,6 +77,7 @@ function FeedCard({ item, onVerify, onCheer, onReport }) {
 
 function FeedView({ toast, cheer }) {
   const router = useRouter();
+  const [reportTarget, setReportTarget] = useState(null);
   // 2열 그리드: 2개씩 묶어 행으로
   const rows = [];
   for (let i = 0; i < mockFeed.length; i += 2) rows.push(mockFeed.slice(i, i + 2));
@@ -84,12 +91,22 @@ function FeedView({ toast, cheer }) {
               item={item}
               onVerify={() => router.push('/verify')}
               onCheer={cheer}
-              onReport={() => toast('재인증 요청이 전송되었어요!')}
+              onReport={() => setReportTarget(item.name)}
             />
           ))}
           {row.length === 1 && <View className="flex-1" />}
         </View>
       ))}
+
+      <ReverifyRequestSheet
+        open={reportTarget !== null}
+        targetName={reportTarget}
+        onClose={() => setReportTarget(null)}
+        onSubmit={() => {
+          setReportTarget(null);
+          toast('재인증 요청이 전송되었어요!');
+        }}
+      />
     </View>
   );
 }
@@ -201,6 +218,7 @@ export default function GroupScreen() {
   const [toastMsg, setToastMsg] = useState('');
   const [cheerKey, setCheerKey] = useState(0);
   const [cheerOn, setCheerOn] = useState(false);
+  const [cheerCount, setCheerCount] = useState(0);
 
   const toast = (msg) => {
     setToastMsg(msg);
@@ -208,9 +226,9 @@ export default function GroupScreen() {
   };
 
   const cheer = () => {
+    setCheerCount((c) => (c % 3) + 1); // 1→2→3→1 (하트 캐릭터가 하나씩 플레인으로)
     setCheerKey((k) => k + 1);
     setCheerOn(true);
-    toast('응원을 보냈어요! 💚');
     setTimeout(() => setCheerOn(false), 1900);
   };
 
@@ -259,8 +277,8 @@ export default function GroupScreen() {
         {tab === 'info' && <InfoView toast={toast} />}
       </ScrollView>
 
-      {/* 응원 오버레이 (캐릭터 3개 + 폭죽) */}
-      {cheerOn && <CheerOverlay key={cheerKey} />}
+      {/* 응원 오버레이 (캐릭터 3개, 응원할수록 하트→플레인) */}
+      {cheerOn && <CheerOverlay key={cheerKey} usedCount={cheerCount} />}
 
       {/* 토스트 */}
       {!!toastMsg && (

@@ -1,10 +1,9 @@
 import { useState } from 'react';
+import { View, Text, Pressable, TextInput, Modal } from 'react-native';
 
-import BottomSheet from '@/components/common/BottomSheet.jsx';
-import Button from '@/components/common/Button.jsx';
 import { REVERIFY_REASONS } from '@/utils/constants.js';
 
-// 재인증 요청 바텀시트 — 피드에서 다른 멤버의 인증 카드 ⋯ 를 눌렀을 때.
+// 재인증 요청 바텀시트 (웹 ReverifyRequestSheet 포팅) — 피드에서 다른 멤버의 인증 카드 ⋯ 를 눌렀을 때.
 export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetName }) {
   const [reasonId, setReasonId] = useState(REVERIFY_REASONS[0].id); // 첫 사유 기본 선택
   const [etcText, setEtcText] = useState('');
@@ -15,60 +14,61 @@ export default function ReverifyRequestSheet({ open, onClose, onSubmit, targetNa
   };
 
   return (
-    <BottomSheet open={open} onClose={onClose}>
-      <h2 className="text-center text-h2 font-bold text-ink">재인증 요청</h2>
-      <p className="mt-1 text-center text-caption text-muted">
-        {targetName ? `${targetName}님의 ` : ''}재인증을 요청하려는 사유를 선택해주세요.
-      </p>
+    <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
+      <Pressable className="flex-1 justify-end bg-black/40" onPress={onClose}>
+        <Pressable className="rounded-t-[24px] bg-bg p-6" onPress={() => {}}>
+          <Text className="text-center text-[17px] font-bold text-ink">재인증 요청</Text>
+          <Text className="mt-1 text-center text-[12px] text-muted">
+            {targetName ? `${targetName}님의 ` : ''}재인증을 요청하려는 사유를 선택해주세요.
+          </Text>
 
-      <div className="mt-5 space-y-2">
-        {REVERIFY_REASONS.map((r) => {
-          const selected = reasonId === r.id;
-          return (
-            <div key={r.id}>
-              <button
-                type="button"
-                onClick={() => setReasonId(r.id)}
-                className={`flex w-full items-center gap-3 rounded-item border px-4 py-3 text-left text-body ${
-                  selected
-                    ? 'border-primary bg-primary-tint font-semibold text-ink'
-                    : 'border-line bg-surface text-subtle'
-                }`}
-              >
-                <span
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
-                    selected ? 'border-primary' : 'border-disabled'
-                  }`}
-                >
-                  {selected && <span className="h-2.5 w-2.5 rounded-full bg-primary" />}
-                </span>
-                {r.label}
-              </button>
+          <View className="mt-5 gap-2">
+            {REVERIFY_REASONS.map((r) => {
+              const selected = reasonId === r.id;
+              return (
+                <View key={r.id}>
+                  <Pressable
+                    onPress={() => setReasonId(r.id)}
+                    className={`flex-row items-center gap-3 rounded-[15px] border px-4 py-3 ${
+                      selected ? 'border-primary bg-primary-tint' : 'border-line bg-surface'
+                    }`}
+                  >
+                    <View
+                      className={`h-5 w-5 items-center justify-center rounded-full border-2 ${
+                        selected ? 'border-primary' : 'border-disabled'
+                      }`}
+                    >
+                      {selected && <View className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                    </View>
+                    <Text className={`text-[13px] ${selected ? 'font-semibold text-ink' : 'text-subtle'}`}>{r.label}</Text>
+                  </Pressable>
 
-              {/* 기타 선택 시: 바로 밑에 직접 입력칸 (미선택 시 접힘) */}
-              {r.id === 'etc' && (
-                <div
-                  className={`overflow-hidden transition-all duration-300 ease-out ${
-                    reasonId === 'etc' ? 'mt-2 max-h-40 opacity-100' : 'max-h-0 opacity-0'
-                  }`}
-                >
-                  <textarea
-                    value={etcText}
-                    onChange={(e) => setEtcText(e.target.value)}
-                    placeholder="사유를 직접 입력해주세요"
-                    rows={3}
-                    className="w-full resize-none rounded-item border border-line bg-surface p-3 text-body text-ink placeholder:text-disabled focus:border-primary focus:outline-none"
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                  {/* 기타 선택 시: 바로 밑에 직접 입력칸 */}
+                  {r.id === 'etc' && reasonId === 'etc' && (
+                    <TextInput
+                      value={etcText}
+                      onChangeText={setEtcText}
+                      placeholder="사유를 직접 입력해주세요"
+                      placeholderTextColor="#bababa"
+                      multiline
+                      numberOfLines={3}
+                      className="mt-2 min-h-[72px] rounded-[15px] border border-line bg-surface p-3 text-[13px] text-ink"
+                      textAlignVertical="top"
+                    />
+                  )}
+                </View>
+              );
+            })}
+          </View>
 
-      <Button variant="danger" className="mt-6" onClick={handleSubmit}>
-        재인증 요청하기
-      </Button>
-    </BottomSheet>
+          <Pressable
+            onPress={handleSubmit}
+            className="mt-6 h-[50px] items-center justify-center rounded-[27.5px] bg-danger"
+          >
+            <Text className="text-[15px] font-bold text-white">재인증 요청하기</Text>
+          </Pressable>
+        </Pressable>
+      </Pressable>
+    </Modal>
   );
 }
