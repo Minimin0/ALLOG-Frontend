@@ -159,6 +159,9 @@ export default function ExploreScreen() {
           >
             <Text className="text-[15px] font-bold text-white">직접 그룹 만들기</Text>
           </Pressable>
+          <Pressable onPress={() => router.push('/group/join')} className="mt-3">
+            <Text className="text-[13px] font-semibold text-muted underline">초대 코드가 있나요? 코드로 참여하기</Text>
+          </Pressable>
         </View>
       </ScrollView>
 

@@ -3,16 +3,27 @@ import { View, Text, Pressable, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-// 본인 인증 (웹 SignUpPhonePage 포팅). 통신사 select는 간단 토글로.
+import TermsAgreementModal from '@/components/auth/TermsAgreementModal';
+
+// 본인 인증 (웹 SignUpPhonePage 포팅). 약관 동의는 바텀시트 모달로.
 const carriers = ['SKT', 'KT', 'LG U+'];
 
 export default function SignUpPhoneScreen() {
   const router = useRouter();
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
-  const [agreed, setAgreed] = useState(false);
   const [carrier, setCarrier] = useState('SKT');
   const [carrierOpen, setCarrierOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [agreements, setAgreements] = useState({ terms: false, privacy: false, marketing: false });
+  const agreed = agreements.terms && agreements.privacy; // 필수 2개
+
+  const toggle = (key) => setAgreements((a) => ({ ...a, [key]: !a[key] }));
+  const toggleAll = () =>
+    setAgreements((a) => {
+      const next = !(a.terms && a.privacy && a.marketing);
+      return { terms: next, privacy: next, marketing: next };
+    });
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
@@ -66,12 +77,13 @@ export default function SignUpPhoneScreen() {
           <Text className="text-[12px] text-[#bababa]">00:00</Text>
         </View>
 
-        {/* 약관 동의 */}
-        <Pressable onPress={() => setAgreed((a) => !a)} className="mt-4 flex-row items-center gap-2">
-          <View className={`h-5 w-5 items-center justify-center rounded ${agreed ? 'bg-primary' : 'bg-disabled'}`}>
-            <Text className="text-[11px] text-white">✓</Text>
+        {/* 약관 동의 (모달 열기) */}
+        <Pressable onPress={() => setTermsOpen(true)} className="mt-4 flex-row items-center gap-2">
+          <View className={`h-5 w-5 items-center justify-center rounded-full ${agreed ? 'bg-primary' : 'border border-disabled'}`}>
+            {agreed && <Text className="text-[11px] text-white">✓</Text>}
           </View>
-          <Text className="text-[13px] text-ink">본인 인증 서비스 약관 전체동의</Text>
+          <Text className="flex-1 text-[13px] text-ink">약관에 동의해주세요 (필수)</Text>
+          <Text className="text-[12px] text-muted">보기 ›</Text>
         </Pressable>
 
         <View className="flex-1" />
@@ -84,6 +96,15 @@ export default function SignUpPhoneScreen() {
           <Text className="text-[18px] font-bold text-[#f2f2f6]">다음</Text>
         </Pressable>
       </View>
+
+      <TermsAgreementModal
+        open={termsOpen}
+        agreements={agreements}
+        onToggle={toggle}
+        onToggleAll={toggleAll}
+        onClose={() => setTermsOpen(false)}
+        onConfirm={() => setTermsOpen(false)}
+      />
     </SafeAreaView>
   );
 }
