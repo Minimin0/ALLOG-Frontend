@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function OnboardingShell({
   step,
   total = 4,
@@ -19,28 +20,34 @@ export default function OnboardingShell({
   children,
 }) {
   return (
-    <KeyboardAvoidingView
+    <SafeAreaView
       style={s.screen}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      edges={step >= 1 && step <= 4 ? ["top"] : []}
     >
-      <ScrollView
-        contentContainerStyle={s.content}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        style={s.screen}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={s.head}>
-          <Pressable onPress={onBack} style={s.back}>
-            <Text style={s.arrow}>←</Text>
-          </Pressable>
-          <Text style={s.step}>STEP {step}</Text>
-        </View>
-        <View style={s.progress}>
-          {Array.from({ length: total }, (_, index) => index + 1).map((i) => (
-            <View key={i} style={[s.segment, i <= step && s.filled]} />
-          ))}
-        </View>
-        <Text style={s.title}>{title}</Text>
-        {subtitle ? <Text style={s.subtitle}>{subtitle}</Text> : null}
-        <View style={s.form}>{children}</View>
+        <ScrollView
+          style={s.scroll}
+          contentContainerStyle={s.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={s.head}>
+            <Pressable onPress={onBack} style={s.back}>
+              <Text style={s.arrow}>←</Text>
+            </Pressable>
+            <Text style={s.step}>STEP {step}</Text>
+          </View>
+          <View style={s.progress}>
+            {Array.from({ length: total }, (_, index) => index + 1).map((i) => (
+              <View key={i} style={[s.segment, i <= step && s.filled]} />
+            ))}
+          </View>
+          <Text style={s.title}>{title}</Text>
+          {subtitle ? <Text style={s.subtitle}>{subtitle}</Text> : null}
+          <View style={s.form}>{children}</View>
+        </ScrollView>
         <View style={s.footer}>
           <Pressable style={s.secondary} onPress={onBack}>
             <Text style={s.secondaryText}>이전</Text>
@@ -55,18 +62,19 @@ export default function OnboardingShell({
             </Text>
           </Pressable>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 const s = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#f7f6f3" },
+  scroll: { flex: 1 },
   content: {
     width: "100%",
     maxWidth: 390,
     alignSelf: "center",
     padding: 20,
-    paddingBottom: 18,
+    paddingBottom: 24,
   },
   head: {
     height: 28,
@@ -94,9 +102,19 @@ const s = StyleSheet.create({
   title: { fontSize: 25, lineHeight: 32.5, fontWeight: "700", marginBottom: 8 },
   subtitle: { fontSize: 12, lineHeight: 19.2, color: "#666", marginBottom: 18 },
   form: { gap: 16 },
-  footer: { flexDirection: "row", gap: 10, marginTop: 20 },
+  footer: {
+    width: "100%",
+    maxWidth: 390,
+    alignSelf: "center",
+    flexDirection: "row",
+    gap: 10,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 28,
+    backgroundColor: "#f7f6f3",
+  },
   secondary: {
-    height: 50,
+    height: 55,
     minWidth: 90,
     borderRadius: 27.5,
     backgroundColor: "#e8e8e8",
@@ -105,7 +123,7 @@ const s = StyleSheet.create({
   },
   secondaryText: { fontSize: 15, fontWeight: "700", color: "#4a4a4a" },
   primary: {
-    height: 50,
+    height: 55,
     flex: 1,
     borderRadius: 27.5,
     backgroundColor: "#000",

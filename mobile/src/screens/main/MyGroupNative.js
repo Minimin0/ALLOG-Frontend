@@ -12,7 +12,10 @@ import {
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import CoachMascotButton from "../../components/CoachMascotButton";
 import * as Clipboard from "expo-clipboard";
+import { useAppState } from "../../state/AppState";
+import { getCoachImage } from "../../utils/coach";
 export default function MyGroupNative({ navigation }) {
+  const { coachStyle } = useAppState();
   const [tab, setTab] = useState("인증");
   return (
     <View style={s.screen}>
@@ -21,7 +24,7 @@ export default function MyGroupNative({ navigation }) {
         {tab !== "정보" ? (
           <CoachMascotButton
             size={56}
-            source={require("../../../assets/images/CheerCoach.png")}
+            source={getCoachImage(coachStyle)}
             onPress={() =>
               navigation.navigate("AiCoach", {
                 from: tab === "인증" ? "feed" : "ranking",

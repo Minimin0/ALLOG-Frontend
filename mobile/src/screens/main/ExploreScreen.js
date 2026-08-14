@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import {
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -12,6 +13,8 @@ import Search from "../../../assets/images/SearchIcon.svg";
 import Filter from "../../../assets/images/FilterIcon.svg";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import CoachMascotButton from "../../components/CoachMascotButton";
+import { useAppState } from "../../state/AppState";
+import { getCoachImage } from "../../utils/coach";
 const categories = ["전체", "수분케어", "식사", "운동", "수면"];
 const groups = [
   {
@@ -38,6 +41,7 @@ const groups = [
   },
 ];
 export default function ExploreScreen({ navigation }) {
+  const { coachStyle } = useAppState();
   const [category, setCategory] = useState("수분케어"),
     [join, setJoin] = useState(null),
     [filter, setFilter] = useState(false),
@@ -76,7 +80,7 @@ export default function ExploreScreen({ navigation }) {
       <View style={s.header}>
         <Text style={s.title}>탐색</Text>
         <CoachMascotButton
-          source={require("../../../assets/images/CheerCoach.png")}
+          source={getCoachImage(coachStyle)}
           onPress={() => navigation.navigate("AiCoach")}
         />
       </View>
@@ -171,19 +175,61 @@ export default function ExploreScreen({ navigation }) {
           이미 초대 코드가 있나요? 코드로 참여하기
         </Text>
       </ScrollView>
-      <Modal visible={!!join} transparent animationType="fade">
-        <Pressable style={s.dim} onPress={() => setJoin(null)} />
-        <View style={s.dialog}>
-          <Text style={s.dialogTitle}>{join?.title}</Text>
-          <Text style={s.dialogText}>하트 1개를 사용해 그룹에 참가할까요?</Text>
-          <View style={s.dialogRow}>
-            <Pressable style={s.cancel} onPress={() => setJoin(null)}>
-              <Text>취소</Text>
-            </Pressable>
-            <Pressable style={s.confirm} onPress={confirmJoin}>
-              <Text style={s.createText}>참가</Text>
-            </Pressable>
-          </View>
+      <Modal
+        visible={!!join}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setJoin(null)}
+      >
+        <View style={s.modalRoot}>
+          <Pressable style={s.dim} onPress={() => setJoin(null)} />
+          <AnimatedEntrance style={s.dialog} distance={10} duration={240}>
+            <View style={s.dialogTop}>
+              <View style={s.coachBadge}>
+                <Image
+                  source={getCoachImage(coachStyle)}
+                  style={s.dialogCoach}
+                  resizeMode="contain"
+                />
+              </View>
+              <Pressable
+                accessibilityLabel="참가 창 닫기"
+                hitSlop={10}
+                style={s.closeButton}
+                onPress={() => setJoin(null)}
+              >
+                <Text style={s.closeText}>×</Text>
+              </Pressable>
+            </View>
+            <Text style={s.dialogEyebrow}>함께 루틴을 시작해요</Text>
+            <Text style={s.dialogTitle}>{join?.title}</Text>
+            <Text style={s.dialogText}>
+              멤버들과 매일 인증하며 목표를 달성해 보세요.
+            </Text>
+            <View style={s.joinSummary}>
+              <View style={s.summaryItem}>
+                <Text style={s.summaryLabel}>참여 인원</Text>
+                <Text style={s.summaryValue}>{join?.members || "4/5명"}</Text>
+              </View>
+              <View style={s.summaryLine} />
+              <View style={s.summaryItem}>
+                <Text style={s.summaryLabel}>참가 비용</Text>
+                <Text style={[s.summaryValue, s.heartCost]}>♥ 1개</Text>
+              </View>
+            </View>
+            <Text style={s.joinNotice}>
+              참가하면 하트 1개가 사용되며 바로 그룹에 입장해요.
+            </Text>
+            <View style={s.dialogRow}>
+              <Pressable style={s.cancel} onPress={() => setJoin(null)}>
+                <Text style={s.cancelText}>다음에</Text>
+              </Pressable>
+              <Pressable style={s.confirm} onPress={confirmJoin}>
+                <Text style={s.confirmText}>참가하기</Text>
+              </Pressable>
+            </View>
+          </AnimatedEntrance>
         </View>
       </Modal>
       <Modal visible={filter} transparent animationType="slide">
@@ -372,34 +418,102 @@ const s = StyleSheet.create({
     textDecorationLine: "underline",
   },
   dim: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,.4)" },
-  dialog: {
-    position: "absolute",
-    left: 30,
-    right: 30,
-    top: "35%",
-    borderRadius: 22,
-    backgroundColor: "#fff",
-    padding: 22,
+  modalRoot: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 24,
   },
-  dialogTitle: { fontSize: 20, fontWeight: "700" },
-  dialogText: { fontSize: 14, color: "#6b7268", marginVertical: 16 },
-  dialogRow: { flexDirection: "row", gap: 10, marginTop: 14 },
+  dialog: {
+    width: "100%",
+    borderRadius: 28,
+    backgroundColor: "#fffdf9",
+    paddingHorizontal: 22,
+    paddingTop: 20,
+    paddingBottom: 18,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+  dialogTop: {
+    minHeight: 54,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+  },
+  coachBadge: {
+    width: 54,
+    height: 54,
+    borderRadius: 19,
+    backgroundColor: "#edf2ec",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dialogCoach: { width: 48, height: 48 },
+  closeButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "#f1efe9",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  closeText: { marginTop: -2, fontSize: 24, color: "#6b7268" },
+  dialogEyebrow: {
+    marginTop: 16,
+    marginBottom: 7,
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#527065",
+  },
+  dialogTitle: { fontSize: 22, lineHeight: 29, fontWeight: "800" },
+  dialogText: {
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 21,
+    color: "#6b7268",
+  },
+  joinSummary: {
+    marginTop: 18,
+    minHeight: 72,
+    borderRadius: 18,
+    backgroundColor: "#f5f3ed",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+  },
+  summaryItem: { flex: 1, alignItems: "center", gap: 5 },
+  summaryLabel: { fontSize: 11, color: "#7c8178" },
+  summaryValue: { fontSize: 15, fontWeight: "800", color: "#202420" },
+  summaryLine: { width: 1, height: 32, backgroundColor: "#dfddd5" },
+  heartCost: { color: "#d9573b" },
+  joinNotice: {
+    marginTop: 12,
+    fontSize: 11,
+    lineHeight: 17,
+    textAlign: "center",
+    color: "#858980",
+  },
+  dialogRow: { flexDirection: "row", gap: 10, marginTop: 18 },
   cancel: {
     flex: 1,
-    height: 48,
-    borderRadius: 18,
-    backgroundColor: "#e7e3d8",
+    height: 52,
+    borderRadius: 17,
+    backgroundColor: "#ebe9e2",
     alignItems: "center",
     justifyContent: "center",
   },
+  cancelText: { fontSize: 15, fontWeight: "700", color: "#525851" },
   confirm: {
-    flex: 1,
-    height: 48,
-    borderRadius: 18,
-    backgroundColor: "#000",
+    flex: 1.35,
+    height: 52,
+    borderRadius: 17,
+    backgroundColor: "#172e28",
     alignItems: "center",
     justifyContent: "center",
   },
+  confirmText: { fontSize: 15, fontWeight: "800", color: "#fff" },
   sheet: {
     position: "absolute",
     left: 0,

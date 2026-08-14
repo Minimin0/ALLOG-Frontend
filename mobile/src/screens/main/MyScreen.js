@@ -52,17 +52,19 @@ export default function MyScreen({ navigation }) {
             <Metric label="성공한 루틴" value="13회" />
           </View>
         </AnimatedEntrance>
-        <Text style={s.section}>내 기록</Text>
-        <AnimatedEntrance delay={60} style={s.records}>
-          {records.map(([name, count, Icon]) => (
-            <View key={name} style={s.record}>
-              <View style={s.recordIcon}>
-                <Icon width={24} height={24} />
+        <AnimatedEntrance delay={60} style={s.recordSection}>
+          <Text style={s.section}>내 기록</Text>
+          <View style={s.records}>
+            {records.map(([name, count, Icon]) => (
+              <View key={name} style={s.record}>
+                <View style={s.recordIcon}>
+                  <Icon width={24} height={24} />
+                </View>
+                <Text style={s.recordName}>{name}</Text>
+                <Text style={s.recordCount}>{count}</Text>
               </View>
-              <Text style={s.recordName}>{name}</Text>
-              <Text style={s.recordCount}>{count}</Text>
-            </View>
-          ))}
+            ))}
+          </View>
         </AnimatedEntrance>
         <AnimatedEntrance delay={120} style={s.menus}>
           {menus.map(([label, route, Icon], i) => (
@@ -106,8 +108,8 @@ const s = StyleSheet.create({
   content: {
     paddingHorizontal: 30,
     paddingTop: 16,
-    paddingBottom: 35,
-    gap: 12,
+    paddingBottom: 32,
+    gap: 20,
   },
   profile: {
     borderRadius: 26,
@@ -146,7 +148,13 @@ const s = StyleSheet.create({
     gap: 4,
   },
   metricValueText: { fontSize: 15, fontWeight: "700" },
-  section: { fontSize: 13, fontWeight: "700", color: "#6b7268", marginTop: 8 },
+  recordSection: { gap: 10 },
+  section: {
+    fontSize: 13,
+    lineHeight: 16,
+    fontWeight: "700",
+    color: "#6b7268",
+  },
   records: {
     borderRadius: 26,
     borderWidth: 1,
@@ -154,7 +162,7 @@ const s = StyleSheet.create({
     backgroundColor: "#fefefe",
     padding: 16,
     flexDirection: "row",
-    gap: 7,
+    gap: 8,
   },
   record: { flex: 1, alignItems: "center" },
   recordIcon: {
@@ -165,18 +173,23 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  recordName: { marginTop: 8, fontSize: 11, fontWeight: "600" },
-  recordCount: { fontSize: 15, fontWeight: "700", color: "#14453a" },
+  recordName: { marginTop: 8, fontSize: 11, lineHeight: 13, fontWeight: "600" },
+  recordCount: {
+    marginTop: 2,
+    fontSize: 15,
+    lineHeight: 18,
+    fontWeight: "700",
+    color: "#14453a",
+  },
   menus: {
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#e7e3d8",
     backgroundColor: "#fefefe",
     overflow: "hidden",
-    marginTop: 8,
   },
   menu: {
-    height: 51,
+    height: 50,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",

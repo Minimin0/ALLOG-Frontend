@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { SafeAreaView } from "react-native-safe-area-context";
 const cats = ["수분케어", "식사", "운동", "수면"],
   durations = ["7일", "14일", "30일"];
 const generateInviteCode = () => {
@@ -57,6 +58,7 @@ export function CreateGroupScreen({ navigation }) {
             {cats.map((x) => (
               <Choice
                 key={x}
+                style={s.categoryChoice}
                 active={category === x}
                 onPress={() => setCategory(x)}
               >
@@ -78,6 +80,7 @@ export function CreateGroupScreen({ navigation }) {
             {durations.map((x) => (
               <Choice
                 key={x}
+                style={s.durationChoice}
                 active={duration === x}
                 onPress={() => setDuration(x)}
               >
@@ -119,48 +122,60 @@ export function CreateGroupScreen({ navigation }) {
         >
           {times.map((x, i) => (
             <View key={i} style={s.time}>
-              <Text style={s.timeLabel}>시작</Text>
-              <TextInput
-                value={x.start}
-                maxLength={5}
-                onChangeText={(value) => updateTime(i, "start", value)}
-                style={s.timeInput}
-              />
-              <Text style={s.timeDivider}>~</Text>
-              <Text style={s.timeLabel}>마감</Text>
-              <TextInput
-                value={x.end}
-                maxLength={5}
-                onChangeText={(value) => updateTime(i, "end", value)}
-                style={s.timeInput}
-              />
-              {times.length > 1 && (
-                <Text
-                  style={s.remove}
-                  onPress={() => setTimes((v) => v.filter((_, j) => j !== i))}
-                >
-                  ×
-                </Text>
-              )}
+              {times.length > 1 ? (
+                <View style={s.timeSlotHead}>
+                  <Text style={s.timeSlotName}>인증 시간 {i + 1}</Text>
+                  <Pressable
+                    accessibilityLabel={`인증 시간 ${i + 1} 삭제`}
+                    style={s.removeButton}
+                    onPress={() => setTimes((v) => v.filter((_, j) => j !== i))}
+                  >
+                    <Text style={s.remove}>×</Text>
+                  </Pressable>
+                </View>
+              ) : null}
+              <View style={s.timeRow}>
+                <View style={s.timeField}>
+                  <Text style={s.timeLabel}>시작</Text>
+                  <TextInput
+                    value={x.start}
+                    maxLength={5}
+                    onChangeText={(value) => updateTime(i, "start", value)}
+                    style={s.timeInput}
+                  />
+                </View>
+                <Text style={s.timeDivider}>~</Text>
+                <View style={s.timeField}>
+                  <Text style={s.timeLabel}>마감</Text>
+                  <TextInput
+                    value={x.end}
+                    maxLength={5}
+                    onChangeText={(value) => updateTime(i, "end", value)}
+                    style={s.timeInput}
+                  />
+                </View>
+              </View>
             </View>
           ))}
         </Section>
         <Section title="공개 범위">
           <View style={s.row}>
-            <Choice
+            <VisibilityChoice
               active={visibility === "public"}
               onPress={() => setVisibility("public")}
-            >
-              <Text>공개{`\n`}누구나 참여할 수 있어요.</Text>
-            </Choice>
-            <Choice
+              title="공개"
+              description="누구나 참여할 수 있어요."
+            />
+            <VisibilityChoice
               active={visibility === "private"}
               onPress={() => setVisibility("private")}
-            >
-              <Text>비공개{`\n`}초대한 사람만 참여할 수 있어요.</Text>
-            </Choice>
+              title="비공개"
+              description="초대한 사람만 참여할 수 있어요."
+            />
           </View>
         </Section>
+      </ScrollView>
+      <SafeAreaView edges={["bottom"]} style={s.createFooter}>
         <Pressable
           disabled={!valid}
           style={[s.primary, !valid && s.disabled]}
@@ -174,8 +189,22 @@ export function CreateGroupScreen({ navigation }) {
         >
           <Text style={s.primaryText}>그룹 만들기</Text>
         </Pressable>
-      </ScrollView>
+      </SafeAreaView>
     </View>
+  );
+}
+function VisibilityChoice({ active, onPress, title, description }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[s.visibilityChoice, active && s.active]}
+    >
+      <View style={[s.visibilityDot, active && s.visibilityDotActive]}>
+        {active ? <View style={s.visibilityDotInner} /> : null}
+      </View>
+      <Text style={s.visibilityTitle}>{title}</Text>
+      <Text style={s.visibilityDescription}>{description}</Text>
+    </Pressable>
   );
 }
 function Section({ title, action, children }) {
@@ -448,7 +477,7 @@ const s = StyleSheet.create({
   },
   backText: { fontSize: 32, color: "#fff", lineHeight: 34 },
   headerTitle: { fontSize: 19, fontWeight: "700" },
-  content: { paddingHorizontal: 20, paddingBottom: 30, gap: 24 },
+  content: { paddingHorizontal: 20, paddingBottom: 28, gap: 24 },
   section: { gap: 8 },
   sectionHead: {
     flexDirection: "row",
@@ -468,6 +497,8 @@ const s = StyleSheet.create({
     justifyContent: "center",
     padding: 8,
   },
+  categoryChoice: { minHeight: 40, borderRadius: 99, paddingHorizontal: 6 },
+  durationChoice: { minHeight: 48 },
   active: {
     borderWidth: 2,
     borderColor: "#14453a",
@@ -494,9 +525,9 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
   },
   circle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: "#f0eee8",
     alignItems: "center",
     justifyContent: "center",
@@ -512,28 +543,93 @@ const s = StyleSheet.create({
   },
   addText: { color: "#fff", fontWeight: "700" },
   time: {
-    height: 50,
+    minHeight: 70,
     borderRadius: 15,
     borderWidth: 1,
     borderColor: "#e7e3d8",
     backgroundColor: "#fff",
     paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 8,
+  },
+  timeSlotHead: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+  },
+  timeSlotName: { fontSize: 11, fontWeight: "700", color: "#6b7268" },
+  timeRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  timeField: {
+    flex: 1,
+    height: 40,
+    borderRadius: 11,
+    backgroundColor: "#f7f6f3",
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   timeLabel: { fontSize: 11, fontWeight: "600", color: "#4a4a4a" },
   timeInput: {
-    width: 48,
+    flex: 1,
+    minWidth: 0,
     paddingVertical: 4,
     textAlign: "center",
     fontSize: 13,
     fontWeight: "600",
   },
-  timeDivider: { flex: 1, textAlign: "center", color: "#bababa" },
-  remove: { fontSize: 18, color: "#6b7268" },
+  timeDivider: { color: "#bababa" },
+  removeButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#f0eee8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  remove: { fontSize: 17, lineHeight: 18, color: "#6b7268" },
+  visibilityChoice: {
+    flex: 1,
+    minHeight: 94,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
+    paddingHorizontal: 13,
+    paddingVertical: 13,
+  },
+  visibilityDot: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1.5,
+    borderColor: "#bababa",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  visibilityDotActive: { borderColor: "#14453a" },
+  visibilityDotInner: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: "#14453a",
+  },
+  visibilityTitle: { marginTop: 8, fontSize: 14, fontWeight: "700" },
+  visibilityDescription: {
+    marginTop: 3,
+    fontSize: 10,
+    lineHeight: 15,
+    color: "#6b7268",
+  },
+  createFooter: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 16,
+    backgroundColor: "#f7f6f3",
+  },
   primary: {
     width: "100%",
-    height: 50,
+    height: 55,
     borderRadius: 27.5,
     backgroundColor: "#000",
     alignItems: "center",

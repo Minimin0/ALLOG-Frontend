@@ -1,22 +1,82 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Circle, Line, Path, Rect } from "react-native-svg";
 import HomeScreen from "../screens/main/HomeNative";
 import ExploreScreen from "../screens/main/ExploreScreen";
 import MyGroupScreen from "../screens/main/MyGroupNative";
 import RewardScreen from "../screens/main/RewardScreen";
 import MyScreen from "../screens/main/MyScreen";
-import GroupIcon from "../../assets/images/GroupTab.svg";
-import ExploreIcon from "../../assets/images/ExploreTab.svg";
-import RewardIcon from "../../assets/images/RewardTab.svg";
-import MyIcon from "../../assets/images/MyTab.svg";
 const Tab = createBottomTabNavigator();
+
+function GroupTabIcon({ color }) {
+  return (
+    <Svg width={30} height={26} viewBox="0 0 30 26">
+      <Circle cx={11} cy={7} r={5} fill={color} />
+      <Circle cx={23} cy={8} r={4} fill={color} opacity={0.82} />
+      <Path d="M1 25 C1 18 5 14 11 14 C17 14 21 18 21 25 Z" fill={color} />
+      <Path
+        d="M20 16 C26 16 29 19 29 25 L23 25 C23 21 22 18 20 16 Z"
+        fill={color}
+        opacity={0.82}
+      />
+    </Svg>
+  );
+}
+
+function ExploreTabIcon({ color }) {
+  return (
+    <Svg width={27} height={27} viewBox="0 0 27 27">
+      <Circle
+        cx={11}
+        cy={11}
+        r={8.5}
+        fill="none"
+        stroke={color}
+        strokeWidth={4}
+      />
+      <Line
+        x1={17.5}
+        y1={17.5}
+        x2={25}
+        y2={25}
+        stroke={color}
+        strokeWidth={4}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
+
+function RewardTabIcon({ color }) {
+  return (
+    <Svg width={29} height={27} viewBox="0 0 29 27">
+      <Rect x={2} y={9} width={25} height={16} rx={3} fill={color} />
+      <Rect x={0} y={6} width={29} height={7} rx={3} fill={color} />
+      <Rect x={13} y={6} width={3} height={19} fill="#ffffff" />
+      <Path
+        d="M14 6 C8 -1 4 1 5 4 C6 7 10 7 14 6 Z M15 6 C21 -1 25 1 24 4 C23 7 19 7 15 6 Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function MyTabIcon({ color }) {
+  return (
+    <Svg width={27} height={27} viewBox="0 0 27 27">
+      <Circle cx={13.5} cy={7} r={6} fill={color} />
+      <Path d="M1 27 C1 18 6 14 13.5 14 C21 14 26 18 26 27 Z" fill={color} />
+    </Svg>
+  );
+}
+
 const icons = {
-  Group: GroupIcon,
-  Explore: ExploreIcon,
-  Reward: RewardIcon,
-  My: MyIcon,
+  Group: GroupTabIcon,
+  Explore: ExploreTabIcon,
+  Reward: RewardTabIcon,
+  My: MyTabIcon,
 };
+
 export default function MainTabs() {
   return (
     <Tab.Navigator
@@ -28,7 +88,7 @@ export default function MainTabs() {
         tabBarActiveTintColor: "#000",
         tabBarInactiveTintColor: "#bababa",
         tabBarIcon: ({ color }) => {
-          if (route.name === "HomeTab")
+          if (route.name === "HomeTab") {
             return (
               <View
                 style={[
@@ -36,16 +96,17 @@ export default function MainTabs() {
                   { backgroundColor: color === "#000" ? "#000" : "#bababa" },
                 ]}
               >
-                <Svg width={22} height={24} viewBox="188 20 32 34">
+                <Svg width={26} height={28} viewBox="0 0 24 24">
                   <Path
                     fill="#ffffff"
-                    d="M193 47.975V33.4883C193 33.0617 193.096 32.6578 193.287 32.2767C193.478 31.8956 193.741 31.5817 194.077 31.335L203.052 24.5383C203.522 24.1794 204.058 24 204.662 24C205.265 24 205.805 24.1794 206.282 24.5383L215.257 31.3333C215.593 31.58 215.857 31.8944 216.047 32.2767C216.238 32.6578 216.333 33.0617 216.333 33.4883V47.975C216.333 48.4217 216.167 48.8111 215.835 49.1433C215.503 49.4756 215.113 49.6417 214.667 49.6417H209.027C208.644 49.6417 208.324 49.5128 208.067 49.255C207.809 48.9961 207.68 48.6761 207.68 48.295V40.3467C207.68 39.9656 207.551 39.6461 207.293 39.3883C207.034 39.1294 206.714 39H203C202.619 39 202.299 39.1294 202.042 39.3883C201.783 39.6461 201.653 39.9656 201.653 40.3467V48.2967C201.653 48.6778 201.524 48.9972 201.267 49.255C201.009 49.5128 200.689 49.6417 200.308 49.6417H194.667C194.22 49.6417 193.831 49.4756 193.498 49.1433C193.166 48.8111 193 48.4217 193 47.975Z"
+                    d="M2 10.5 L12 2 L22 10.5 L20.4 12.4 L19 11.2 L19 22 L14 22 L14 15 L10 15 L10 22 L5 22 L5 11.2 L3.6 12.4 Z"
                   />
                 </Svg>
               </View>
             );
+          }
           const Icon = icons[route.name];
-          return <Icon width={22} height={22} color={color} />;
+          return <Icon color={color} />;
         },
       })}
     >
@@ -77,23 +138,24 @@ export default function MainTabs() {
     </Tab.Navigator>
   );
 }
+
 const s = StyleSheet.create({
   bar: {
-    height: 66,
-    paddingTop: 7,
-    paddingBottom: 7,
+    height: 80,
+    paddingTop: 10,
+    paddingBottom: 10,
     backgroundColor: "#fff",
     borderTopWidth: 0,
     elevation: 12,
   },
-  label: { fontSize: 10, fontWeight: "700" },
+  label: { marginTop: 2, fontSize: 12, fontWeight: "700" },
   home: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
+    width: 62,
+    height: 62,
+    borderRadius: 31,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -28,
+    marginTop: -30,
     borderWidth: 8,
     borderColor: "#fff",
   },

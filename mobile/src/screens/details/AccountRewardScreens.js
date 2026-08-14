@@ -17,6 +17,8 @@ import DiscountIcon from "../../../assets/images/DiscountIcon.svg";
 import ShippingIcon from "../../../assets/images/ShippingIcon.svg";
 import { useAppState } from "../../state/AppState";
 import SleepTimeDial from "../../components/SleepTimeDial";
+import AnimatedEntrance from "../../components/AnimatedEntrance";
+import { COACH_IMAGES } from "../../utils/coach";
 function Header({ navigation, title }) {
   return (
     <View style={s.header}>
@@ -93,27 +95,47 @@ export function RewardDetailScreen({ navigation, route }) {
       </View>
       <Modal visible={done} transparent animationType="fade">
         <View style={s.dim}>
-          <View style={s.purchase}>
-            <View style={s.check}>
-              <Text style={s.checkText}>✓</Text>
+          <AnimatedEntrance distance={8} duration={260} style={s.purchase}>
+            <View style={s.successHalo}>
+              <View style={s.check}>
+                <Text style={s.checkText}>✓</Text>
+              </View>
+            </View>
+            <View style={s.successBadge}>
+              <Text style={s.successBadgeText}>교환 완료</Text>
             </View>
             <Text style={s.purchaseTitle}>구매가 완료됐어요!</Text>
-            <Text style={s.purchaseName}>{reward.title}</Text>
-            <Text style={s.sub}>{reward.cost}포인트가 차감됐어요.</Text>
-            <View style={s.remain}>
-              <Text>
-                남은 포인트 <Text style={{ fontWeight: "700" }}>{points}</Text>
-              </Text>
+            <Text style={s.purchaseSub}>
+              새로운 리워드가 내 쿠폰함에 추가됐어요.
+            </Text>
+            <View style={s.purchasedItem}>
+              <View style={s.purchasedIcon}>
+                <DetailIcon width={32} height={32} />
+              </View>
+              <View style={s.purchasedCopy}>
+                <Text style={s.purchaseName}>{reward.title}</Text>
+                <Text style={s.purchaseNote}>{reward.note}</Text>
+              </View>
+              <View style={s.purchaseCostRow}>
+                <RewardIcon width={15} height={15} />
+                <Text style={s.purchaseCost}>{reward.cost}</Text>
+              </View>
             </View>
-            <Button
-              onPress={() => {
-                setDone(false);
-                navigation.goBack();
-              }}
-            >
-              확인
-            </Button>
-          </View>
+            <View style={s.remain}>
+              <Text style={s.remainLabel}>남은 포인트</Text>
+              <Text style={s.remainValue}>{points}</Text>
+            </View>
+            <View style={s.purchaseAction}>
+              <Button
+                onPress={() => {
+                  setDone(false);
+                  navigation.goBack();
+                }}
+              >
+                확인
+              </Button>
+            </View>
+          </AnimatedEntrance>
         </View>
       </Modal>
     </View>
@@ -129,25 +151,32 @@ function Row({ label, value, danger }) {
 }
 const genders = ["여성", "남성", "선택 안함"],
   exercise = ["주 1회", "주 2회", "주 3회", "주 4회", "주 5회", "거의 안함"],
-  water = ["0.5L 미만", "0.5L~1L", "1L~1.5L", "1.5L~2L", "2L 이상"],
+  meals = ["먹지 않음", "1회", "2회", "3회 이상"],
+  periods = ["7일", "14일", "30일"],
   coaches = [
-    ["응원형", require("../../../assets/images/CheerCoach.png")],
-    ["압박형", require("../../../assets/images/PushCoach.png")],
-    ["팩트형", require("../../../assets/images/FactCoach.png")],
-    ["유머형", require("../../../assets/images/HumorCoach.png")],
+    ["응원형", COACH_IMAGES["응원형"]],
+    ["압박형", COACH_IMAGES["압박형"]],
+    ["팩트형", COACH_IMAGES["팩트형"]],
+    ["유머형", COACH_IMAGES["유머형"]],
   ];
 export function EditProfileScreen({ navigation }) {
-  const { coachStyle: savedCoachStyle, setCoachStyle } = useAppState();
+  const {
+    coachStyle: savedCoachStyle,
+    lifestyle,
+    setCoachStyle,
+    setLifestyle,
+  } = useAppState();
   const [nick, setNick] = useState("민지"),
     [gender, setGender] = useState("여성"),
     [coach, setCoach] = useState(savedCoachStyle),
-    [sleep, setSleep] = useState(6.5),
-    [ex, setEx] = useState("주 3회"),
-    [wa, setWa] = useState("1L~1.5L");
+    [sleep, setSleep] = useState(lifestyle.sleep),
+    [ex, setEx] = useState(lifestyle.exercise),
+    [meal, setMeal] = useState(lifestyle.meal),
+    [period, setPeriod] = useState(lifestyle.period);
   return (
     <View style={s.screen}>
       <Header navigation={navigation} title="프로필 편집" />
-      <ScrollView contentContainerStyle={s.content}>
+      <ScrollView contentContainerStyle={[s.content, s.editContent]}>
         <View style={s.profileEdit}>
           <View style={s.avatar}>
             <Text style={s.avatarText}>A</Text>
@@ -170,10 +199,10 @@ export function EditProfileScreen({ navigation }) {
           </View>
         </Field>
         <View style={s.two}>
-          <Field title="키">
+          <Field title="키" style={s.half}>
             <UnitInput value="165" unit="cm" />
           </Field>
-          <Field title="몸무게">
+          <Field title="몸무게" style={s.half}>
             <UnitInput value="50" unit="kg" />
           </Field>
         </View>
@@ -199,7 +228,7 @@ export function EditProfileScreen({ navigation }) {
         <Text style={s.centerTitle}>수면 시간</Text>
         <View style={s.sleep}>
           <Text style={s.sleepNumber}>{Math.floor(sleep)}</Text>
-          <Text style={s.sleepUnit}>시간</Text>
+          <Text style={[s.sleepUnit, s.sleepHourUnit]}>시간</Text>
           <Text style={s.sleepNumber}>{sleep % 1 ? "30" : "00"}</Text>
           <Text style={s.sleepUnit}>분</Text>
           <View style={s.sleepDial}>
@@ -208,15 +237,20 @@ export function EditProfileScreen({ navigation }) {
         </View>
         <View style={s.line} />
         <Field title="운동 빈도" centered>
-          <Chips list={exercise} value={ex} set={setEx} wrap />
+          <Chips list={exercise} value={ex} set={setEx} columns={3} />
         </Field>
         <View style={s.line} />
-        <Field title="하루 물 섭취량" centered>
-          <Chips list={water} value={wa} set={setWa} wrap />
+        <Field title="식사 빈도" centered>
+          <Chips list={meals} value={meal} set={setMeal} columns={2} />
+        </Field>
+        <View style={s.line} />
+        <Field title="선호 기간" centered>
+          <Chips list={periods} value={period} set={setPeriod} columns={3} />
         </Field>
         <Button
           onPress={() => {
             setCoachStyle(coach);
+            setLifestyle({ sleep, exercise: ex, meal, period });
             navigation.goBack();
           }}
         >
@@ -226,9 +260,9 @@ export function EditProfileScreen({ navigation }) {
     </View>
   );
 }
-function Field({ title, children, centered }) {
+function Field({ title, children, centered, style }) {
   return (
-    <View style={s.field}>
+    <View style={[s.field, style]}>
       <Text style={[s.fieldTitle, centered && { textAlign: "center" }]}>
         {title}
       </Text>
@@ -236,15 +270,19 @@ function Field({ title, children, centered }) {
     </View>
   );
 }
-function Chips({ list, value, set, wrap }) {
+function Chips({ list, value, set, columns }) {
   return (
-    <View
-      style={[s.chips, wrap && { flexWrap: "wrap", justifyContent: "center" }]}
-    >
+    <View style={[s.chips, columns && s.chipGrid]}>
       {list.map((x) => (
         <Pressable
           key={x}
-          style={[s.chip, value === x && s.active]}
+          style={[
+            s.chip,
+            columns ? s.gridChip : s.flexChip,
+            columns === 2 && s.twoColumnChip,
+            columns === 3 && s.threeColumnChip,
+            value === x && s.active,
+          ]}
           onPress={() => set(x)}
         >
           <Text style={s.chipText}>{x}</Text>
@@ -541,6 +579,7 @@ const s = StyleSheet.create({
   backText: { fontSize: 30, lineHeight: 32 },
   headerTitle: { fontSize: 19, fontWeight: "700" },
   content: { paddingHorizontal: 20, paddingBottom: 35, gap: 16 },
+  editContent: { paddingBottom: 40, gap: 24 },
   footer: { paddingHorizontal: 20, paddingBottom: 28 },
   button: {
     height: 50,
@@ -611,35 +650,89 @@ const s = StyleSheet.create({
   },
   purchase: {
     width: "100%",
-    borderRadius: 24,
+    maxWidth: 340,
+    borderRadius: 28,
     backgroundColor: "#f7f6f3",
-    padding: 24,
+    padding: 26,
     alignItems: "center",
   },
-  check: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#000",
+  successHalo: {
+    width: 82,
+    height: 82,
+    borderRadius: 41,
+    backgroundColor: "#e5f4e8",
     alignItems: "center",
     justifyContent: "center",
   },
-  checkText: { fontSize: 22, color: "#fff" },
-  purchaseTitle: { marginTop: 16, fontSize: 17, fontWeight: "700" },
-  purchaseName: {
-    marginTop: 8,
+  check: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: "#14453a",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkText: { fontSize: 26, fontWeight: "700", color: "#fff" },
+  successBadge: {
+    marginTop: 14,
+    borderRadius: 99,
+    backgroundColor: "#f0e2b8",
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  successBadgeText: { fontSize: 11, fontWeight: "700", color: "#6c5315" },
+  purchaseTitle: { marginTop: 10, fontSize: 21, fontWeight: "800" },
+  purchaseSub: {
+    marginTop: 7,
     textAlign: "center",
+    fontSize: 12,
+    lineHeight: 18,
+    color: "#6b7268",
+  },
+  purchasedItem: {
+    marginTop: 20,
+    width: "100%",
+    minHeight: 86,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
+    padding: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  purchasedIcon: {
+    width: 54,
+    height: 54,
+    borderRadius: 16,
+    backgroundColor: "#f3efe4",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  purchasedCopy: { flex: 1 },
+  purchaseName: {
     fontSize: 13,
     fontWeight: "700",
   },
+  purchaseNote: { marginTop: 4, fontSize: 10, color: "#6b7268" },
+  purchaseCostRow: { flexDirection: "row", alignItems: "center", gap: 4 },
+  purchaseCost: { fontSize: 13, fontWeight: "800" },
   remain: {
-    marginVertical: 16,
+    marginTop: 12,
+    marginBottom: 18,
     width: "100%",
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    padding: 14,
+    borderRadius: 15,
+    backgroundColor: "#eaf4ec",
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
   },
+  remainLabel: { fontSize: 12, fontWeight: "600", color: "#496157" },
+  remainValue: { fontSize: 17, fontWeight: "800", color: "#14453a" },
+  purchaseAction: { width: "100%" },
   profileEdit: { alignItems: "center" },
   avatar: {
     width: 68,
@@ -664,10 +757,11 @@ const s = StyleSheet.create({
   },
   nickInput: { flex: 1, textAlign: "center", fontSize: 15, fontWeight: "600" },
   field: { gap: 8 },
+  half: { flex: 1 },
   fieldTitle: { fontSize: 13, fontWeight: "700", color: "#4a4a4a" },
   chips: { flexDirection: "row", gap: 8 },
+  chipGrid: { flexWrap: "wrap", gap: 12 },
   chip: {
-    flex: 1,
     minHeight: 42,
     borderRadius: 15,
     borderWidth: 1,
@@ -677,6 +771,10 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  flexChip: { flex: 1 },
+  gridChip: { height: 54, paddingHorizontal: 8 },
+  twoColumnChip: { width: "48%" },
+  threeColumnChip: { width: "30.8%" },
   active: {
     borderWidth: 2,
     borderColor: "#14453a",
@@ -703,9 +801,17 @@ const s = StyleSheet.create({
     backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "center",
+    position: "relative",
   },
-  unitInput: { flex: 1, textAlign: "center" },
-  unit: { paddingRight: 12, color: "#bababa" },
+  unitInput: {
+    flex: 1,
+    minWidth: 0,
+    height: "100%",
+    paddingLeft: 34,
+    paddingRight: 34,
+    textAlign: "center",
+  },
+  unit: { position: "absolute", right: 12, color: "#bababa" },
   coaches: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   coach: {
     width: "48%",
@@ -719,7 +825,7 @@ const s = StyleSheet.create({
   },
   centerTitle: { textAlign: "center", fontSize: 15, fontWeight: "700" },
   sleep: {
-    height: 130,
+    height: 191,
     borderRadius: 15,
     borderWidth: 1,
     borderColor: "#e7e3d8",
@@ -728,16 +834,17 @@ const s = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "center",
     gap: 6,
-    paddingTop: 20,
+    paddingTop: 24,
   },
   sleepNumber: { fontSize: 33, fontWeight: "700" },
-  sleepUnit: { marginTop: 17, fontSize: 13, color: "#696973" },
+  sleepUnit: { marginTop: 18, fontSize: 13, color: "#696973" },
+  sleepHourUnit: { marginRight: 10 },
   sleepDial: {
     position: "absolute",
     left: 1,
     right: 1,
-    bottom: 12,
-    height: 80,
+    bottom: 18,
+    height: 92,
   },
   listCard: {
     borderRadius: 20,

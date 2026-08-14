@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
 import SleepTimeDial from "../../components/SleepTimeDial";
+import { useAppState } from "../../state/AppState";
 export default function LifestyleScreen({ navigation }) {
+  const { setLifestyle } = useAppState();
   const [form, setForm] = useState({
     sleep: 6.5,
     exercise: null,
@@ -16,7 +18,10 @@ export default function LifestyleScreen({ navigation }) {
       title="생활 패턴을 알려주세요"
       subtitle="AI가 최적의 그룹과 루틴 시간을 추천해 드려요."
       onBack={() => navigation.goBack()}
-      onNext={() => navigation.navigate("OnboardingComplete")}
+      onNext={() => {
+        setLifestyle(form);
+        navigation.navigate("OnboardingComplete");
+      }}
       canNext={form.exercise && form.meal && form.period}
     >
       <View style={s.lifestyleForm}>
@@ -31,6 +36,8 @@ export default function LifestyleScreen({ navigation }) {
               <SleepTimeDial
                 value={form.sleep}
                 onChange={(sleep) => set("sleep", sleep)}
+                min={0}
+                max={24}
               />
             </View>
           </View>

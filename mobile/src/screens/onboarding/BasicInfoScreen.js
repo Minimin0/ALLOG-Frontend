@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import Svg, { Line, Path, Rect } from "react-native-svg";
 import OnboardingShell from "../../components/OnboardingShell";
 export default function BasicInfoScreen({ navigation }) {
   const [form, setForm] = useState({
@@ -52,20 +53,31 @@ export default function BasicInfoScreen({ navigation }) {
         </View>
       </Field>
       <Field label="생년월일">
-        {Platform.OS === "web" ? (
-          <TextInput
-            value={form.birth}
-            onChangeText={(v) => set("birth", v)}
-            placeholder="YYYY-MM-DD"
-            style={s.input}
-          />
-        ) : (
-          <Pressable style={s.input} onPress={() => setDateOpen(true)}>
-            <Text style={[s.dateText, !form.birth && s.placeholder]}>
-              {form.birth || "YYYY-MM-DD"}
-            </Text>
+        <View style={s.dateField}>
+          {Platform.OS === "web" ? (
+            <TextInput
+              value={form.birth}
+              onChangeText={(v) => set("birth", v)}
+              placeholder="YYYY-MM-DD"
+              style={s.dateInput}
+            />
+          ) : (
+            <Pressable style={s.dateValue} onPress={() => setDateOpen(true)}>
+              <Text style={[s.dateText, !form.birth && s.placeholder]}>
+                {form.birth || "YYYY-MM-DD"}
+              </Text>
+            </Pressable>
+          )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="생년월일 달력 열기"
+            hitSlop={8}
+            style={s.calendarButton}
+            onPress={() => setDateOpen(true)}
+          >
+            <CalendarIcon />
           </Pressable>
-        )}
+        </View>
         {dateOpen && Platform.OS !== "web" ? (
           <DateTimePicker
             value={
@@ -74,6 +86,7 @@ export default function BasicInfoScreen({ navigation }) {
                 : new Date(2000, 0, 1)
             }
             mode="date"
+            display={Platform.OS === "ios" ? "inline" : "calendar"}
             maximumDate={new Date()}
             onChange={(event, selectedDate) => {
               setDateOpen(false);
@@ -128,6 +141,29 @@ function Choice({ text, active, onPress }) {
     </Pressable>
   );
 }
+function CalendarIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 20 20">
+      <Rect
+        x={2}
+        y={3.5}
+        width={16}
+        height={14.5}
+        rx={3}
+        fill="none"
+        stroke="#14453a"
+        strokeWidth={1.7}
+      />
+      <Line x1={2} y1={8} x2={18} y2={8} stroke="#14453a" strokeWidth={1.7} />
+      <Path
+        d="M6 2 L6 5 M14 2 L14 5"
+        stroke="#14453a"
+        strokeWidth={1.7}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
 const s = StyleSheet.create({
   field: { gap: 8 },
   label: { fontSize: 12, fontWeight: "700", color: "#666" },
@@ -142,6 +178,28 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   dateText: { fontSize: 13, color: "#111" },
+  dateField: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dateInput: { flex: 1, height: "100%", paddingHorizontal: 14, fontSize: 13 },
+  dateValue: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 14,
+    justifyContent: "center",
+  },
+  calendarButton: {
+    width: 48,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   placeholder: { color: "#8a8a8a" },
   row: { flexDirection: "row", gap: 10 },
   choice: {

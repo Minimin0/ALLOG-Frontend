@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, Easing, Platform } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function AnimatedEntrance({
   children,
@@ -9,23 +10,29 @@ export default function AnimatedEntrance({
   style,
 }) {
   const progress = useRef(new Animated.Value(0)).current;
+  const isFocused = useIsFocused();
 
   useEffect(() => {
+    progress.stopAnimation();
+    progress.setValue(0);
+    if (!isFocused) return undefined;
     if (
       Platform.OS === "web" &&
       globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches
     ) {
       progress.setValue(1);
-      return;
+      return undefined;
     }
-    Animated.timing(progress, {
+    const animation = Animated.timing(progress, {
       toValue: 1,
       delay,
       duration,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
-    }).start();
-  }, [delay, duration, progress]);
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [delay, duration, isFocused, progress]);
 
   return (
     <Animated.View

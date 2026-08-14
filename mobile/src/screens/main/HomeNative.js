@@ -7,32 +7,33 @@ import {
   View,
 } from "react-native";
 import { useEffect, useRef } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import Heart from "../../../assets/images/HeartIcon.svg";
 import Reward from "../../../assets/images/RewardIcon.svg";
 import Chart from "../../../assets/images/ChartIcon.svg";
 import Fire from "../../../assets/images/FireIcon.svg";
 import { useAppState } from "../../state/AppState";
+import { getCoachImage } from "../../utils/coach";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import CoachMascotButton from "../../components/CoachMascotButton";
 export default function HomeNative({ navigation }) {
-  const { coachStyle, points } = useAppState();
+  const { coachStyle, points, hearts } = useAppState();
+  const isFocused = useIsFocused();
   const gauge = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    Animated.timing(gauge, {
+    gauge.stopAnimation();
+    gauge.setValue(0);
+    if (!isFocused) return undefined;
+    const animation = Animated.timing(gauge, {
       toValue: 0.6,
       delay: 150,
       duration: 1000,
       useNativeDriver: false,
-    }).start();
-  }, [gauge]);
-  const coachImage =
-    coachStyle === "압박형"
-      ? require("../../../assets/images/PushCoach.png")
-      : coachStyle === "팩트형"
-        ? require("../../../assets/images/FactCoach.png")
-        : coachStyle === "유머형"
-          ? require("../../../assets/images/HumorCoach.png")
-          : require("../../../assets/images/CheerCoach.png");
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [gauge, isFocused]);
+  const coachImage = getCoachImage(coachStyle);
   return (
     <View style={s.screen}>
       <View style={s.header}>
@@ -46,7 +47,7 @@ export default function HomeNative({ navigation }) {
         <AnimatedEntrance style={s.row}>
           <Card
             icon={<Heart width={21} height={19} />}
-            value="3"
+            value={String(hearts)}
             label="보유 하트"
             note="하트 이벤트 가기 >"
             onPress={() => navigation.navigate("HeartEvent")}

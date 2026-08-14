@@ -15,6 +15,8 @@ import Heart from "../../../assets/images/HeartIcon.svg";
 import Svg, { Circle, Line } from "react-native-svg";
 import { getCoachContent } from "../../../../src/data/mockChat.js";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
+import { useAppState } from "../../state/AppState";
+import { getCoachImage } from "../../utils/coach";
 function Header({ navigation, title }) {
   return (
     <View style={s.header}>
@@ -27,6 +29,8 @@ function Header({ navigation, title }) {
   );
 }
 export function AiCoachScreen({ navigation, route }) {
+  const { coachStyle } = useAppState();
+  const coachImage = getCoachImage(coachStyle);
   const { intro, qa } = getCoachContent(route.params?.from);
   const [msgs, setMsgs] = useState([
       {
@@ -59,7 +63,7 @@ export function AiCoachScreen({ navigation, route }) {
           >
             {m.role === "ai" && (
               <Image
-                source={require("../../../assets/images/CheerCoach.png")}
+                source={coachImage}
                 style={{ width: 32, height: 32 }}
                 resizeMode="contain"
               />
@@ -216,17 +220,18 @@ const events = [
   ["cheer", "친구 응원해주기", "Home"],
 ];
 export function HeartEventScreen({ navigation }) {
-  const [hearts, setHearts] = useState(3),
-    [completed, setCompleted] = useState([]),
-    [reward, setReward] = useState(null);
+  const {
+    hearts,
+    completedHeartEvents: completed,
+    claimHeartEvent,
+  } = useAppState();
+  const [reward, setReward] = useState(null);
   const participate = (e) => {
-    if (completed.includes(e[0])) {
+    if (!claimHeartEvent(e[0])) {
       if (e[2] === "Explore")
         return navigation.navigate("Home", { screen: "Explore" });
       return navigation.navigate(e[2]);
     }
-    setCompleted((x) => [...x, e[0]]);
-    setHearts((x) => x + 1);
     setReward(e);
   };
   return (

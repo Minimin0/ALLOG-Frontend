@@ -2,27 +2,12 @@ import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
 import { useAppState } from "../../state/AppState";
+import { COACH_IMAGES } from "../../utils/coach";
 const items = [
-  [
-    "응원형",
-    "따뜻하게 격려해드려요",
-    require("../../../assets/images/CheerCoach.png"),
-  ],
-  [
-    "압박형",
-    "긴장감 있게 자극할게요",
-    require("../../../assets/images/PushCoach.png"),
-  ],
-  [
-    "팩트형",
-    "숫자와 근거로 말할게요",
-    require("../../../assets/images/FactCoach.png"),
-  ],
-  [
-    "유머형",
-    "가볍고 재밌게 말할게요",
-    require("../../../assets/images/HumorCoach.png"),
-  ],
+  ["응원형", "따뜻하게 격려해드려요", COACH_IMAGES["응원형"]],
+  ["압박형", "긴장감 있게 자극할게요", COACH_IMAGES["압박형"]],
+  ["팩트형", "숫자와 근거로 말할게요", COACH_IMAGES["팩트형"]],
+  ["유머형", "가볍고 재밌게 말할게요", COACH_IMAGES["유머형"]],
 ];
 export default function CoachStyleScreen({ navigation }) {
   const { coachStyle, setCoachStyle } = useAppState();

@@ -9,6 +9,8 @@ import {
   View,
 } from "react-native";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
+import { useAppState } from "../../state/AppState";
+import { getCoachImage } from "../../utils/coach";
 function Header({ navigation, title, right }) {
   return (
     <View style={s.header}>
@@ -30,6 +32,7 @@ const ranking = [
   [6, "준호", "1600점", false, "계단 오르기"],
 ];
 export function FullRankingScreen({ navigation }) {
+  const { coachStyle } = useAppState();
   return (
     <View style={s.screen}>
       <Header
@@ -37,7 +40,7 @@ export function FullRankingScreen({ navigation }) {
         title="전체 랭킹"
         right={
           <Image
-            source={require("../../../assets/images/CheerCoach.png")}
+            source={getCoachImage(coachStyle)}
             style={{ width: 40, height: 40 }}
             resizeMode="contain"
           />
