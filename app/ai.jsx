@@ -63,8 +63,8 @@ export default function AiCoachScreen() {
       <View className="border-t border-line p-3">
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
           {qa.map((item) => (
-            <Pressable key={item.id} onPress={() => ask(item)} className="rounded-pill bg-primary-tint px-5 py-3">
-              <Text className="text-[15px] font-medium text-primary">{item.q}</Text>
+            <Pressable key={item.id} onPress={() => ask(item)} className="h-11 items-center justify-center rounded-pill bg-primary-tint px-5">
+              <Text className="text-[15px] font-medium text-primary" numberOfLines={1}>{item.q}</Text>
             </Pressable>
           ))}
         </ScrollView>
