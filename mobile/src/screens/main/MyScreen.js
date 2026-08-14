@@ -24,7 +24,7 @@ const records = [
     ["고객센터", "Support", Support],
   ];
 export default function MyScreen({ navigation }) {
-  const { points } = useAppState();
+  const { nickname, points } = useAppState();
   return (
     <View style={s.screen}>
       <Text style={s.title}>마이 페이지</Text>
@@ -32,10 +32,10 @@ export default function MyScreen({ navigation }) {
         <AnimatedEntrance style={s.profile}>
           <View style={s.profileRow}>
             <View style={s.avatar}>
-              <Text style={s.avatarText}>A</Text>
+              <Text style={s.avatarText}>{nickname.charAt(0) || "A"}</Text>
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={s.name}>민지</Text>
+              <Text style={s.name}>{nickname}</Text>
               <Text style={s.email}>minzi@gmail.com</Text>
             </View>
             <Pressable

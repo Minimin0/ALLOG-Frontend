@@ -3,6 +3,7 @@ import {
   Image,
   Linking,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,6 +12,8 @@ import {
   TextInput,
   View,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import Svg, { Line, Path, Rect } from "react-native-svg";
 import RewardIcon from "../../../assets/images/RewardIcon.svg";
 import TrialIcon from "../../../assets/images/TrialIcon.svg";
 import DiscountIcon from "../../../assets/images/DiscountIcon.svg";
@@ -161,12 +164,19 @@ const genders = ["여성", "남성", "선택 안함"],
   ];
 export function EditProfileScreen({ navigation }) {
   const {
+    nickname: savedNickname,
+    birth: savedBirth,
     coachStyle: savedCoachStyle,
     lifestyle,
+    setNickname,
+    setBirth,
     setCoachStyle,
     setLifestyle,
   } = useAppState();
-  const [nick, setNick] = useState("민지"),
+  const [nick, setNick] = useState(savedNickname),
+    [birth, setBirthValue] = useState(savedBirth),
+    [dateOpen, setDateOpen] = useState(false),
+    [saveDone, setSaveDone] = useState(false),
     [gender, setGender] = useState("여성"),
     [coach, setCoach] = useState(savedCoachStyle),
     [sleep, setSleep] = useState(lifestyle.sleep),
@@ -192,11 +202,51 @@ export function EditProfileScreen({ navigation }) {
           <Chips list={genders} value={gender} set={setGender} />
         </Field>
         <Field title="생년월일">
-          <View style={s.date}>
-            <SmallInput value="2000" suffix="년" />
-            <SmallInput value="07" suffix="월" />
-            <SmallInput value="30" suffix="일" />
+          <View style={s.birthField}>
+            {Platform.OS === "web" ? (
+              <TextInput
+                value={birth}
+                onChangeText={setBirthValue}
+                placeholder="YYYY-MM-DD"
+                style={s.birthInput}
+              />
+            ) : (
+              <Pressable style={s.birthValue} onPress={() => setDateOpen(true)}>
+                <Text style={s.birthText}>{birth || "YYYY-MM-DD"}</Text>
+              </Pressable>
+            )}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="생년월일 달력 열기"
+              hitSlop={8}
+              style={s.calendarButton}
+              onPress={() => setDateOpen(true)}
+            >
+              <CalendarIcon />
+            </Pressable>
           </View>
+          {dateOpen && Platform.OS !== "web" ? (
+            <DateTimePicker
+              value={
+                birth ? new Date(`${birth}T00:00:00`) : new Date(2000, 0, 1)
+              }
+              mode="date"
+              display={Platform.OS === "ios" ? "inline" : "calendar"}
+              maximumDate={new Date()}
+              onChange={(event, selectedDate) => {
+                setDateOpen(false);
+                if (event.type === "set" && selectedDate) {
+                  const year = selectedDate.getFullYear();
+                  const month = String(selectedDate.getMonth() + 1).padStart(
+                    2,
+                    "0",
+                  );
+                  const day = String(selectedDate.getDate()).padStart(2, "0");
+                  setBirthValue(`${year}-${month}-${day}`);
+                }
+              }}
+            />
+          ) : null}
         </Field>
         <View style={s.two}>
           <Field title="키" style={s.half}>
@@ -249,14 +299,51 @@ export function EditProfileScreen({ navigation }) {
         </Field>
         <Button
           onPress={() => {
+            setNickname(nick);
+            setBirth(birth);
             setCoachStyle(coach);
             setLifestyle({ sleep, exercise: ex, meal, period });
-            navigation.goBack();
+            setSaveDone(true);
           }}
         >
           저장하기
         </Button>
       </ScrollView>
+      <Modal
+        visible={saveDone}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => {
+          setSaveDone(false);
+          navigation.goBack();
+        }}
+      >
+        <View style={s.dim}>
+          <AnimatedEntrance distance={12} duration={280} style={s.profileSaved}>
+            <AnimatedEntrance delay={90} distance={8} duration={320}>
+              <View style={s.successHalo}>
+                <View style={s.check}>
+                  <Text style={s.checkText}>✓</Text>
+                </View>
+              </View>
+            </AnimatedEntrance>
+            <Text style={s.savedTitle}>프로필을 저장했어요!</Text>
+            <Text style={s.savedSub}>
+              변경한 정보가 모든 화면에 바로 반영됐어요.
+            </Text>
+            <Pressable
+              style={s.savedButton}
+              onPress={() => {
+                setSaveDone(false);
+                navigation.goBack();
+              }}
+            >
+              <Text style={s.savedButtonText}>확인</Text>
+            </Pressable>
+          </AnimatedEntrance>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -268,6 +355,29 @@ function Field({ title, children, centered, style }) {
       </Text>
       {children}
     </View>
+  );
+}
+function CalendarIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 20 20">
+      <Rect
+        x={2}
+        y={3.5}
+        width={16}
+        height={14.5}
+        rx={3}
+        fill="none"
+        stroke="#14453a"
+        strokeWidth={1.7}
+      />
+      <Line x1={2} y1={8} x2={18} y2={8} stroke="#14453a" strokeWidth={1.7} />
+      <Path
+        d="M6 2 L6 5 M14 2 L14 5"
+        stroke="#14453a"
+        strokeWidth={1.7}
+        strokeLinecap="round"
+      />
+    </Svg>
   );
 }
 function Chips({ list, value, set, columns }) {
@@ -733,6 +843,39 @@ const s = StyleSheet.create({
   remainLabel: { fontSize: 12, fontWeight: "600", color: "#496157" },
   remainValue: { fontSize: 17, fontWeight: "800", color: "#14453a" },
   purchaseAction: { width: "100%" },
+  profileSaved: {
+    width: "100%",
+    maxWidth: 330,
+    borderRadius: 28,
+    backgroundColor: "#f7f6f3",
+    paddingHorizontal: 26,
+    paddingTop: 30,
+    paddingBottom: 22,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+  savedTitle: { marginTop: 18, fontSize: 21, fontWeight: "800" },
+  savedSub: {
+    marginTop: 8,
+    textAlign: "center",
+    fontSize: 13,
+    lineHeight: 19,
+    color: "#6b7268",
+  },
+  savedButton: {
+    marginTop: 24,
+    width: "100%",
+    height: 50,
+    borderRadius: 17,
+    backgroundColor: "#14453a",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  savedButtonText: { fontSize: 15, fontWeight: "800", color: "#fff" },
   profileEdit: { alignItems: "center" },
   avatar: {
     width: 68,
@@ -782,6 +925,29 @@ const s = StyleSheet.create({
   },
   chipText: { fontSize: 12, fontWeight: "600" },
   date: { flexDirection: "row", gap: 8 },
+  birthField: {
+    height: 48,
+    borderWidth: 1,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  birthInput: { flex: 1, height: "100%", paddingHorizontal: 14, fontSize: 13 },
+  birthValue: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 14,
+    justifyContent: "center",
+  },
+  birthText: { fontSize: 13, color: "#111" },
+  calendarButton: {
+    width: 48,
+    height: 48,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   smallWrap: { flexDirection: "row", alignItems: "center", gap: 5 },
   smallInput: {
     width: 64,

@@ -32,7 +32,7 @@ const ranking = [
   [6, "준호", "1600점", false, "계단 오르기"],
 ];
 export function FullRankingScreen({ navigation }) {
-  const { coachStyle } = useAppState();
+  const { coachStyle, nickname } = useAppState();
   return (
     <View style={s.screen}>
       <Header
@@ -48,8 +48,14 @@ export function FullRankingScreen({ navigation }) {
       />
       <ScrollView contentContainerStyle={s.content}>
         {ranking.map(([rank, name, score, me, group], index) => (
-          <AnimatedEntrance key={name} delay={index * 70}>
-            <Rank rank={rank} name={name} score={score} me={me} group={group} />
+          <AnimatedEntrance key={`${rank}-${name}`} delay={index * 70}>
+            <Rank
+              rank={rank}
+              name={me ? nickname : name}
+              score={score}
+              me={me}
+              group={group}
+            />
           </AnimatedEntrance>
         ))}
       </ScrollView>

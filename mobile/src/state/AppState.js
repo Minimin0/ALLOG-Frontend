@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const KEYS = {
+  nickname: "allog_nickname",
+  birth: "allog_birth",
   points: "allog_reward_points",
   coach: "allog_coach_style",
   lifestyle: "allog_lifestyle",
@@ -17,6 +19,8 @@ const DEFAULT_LIFESTYLE = {
 const Context = createContext(null);
 
 export function AppStateProvider({ children }) {
+  const [nickname, setNicknameState] = useState("민지");
+  const [birth, setBirthState] = useState("2000-07-30");
   const [points, setPointsState] = useState(1540);
   const [coachStyle, setCoachStyleState] = useState("응원형");
   const [lifestyle, setLifestyleState] = useState(DEFAULT_LIFESTYLE);
@@ -24,6 +28,8 @@ export function AppStateProvider({ children }) {
   const [completedHeartEvents, setCompletedHeartEvents] = useState([]);
   useEffect(() => {
     Promise.all([
+      AsyncStorage.getItem(KEYS.nickname),
+      AsyncStorage.getItem(KEYS.birth),
       AsyncStorage.getItem(KEYS.points),
       AsyncStorage.getItem(KEYS.coach),
       AsyncStorage.getItem(KEYS.lifestyle),
@@ -31,12 +37,16 @@ export function AppStateProvider({ children }) {
       AsyncStorage.getItem(KEYS.heartEvents),
     ]).then(
       ([
+        storedNickname,
+        storedBirth,
         storedPoints,
         storedCoach,
         storedLifestyle,
         storedHearts,
         storedEvents,
       ]) => {
+        if (storedNickname?.trim()) setNicknameState(storedNickname.trim());
+        if (storedBirth) setBirthState(storedBirth);
         if (storedPoints !== null && Number.isFinite(Number(storedPoints)))
           setPointsState(Number(storedPoints));
         if (storedCoach) setCoachStyleState(storedCoach);
@@ -64,6 +74,17 @@ export function AppStateProvider({ children }) {
       },
     );
   }, []);
+  const setNickname = (value) => {
+    const next = value.trim();
+    if (!next) return false;
+    setNicknameState(next);
+    AsyncStorage.setItem(KEYS.nickname, next);
+    return true;
+  };
+  const setBirth = (value) => {
+    setBirthState(value);
+    AsyncStorage.setItem(KEYS.birth, value);
+  };
   const setCoachStyle = (value) => {
     setCoachStyleState(value);
     AsyncStorage.setItem(KEYS.coach, value);
@@ -93,17 +114,29 @@ export function AppStateProvider({ children }) {
   };
   const value = useMemo(
     () => ({
+      nickname,
+      birth,
       points,
       coachStyle,
       lifestyle,
       hearts,
       completedHeartEvents,
+      setNickname,
+      setBirth,
       setCoachStyle,
       setLifestyle,
       claimHeartEvent,
       deductPoints,
     }),
-    [points, coachStyle, lifestyle, hearts, completedHeartEvents],
+    [
+      nickname,
+      birth,
+      points,
+      coachStyle,
+      lifestyle,
+      hearts,
+      completedHeartEvents,
+    ],
   );
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }

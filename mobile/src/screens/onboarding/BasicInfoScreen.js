@@ -10,9 +10,11 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Svg, { Line, Path, Rect } from "react-native-svg";
 import OnboardingShell from "../../components/OnboardingShell";
+import { useAppState } from "../../state/AppState";
 export default function BasicInfoScreen({ navigation }) {
+  const { nickname, setNickname, setBirth } = useAppState();
   const [form, setForm] = useState({
-    nickname: "",
+    nickname,
     gender: "여성",
     birth: "",
     height: "",
@@ -28,7 +30,11 @@ export default function BasicInfoScreen({ navigation }) {
       title="기본 정보를 입력해주세요."
       subtitle="입력하신 정보로 맞춤 루틴을 추천해드려요."
       onBack={() => navigation.goBack()}
-      onNext={() => navigation.navigate("Habits")}
+      onNext={() => {
+        setNickname(form.nickname);
+        setBirth(form.birth);
+        navigation.navigate("Habits");
+      }}
       nextLabel="다음 단계로"
       canNext={valid}
     >
@@ -105,22 +111,30 @@ export default function BasicInfoScreen({ navigation }) {
       </Field>
       <View style={s.row}>
         <Field label="키" half>
-          <TextInput
-            value={form.height}
-            onChangeText={(v) => set("height", v)}
-            placeholder="165          cm"
-            keyboardType="number-pad"
-            style={[s.input, s.center]}
-          />
+          <View style={s.measureInput}>
+            <TextInput
+              value={form.height}
+              onChangeText={(v) => set("height", v)}
+              placeholder="165"
+              placeholderTextColor="#a2a2a2"
+              keyboardType="number-pad"
+              style={s.measureNumber}
+            />
+            <Text style={s.measureUnit}>cm</Text>
+          </View>
         </Field>
         <Field label="몸무게" half>
-          <TextInput
-            value={form.weight}
-            onChangeText={(v) => set("weight", v)}
-            placeholder="50            kg"
-            keyboardType="number-pad"
-            style={[s.input, s.center]}
-          />
+          <View style={s.measureInput}>
+            <TextInput
+              value={form.weight}
+              onChangeText={(v) => set("weight", v)}
+              placeholder="50"
+              placeholderTextColor="#a2a2a2"
+              keyboardType="number-pad"
+              style={s.measureNumber}
+            />
+            <Text style={s.measureUnit}>kg</Text>
+          </View>
         </Field>
       </View>
     </OnboardingShell>
@@ -201,6 +215,32 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   placeholder: { color: "#8a8a8a" },
+  measureInput: {
+    height: 44,
+    borderWidth: 1,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+  },
+  measureNumber: {
+    flex: 1,
+    height: "100%",
+    padding: 0,
+    textAlign: "center",
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#111",
+  },
+  measureUnit: {
+    width: 24,
+    marginLeft: 4,
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#111",
+  },
   row: { flexDirection: "row", gap: 10 },
   choice: {
     flex: 1,
