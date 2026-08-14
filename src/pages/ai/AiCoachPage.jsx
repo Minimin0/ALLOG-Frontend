@@ -35,7 +35,7 @@ export default function AiCoachPage() {
   };
 
   return (
-    <div className="mx-auto flex h-[100dvh] max-w-md flex-col bg-bg">
+    <div className="mx-auto flex h-[100dvh] max-w-[402px] flex-col bg-bg">
       {/* 헤더 */}
       <header className="relative flex h-14 shrink-0 items-center justify-center border-b border-line px-4">
         <button

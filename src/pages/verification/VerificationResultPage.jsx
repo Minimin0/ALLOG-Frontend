@@ -43,7 +43,7 @@ export default function VerificationResultPage() {
   };
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col items-center p-6 text-center">
+    <div className="mx-auto flex min-h-full max-w-[402px] flex-col items-center p-6 text-center">
       <div className="flex flex-1 flex-col items-center justify-center gap-4">
         {isSuccess ? (
           <>

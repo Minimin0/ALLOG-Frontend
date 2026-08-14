@@ -9,7 +9,7 @@ export default function BottomSheet({ open, onClose, children }) {
       <div className="absolute inset-0 animate-fadeIn bg-black/40" onClick={onClose} aria-hidden="true" />
 
       {/* 패널 */}
-      <div className="relative z-10 max-h-[85vh] w-full max-w-md animate-slideUp overflow-y-auto rounded-t-[28px] bg-surface px-5 pb-8 pt-3 shadow-xl">
+      <div className="relative z-10 max-h-[85vh] w-full max-w-[402px] animate-slideUp overflow-y-auto rounded-t-[28px] bg-surface px-5 pb-8 pt-3 shadow-xl">
         {/* 손잡이 바 */}
         <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-ink" />
 

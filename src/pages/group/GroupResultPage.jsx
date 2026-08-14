@@ -22,7 +22,7 @@ export default function GroupResultPage() {
   const me = ranked.find((m) => m.isMe);
 
   return (
-    <div className="mx-auto min-h-full max-w-md bg-bg p-5">
+    <div className="mx-auto min-h-full max-w-[402px] bg-bg p-5">
       <Header title="챌린지 결과" />
 
       {/* 요약 카드: 공동 성공률 + 목표 (제목/기간 가운데, 게이지 애니메이션) */}

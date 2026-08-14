@@ -31,7 +31,7 @@ function GroupDetailPage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col bg-[#f7f6f3]">
+      <div className="flex min-h-screen w-full max-w-[402px] flex-col bg-[#f7f6f3]">
         <header className="flex items-center gap-3 px-5 py-3">
           <button
             type="button"
@@ -71,7 +71,10 @@ function GroupDetailPage() {
           </button>
         </header>
 
-        <div className="flex border-b border-[#e7e3d8] px-5">
+        {/* 탭 밑줄은 컨테이너의 별도 border-b가 아니라 각 탭 자신의 border-b-2로 그린다
+            (활성 = 검정, 비활성 = 연한 회색) → 두 border가 어긋나 밑줄이 구분선보다
+            위에 떠 보이는 문제 없이 항상 한 줄로 붙는다. */}
+        <div className="flex px-5">
           {tabs.map((tab) => {
             const active = activeTab === tab.key;
             return (
@@ -79,13 +82,17 @@ function GroupDetailPage() {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 border-b-2 py-3 text-center text-[14px] font-bold ${
-                  active
-                    ? "border-black text-black"
-                    : "border-transparent text-[#bababa]"
-                }`}
+                className="flex flex-1 flex-col items-center pt-3"
               >
-                {tab.label}
+                <span
+                  className={`border-b-2 pb-3 text-[14px] font-bold ${
+                    active
+                      ? "border-black text-black"
+                      : "border-[#e7e3d8] text-[#bababa]"
+                  }`}
+                >
+                  {tab.label}
+                </span>
               </button>
             );
           })}
@@ -94,11 +101,11 @@ function GroupDetailPage() {
         <main className="flex-1 space-y-4 px-5 py-5 pb-10">
           {activeTab === "verify" && (
             <div className="grid grid-cols-2 gap-3">
-              {members.map((member) => (
+              {members.map((member, i) => (
                 <div
                   key={member.name}
-                  className="flex flex-col justify-between rounded-[15px] border border-[#e7e3d8] bg-[#fefefe] p-3"
-                  style={{ minHeight: 176 }}
+                  className="animate-fade-slide-up flex flex-col justify-between rounded-[15px] border border-[#e7e3d8] bg-[#fefefe] p-3"
+                  style={{ minHeight: 176, animationDelay: `${i * 60}ms` }}
                 >
                   {member.done ? (
                     <>
@@ -115,7 +122,7 @@ function GroupDetailPage() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => navigate("/group/feed")}
+                        onClick={() => navigate(`/group/${groupId}/feed`)}
                         className="mt-1 text-left text-[10px] font-semibold text-[#4a4a4a]"
                       >
                         댓글, 재인증 요청
@@ -136,8 +143,8 @@ function GroupDetailPage() {
                         onClick={() =>
                           navigate(
                             member.isMe
-                              ? "/verification/camera"
-                              : "/group/feed",
+                              ? `/group/${groupId}/verify/camera`
+                              : `/group/${groupId}/feed`,
                           )
                         }
                         className="mt-2 rounded-full bg-[#14453a] py-2 text-center text-[12px] font-bold text-white"
@@ -158,8 +165,12 @@ function GroupDetailPage() {
                   { rank: 2, name: "지민", medal: "🥈", h: 90 },
                   { rank: 1, name: "민지", medal: "🥇", h: 116 },
                   { rank: 3, name: "하민", medal: "🥉", h: 70 },
-                ].map((item) => (
-                  <div key={item.rank} className="flex flex-col items-center">
+                ].map((item, i) => (
+                  <div
+                    key={item.rank}
+                    className="animate-fade-slide-up flex flex-col items-center"
+                    style={{ animationDelay: `${i * 90}ms` }}
+                  >
                     <span className="text-[26px]">{item.medal}</span>
                     <span className="mt-1 text-[12px] font-bold text-black">
                       {item.rank}위

@@ -1,6 +1,10 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithGoogle } from "../../services/authApi";
+import { useViewportScale } from "../../hooks/useViewportScale";
+
+const DESIGN_WIDTH = 393;
+const DESIGN_HEIGHT = 852;
 
 const socialButtons = [
   {
@@ -29,6 +33,7 @@ const socialButtons = [
 function LoginPage() {
   const navigate = useNavigate();
   const [googleError, setGoogleError] = useState("");
+  const scale = useViewportScale(DESIGN_WIDTH);
 
   const handleGoogleLogin = async () => {
     setGoogleError("");
@@ -46,8 +51,16 @@ function LoginPage() {
       style={{ fontFamily: "'Pretendard Variable', 'Pretendard', sans-serif" }}
     >
       <div
-        className="relative overflow-hidden bg-[#F7F6F3]"
-        style={{ width: "393px", height: "852px" }}
+        style={{ width: DESIGN_WIDTH * scale, height: DESIGN_HEIGHT * scale }}
+      >
+      <div
+        className="animate-fade-in relative overflow-hidden bg-[#F7F6F3]"
+        style={{
+          width: DESIGN_WIDTH,
+          height: DESIGN_HEIGHT,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
       >
         <h1
           className="absolute text-center text-[40px] font-bold leading-[35px] tracking-[-0.04em] text-[#000000]"
@@ -219,6 +232,7 @@ function LoginPage() {
             {googleError}
           </div>
         ) : null}
+      </div>
       </div>
     </div>
   );

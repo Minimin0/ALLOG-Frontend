@@ -14,8 +14,8 @@ function FilterModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40">
-      <div className="w-full max-w-[402px] rounded-t-[24px] bg-[#f7f6f3] p-6">
+    <div className="animate-backdrop-fade-in fixed inset-0 z-50 flex items-end justify-center bg-black/40">
+      <div className="animate-sheet-slide-up w-full max-w-[402px] rounded-t-[24px] bg-[#f7f6f3] p-6">
         <div className="flex items-center justify-between">
           <p className="text-[17px] font-bold text-black">필터</p>
           <button
@@ -38,7 +38,7 @@ function FilterModal({
                   key={item}
                   type="button"
                   onClick={() => onChangeDuration(item)}
-                  className={`rounded-[10px] border px-4 py-2.5 text-[13px] font-semibold ${
+                  className={`rounded-[10px] border px-4 py-2.5 text-[13px] font-semibold transition-colors duration-200 ${
                     active
                       ? "border-black bg-[#14453a] text-white"
                       : "border-[#e7e3d8] bg-[#fefefe] text-[#6b7268]"
@@ -61,7 +61,7 @@ function FilterModal({
                   key={item}
                   type="button"
                   onClick={() => onChangeStatus(item)}
-                  className={`rounded-[10px] border px-4 py-2.5 text-[13px] font-semibold ${
+                  className={`rounded-[10px] border px-4 py-2.5 text-[13px] font-semibold transition-colors duration-200 ${
                     active
                       ? "border-black bg-[#14453a] text-white"
                       : "border-[#e7e3d8] bg-[#fefefe] text-[#6b7268]"

@@ -1,5 +1,16 @@
+﻿:root {
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F5;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --accent-primary: #4CAF50;
+  --accent-secondary: #FF9800;
+  --error: #F44336;
+  --success: #4CAF50;
+}
+
 /*
- * ALLOG 디자인 토큰 (Figma 추출값 기준)
+ * ALLOG 디자인 토큰 (Figma 추출값 기준, bananayeon 브랜치에서 병합)
  * 출처: Figma "제목 없음" 파일 - 랭킹(1:1675) / 합산(1:494) / 인증촬영(1:733)
  * 전체 무드: 따뜻한 흙빛(earthy) 톤 + 딥그린 브랜드색 + 골드 리워드 강조.
  * 색을 바꾸려면 여기 변수만 수정하면 tailwind.config.js가 그대로 따라온다.

@@ -20,7 +20,7 @@ export default function MyGroupPage() {
   const coachSource = location.pathname.endsWith('/feed') ? 'feed' : 'ranking';
 
   return (
-    <div className="mx-auto flex min-h-full max-w-md flex-col bg-bg">
+    <div className="mx-auto flex min-h-screen min-h-dvh w-full max-w-[402px] flex-col bg-bg">
       <header className="flex items-center justify-between px-5 pt-6">
         <h1 className="text-display font-bold text-ink">내 그룹</h1>
         {/* 우측 상단 캐릭터 → 누르면 폴짝 → AI 코칭 (정보 탭 제외).
@@ -53,21 +53,34 @@ export default function MyGroupPage() {
         </div>
       </div>
 
-      {/* 탭 */}
-      <nav className="mt-4 flex border-b border-line px-5">
+      {/* 탭 (Figma node 1:1675 기준: 밑줄이 탭 칸 전체 너비를 차지, 항상 맨 밑에 고정)
+          텍스트에 border-b를 직접 붙이는 방식은 형제 요소 높이·줄바꿈에 따라
+          미묘하게 어긋날 수 있어 완전히 분리한다: 밑줄 전체를 텍스트와 무관한
+          별도 레이어로 nav 하단에 absolute + bottom-0 고정하고, 그 안에서
+          3등분해 활성 탭 구간만 검정으로 칠한다. Figma도 동일하게 회색 전체
+          바(top:328) 위에 활성 구간 검정 바(top:328, 같은 y)를 겹쳐 그린다. */}
+      <nav className="relative mt-4 flex px-5">
         {TABS.map((tab) => (
-          <NavLink
-            key={tab.to}
-            to={tab.to}
-            className={({ isActive }) =>
-              `flex-1 border-b-2 pb-2 text-center text-section font-semibold ${
-                isActive ? 'border-ink text-ink' : 'border-transparent text-muted'
-              }`
-            }
-          >
-            {tab.label}
+          <NavLink key={tab.to} to={tab.to} className="flex flex-1 justify-center pb-2.5">
+            {({ isActive }) => (
+              <span
+                className={`text-section font-semibold ${isActive ? 'text-ink' : 'text-muted'}`}
+              >
+                {tab.label}
+              </span>
+            )}
           </NavLink>
         ))}
+        <div className="absolute inset-x-5 bottom-0 flex h-0.5">
+          {TABS.map((tab) => (
+            <div
+              key={tab.to}
+              className={`flex-1 ${
+                location.pathname.endsWith(`/${tab.to}`) ? 'bg-ink' : 'bg-line'
+              }`}
+            />
+          ))}
+        </div>
       </nav>
 
       <div className="flex-1">

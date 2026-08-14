@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/layout/BottomNav";
+import { getCoachStyleImage } from "../../utils/constants";
+import { getCoachStyle } from "../../utils/storage";
 
 const SUCCESS_RATE = 60;
 const SUCCESS_GOAL = 70;
@@ -9,6 +11,7 @@ function HomePage() {
   const navigate = useNavigate();
   const [bouncing, setBouncing] = useState(false);
   const [gaugeWidth, setGaugeWidth] = useState(0);
+  const [coachImage] = useState(() => getCoachStyleImage(getCoachStyle()));
 
   useEffect(() => {
     const timer = setTimeout(() => setGaugeWidth(SUCCESS_RATE), 150);
@@ -17,7 +20,7 @@ function HomePage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col bg-[#f7f6f3]">
+      <div className="flex min-h-screen w-full max-w-[402px] flex-col bg-[#f7f6f3]">
         <header className="flex items-center justify-between px-[30px] pt-4">
           <h1 className="text-[28px] font-bold text-black">홈</h1>
           <button
@@ -27,7 +30,7 @@ function HomePage() {
             className="h-[54px] w-[54px]"
           >
             <img
-              src="/images/응원형.svg"
+              src={coachImage}
               alt="AI 코치"
               className={`h-full w-full object-contain ${bouncing ? "bounce-once" : ""}`}
               onAnimationEnd={() => {

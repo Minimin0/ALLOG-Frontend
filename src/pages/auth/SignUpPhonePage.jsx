@@ -1,14 +1,37 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TermsAgreementModal from "../../components/auth/TermsAgreementModal";
+import { useViewportScale } from "../../hooks/useViewportScale";
+
+const DESIGN_WIDTH = 393;
+const DESIGN_HEIGHT = 852;
 
 function SignUpPhonePage() {
   const navigate = useNavigate();
+  const scale = useViewportScale(DESIGN_WIDTH);
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
-  const [agreed, setAgreed] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [agreements, setAgreements] = useState({
+    terms: false,
+    privacy: false,
+    marketing: false,
+  });
+
+  const agreed = agreements.terms && agreements.privacy;
+  const canNext = phone.trim() && code.trim() && agreed;
+
+  const toggleAgreement = (key) => {
+    setAgreements((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleAllAgreements = () => {
+    const next = !(agreements.terms && agreements.privacy && agreements.marketing);
+    setAgreements({ terms: next, privacy: next, marketing: next });
+  };
 
   return (
-    <div className="min-h-screen bg-[#f7f6f3]">
+    <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
       <style>{`
         .signup1-screen {
           position: relative;
@@ -16,7 +39,6 @@ function SignUpPhonePage() {
           height: 852px;
           overflow: hidden;
           background: #f7f6f3;
-          margin: 0 auto;
         }
 
         .signup1-title {
@@ -27,9 +49,9 @@ function SignUpPhonePage() {
           height: 98px;
           margin: 0;
           font-size: 25px;
-          line-height: 35px;
-          font-weight: 900;
-          letter-spacing: -0.06em;
+          line-height: 1.3;
+          font-weight: 700;
+          letter-spacing: normal;
           color: #000000;
         }
 
@@ -201,7 +223,11 @@ function SignUpPhonePage() {
         }
       `}</style>
 
-      <div className="signup1-screen">
+      <div style={{ width: DESIGN_WIDTH * scale, height: DESIGN_HEIGHT * scale }}>
+      <div
+        className="signup1-screen"
+        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
         <h1 className="signup1-title">
           본인 확인을 위해
           <br />
@@ -246,7 +272,7 @@ function SignUpPhonePage() {
         <button
           type="button"
           className="signup1-agreement"
-          onClick={() => setAgreed((prev) => !prev)}
+          onClick={() => setTermsOpen(true)}
           aria-pressed={agreed}
         >
           <img
@@ -260,12 +286,22 @@ function SignUpPhonePage() {
         <button
           type="button"
           className="signup1-next"
-          disabled={!agreed}
+          disabled={!canNext}
           onClick={() => navigate("/auth/signup-account")}
         >
           다음
         </button>
       </div>
+      </div>
+
+      <TermsAgreementModal
+        open={termsOpen}
+        agreements={agreements}
+        onToggle={toggleAgreement}
+        onToggleAll={toggleAllAgreements}
+        onClose={() => setTermsOpen(false)}
+        onConfirm={() => setTermsOpen(false)}
+      />
     </div>
   );
 }

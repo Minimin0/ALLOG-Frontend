@@ -5,7 +5,7 @@ import { getCurrentIdToken } from "./authApi";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
 /**
- * @param {string} path - 예: "/api/v1/users/me"
+ * @param {string} path - 예: "/api/v1/me/groups/1/progress"
  * @param {object} options
  * @param {"GET"|"POST"|"PUT"|"PATCH"|"DELETE"} [options.method]
  * @param {object} [options.body]
@@ -36,9 +36,12 @@ export async function apiRequest(path, options = {}) {
     return { ok: false, status: 0, data: null, error: error.message };
   }
 
+  // 401 응답 등은 Content-Type/Body가 아예 없을 수 있으므로
+  // response.json()을 무조건 호출하지 않고, 먼저 text로 읽은 뒤 비어있지 않을 때만 파싱합니다.
   let data = null;
   try {
-    data = await response.json();
+    const text = await response.text();
+    data = text ? JSON.parse(text) : null;
   } catch (error) {
     data = null;
   }

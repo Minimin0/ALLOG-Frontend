@@ -1,87 +1,75 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Routes, Route } from "react-router-dom";
+import StartPage from "../pages/auth/StartPage";
+import LoginPage from "../pages/auth/LoginPage";
+import SignUpPhonePage from "../pages/auth/SignUpPhonePage";
+import SignUpAccountPage from "../pages/auth/SignUpAccountPage";
+import FirebaseDebugPage from "../pages/auth/FirebaseDebugPage";
+import BasicInfoPage from "../pages/onboarding/BasicInfoPage";
+import HabitSelectPage from "../pages/onboarding/HabitSelectPage";
+import CoachStylePage from "../pages/onboarding/CoachStylePage";
+import LifestylePage from "../pages/onboarding/LifestylePage";
+import OnboardingCompletePage from "../pages/onboarding/OnboardingCompletePage";
 
-// 개발용
-import DevHomePage from '@/pages/DevHomePage.jsx';
-import PlaceholderPage from '@/pages/_PlaceholderPage.jsx';
+import HomePage from "../pages/home/HomePage";
+import ExplorePage from "../pages/explore/ExplorePage";
+import GroupDetailPage from "../pages/explore/GroupDetailPage";
+import RewardPage from "../pages/reward/RewardPage";
+import RewardDetailPage from "../pages/reward/RewardDetailPage";
+import MyPage from "../pages/my/MyPage";
+import EditProfilePage from "../pages/my/EditProfilePage";
+import SettingsPage from "../pages/my/SettingsPage";
+import NotificationSettingsPage from "../pages/my/NotificationSettingsPage";
+import PrivacyPage from "../pages/my/PrivacyPage";
+import TermsPage from "../pages/my/TermsPage";
+import CustomerSupportPage from "../pages/my/CustomerSupportPage";
+import HeartEventPage from "../pages/heart/HeartEventPage";
+import CreateGroupPage from "../pages/group/CreateGroupPage";
+import GroupCreatedPage from "../pages/group/GroupCreatedPage";
+import WaitingRoomPage from "../pages/group/WaitingRoomPage";
+import JoinCompletePage from "../pages/group/JoinCompletePage";
+import InviteGroupPage from "../pages/group/InviteGroupPage";
+import JoinByCodePage from "../pages/group/JoinByCodePage";
+import AiCoachPage from "../pages/ai/AiCoachPage";
 
-// 인증 / 온보딩 (HW)
-import StartPage from '@/pages/auth/StartPage.jsx';
-import LoginPage from '@/pages/auth/LoginPage.jsx';
-import SignUpPhonePage from '@/pages/auth/SignUpPhonePage.jsx';
-import SignUpAccountPage from '@/pages/auth/SignUpAccountPage.jsx';
-import FirebaseDebugPage from '@/pages/auth/FirebaseDebugPage.jsx';
-import BasicInfoPage from '@/pages/onboarding/BasicInfoPage.jsx';
-import HabitSelectPage from '@/pages/onboarding/HabitSelectPage.jsx';
-import CoachStylePage from '@/pages/onboarding/CoachStylePage.jsx';
-import LifestylePage from '@/pages/onboarding/LifestylePage.jsx';
-import OnboardingCompletePage from '@/pages/onboarding/OnboardingCompletePage.jsx';
+// 내 그룹 (인증·랭킹) — bananayeon 브랜치에서 병합
+import MyGroupPage from "../pages/group/MyGroupPage";
+import GroupRankingPage from "../pages/group/GroupRankingPage";
+import RankingCriteriaPage from "../pages/group/RankingCriteriaPage";
+import FullRankingPage from "../pages/group/FullRankingPage";
+import GroupResultPage from "../pages/group/GroupResultPage";
+import GroupFeedPage from "../pages/group/GroupFeedPage";
+import GroupInfoPage from "../pages/group/GroupInfoPage";
 
-// 홈 / 탐색 / 리워드 / 마이 / 하트 (HW)
-import HomePage from '@/pages/home/HomePage.jsx';
-import ExplorePage from '@/pages/explore/ExplorePage.jsx';
-import GroupDetailPage from '@/pages/explore/GroupDetailPage.jsx';
-import RewardPage from '@/pages/reward/RewardPage.jsx';
-import RewardDetailPage from '@/pages/reward/RewardDetailPage.jsx';
-import MyPage from '@/pages/my/MyPage.jsx';
-import EditProfilePage from '@/pages/my/EditProfilePage.jsx';
-import SettingsPage from '@/pages/my/SettingsPage.jsx';
-import NotificationSettingsPage from '@/pages/my/NotificationSettingsPage.jsx';
-import PrivacyPage from '@/pages/my/PrivacyPage.jsx';
-import TermsPage from '@/pages/my/TermsPage.jsx';
-import CustomerSupportPage from '@/pages/my/CustomerSupportPage.jsx';
-import HeartEventPage from '@/pages/heart/HeartEventPage.jsx';
+// 인증 촬영 플로우 — bananayeon 브랜치에서 병합
+import VerificationPage from "../pages/verification/VerificationPage";
+import CameraPage from "../pages/verification/CameraPage";
+import VerificationPreviewPage from "../pages/verification/VerificationPreviewPage";
+import VerificationLoadingPage from "../pages/verification/VerificationLoadingPage";
+import VerificationResultPage from "../pages/verification/VerificationResultPage";
 
-// 그룹 생성 / 초대 / 대기 (HW)
-import CreateGroupPage from '@/pages/group/CreateGroupPage.jsx';
-import GroupCreatedPage from '@/pages/group/GroupCreatedPage.jsx';
-import WaitingRoomPage from '@/pages/group/WaitingRoomPage.jsx';
-import JoinCompletePage from '@/pages/group/JoinCompletePage.jsx';
-import InviteGroupPage from '@/pages/group/InviteGroupPage.jsx';
+// 재인증 / 신고 — bananayeon 브랜치에서 병합
+import ReportPage from "../pages/report/ReportPage";
 
-// 내 그룹 탭 (banana)
-import MyGroupPage from '@/pages/group/MyGroupPage.jsx';
-import GroupRankingPage from '@/pages/group/GroupRankingPage.jsx';
-import RankingCriteriaPage from '@/pages/group/RankingCriteriaPage.jsx';
-import FullRankingPage from '@/pages/group/FullRankingPage.jsx';
-import GroupResultPage from '@/pages/group/GroupResultPage.jsx';
-import GroupFeedPage from '@/pages/group/GroupFeedPage.jsx';
-import GroupInfoPage from '@/pages/group/GroupInfoPage.jsx';
+// 404
+import PlaceholderPage from "../pages/_PlaceholderPage";
 
-// 인증 촬영 플로우 (banana)
-import VerificationPage from '@/pages/verification/VerificationPage.jsx';
-import CameraPage from '@/pages/verification/CameraPage.jsx';
-import VerificationPreviewPage from '@/pages/verification/VerificationPreviewPage.jsx';
-import VerificationLoadingPage from '@/pages/verification/VerificationLoadingPage.jsx';
-import VerificationResultPage from '@/pages/verification/VerificationResultPage.jsx';
-
-// 재인증 / AI 코칭 (banana)
-import ReportPage from '@/pages/report/ReportPage.jsx';
-import AiCoachPage from '@/pages/ai/AiCoachPage.jsx';
-
-// 통합 라우터: HW 껍데기(진입·인증·온보딩·홈·탐색·리워드·마이·그룹관리)
-//  + banana 기능(내 그룹 탭·인증촬영·랭킹·AI 코치)을 합집합으로 매핑.
-// React Router v6는 정적 경로를 동적(:groupId)보다 우선 매칭하므로 /group/create 등이 안전.
-export default function AppRouter() {
+function AppRouter() {
   return (
     <Routes>
-      {/* 진입: 시작 화면(로그인 플로우) — HW */}
       <Route path="/" element={<StartPage />} />
-      <Route path="/dev" element={<DevHomePage />} />
-
-      {/* 인증 (HW) */}
       <Route path="/auth/login" element={<LoginPage />} />
       <Route path="/auth/signup-phone" element={<SignUpPhonePage />} />
       <Route path="/auth/signup-account" element={<SignUpAccountPage />} />
       <Route path="/auth/firebase-debug" element={<FirebaseDebugPage />} />
-
-      {/* 온보딩 (HW) */}
       <Route path="/onboarding/basic-info" element={<BasicInfoPage />} />
       <Route path="/onboarding/habits" element={<HabitSelectPage />} />
       <Route path="/onboarding/coach-style" element={<CoachStylePage />} />
       <Route path="/onboarding/lifestyle" element={<LifestylePage />} />
-      <Route path="/onboarding/complete" element={<OnboardingCompletePage />} />
+      <Route
+        path="/onboarding/complete"
+        element={<OnboardingCompletePage />}
+      />
 
-      {/* 홈 / 탐색 / 리워드 / 마이 / 하트 (HW) */}
       <Route path="/home" element={<HomePage />} />
       <Route path="/explore" element={<ExplorePage />} />
       <Route path="/explore/group/:groupId" element={<GroupDetailPage />} />
@@ -96,48 +84,77 @@ export default function AppRouter() {
       <Route path="/my/support" element={<CustomerSupportPage />} />
       <Route path="/heart-event" element={<HeartEventPage />} />
 
-      {/* 그룹 생성 / 초대 / 대기 (HW) */}
+      {/* 그룹 생성 / 초대 / 대기방 (HW) */}
       <Route path="/group/create" element={<CreateGroupPage />} />
       <Route path="/group/created" element={<GroupCreatedPage />} />
       <Route path="/group/waiting-room" element={<WaitingRoomPage />} />
-      <Route path="/group/join-complete/:groupId" element={<JoinCompletePage />} />
+      <Route
+        path="/group/join-complete/:groupId"
+        element={<JoinCompletePage />}
+      />
       <Route path="/group/join-complete" element={<JoinCompletePage />} />
       <Route path="/group/invite" element={<InviteGroupPage />} />
+      <Route path="/group/join" element={<JoinByCodePage />} />
 
-      {/* 내 그룹: 부모 레이아웃 + 중첩 탭 (banana) */}
+      {/* 내 그룹: 부모 레이아웃 아래 탭들을 중첩 (bananayeon) */}
       <Route path="/group/:groupId" element={<MyGroupPage />}>
         <Route index element={<Navigate to="ranking" replace />} />
         <Route path="ranking" element={<GroupRankingPage />} />
         <Route path="feed" element={<GroupFeedPage />} />
         <Route path="info" element={<GroupInfoPage />} />
       </Route>
-      <Route path="/group/:groupId/ranking/criteria" element={<RankingCriteriaPage />} />
-      <Route path="/ranking" element={<FullRankingPage />} />
+
+      {/* 순위 평가 기준 (탭 밖 전체화면) */}
+      <Route
+        path="/group/:groupId/ranking/criteria"
+        element={<RankingCriteriaPage />}
+      />
+
+      {/* 전체 랭킹 */}
+      <Route path="/group/ranking-full" element={<FullRankingPage />} />
+
+      {/* 합산(챌린지 결과) */}
       <Route path="/group/:groupId/result" element={<GroupResultPage />} />
 
-      {/* 인증 촬영 플로우 (banana) */}
+      {/* 인증 촬영 플로우 (전체화면, 탭 밖) */}
       <Route path="/group/:groupId/verify" element={<VerificationPage />} />
-      <Route path="/group/:groupId/verify/camera" element={<CameraPage />} />
-      <Route path="/group/:groupId/verify/preview" element={<VerificationPreviewPage />} />
-      <Route path="/group/:groupId/verify/loading" element={<VerificationLoadingPage />} />
-      <Route path="/group/:groupId/verify/result" element={<VerificationResultPage />} />
+      <Route
+        path="/group/:groupId/verify/camera"
+        element={<CameraPage />}
+      />
+      <Route
+        path="/group/:groupId/verify/preview"
+        element={<VerificationPreviewPage />}
+      />
+      <Route
+        path="/group/:groupId/verify/loading"
+        element={<VerificationLoadingPage />}
+      />
+      <Route
+        path="/group/:groupId/verify/result"
+        element={<VerificationResultPage />}
+      />
+      {/* groupId 없이 진입하는 기존 진입점(홈/하트이벤트)을 위한 기본 촬영 경로 */}
+      <Route path="/verification/camera" element={<CameraPage />} />
 
-      {/* 재인증 / AI 코칭 (banana) */}
+      {/* 재인증 / 신고 */}
       <Route path="/report" element={<ReportPage />} />
-      <Route path="/ai" element={<AiCoachPage />} />
 
-      {/* HW 평면 경로 → banana 정규 경로 리다이렉트 (기존 링크 호환; mock 그룹 g1) */}
-      <Route path="/group/my" element={<Navigate to="/group/g1" replace />} />
-      <Route path="/group/feed" element={<Navigate to="/group/g1/feed" replace />} />
-      <Route path="/group/ranking-full" element={<Navigate to="/ranking" replace />} />
-      <Route path="/ai-coach" element={<Navigate to="/ai" replace />} />
-      <Route path="/verification/camera" element={<Navigate to="/group/g1/verify/camera" replace />} />
+      {/* AI 코칭 */}
+      <Route path="/ai-coach" element={<AiCoachPage />} />
 
       {/* 404 */}
       <Route
         path="*"
-        element={<PlaceholderPage title="페이지를 찾을 수 없어요" note="경로를 확인해주세요" />}
+        element={
+          <PlaceholderPage
+            title="페이지를 찾을 수 없어요"
+            note="경로를 확인해주세요"
+          />
+        }
       />
     </Routes>
   );
 }
+
+export default AppRouter;

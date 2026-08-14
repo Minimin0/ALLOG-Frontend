@@ -20,13 +20,13 @@ function MyPage() {
 
   return (
     <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
-      <div className="flex min-h-screen w-[402px] flex-col bg-[#f7f6f3]">
+      <div className="flex min-h-screen w-full max-w-[402px] flex-col bg-[#f7f6f3]">
         <header className="px-[30px] pt-4">
           <h1 className="text-[28px] font-bold text-black">마이 페이지</h1>
         </header>
 
         <main className="flex-1 space-y-5 px-[30px] pb-8 pt-4">
-          <div className="rounded-[26px] border border-[#e7e3d8] bg-[#fefefe] p-5">
+          <div className="animate-fade-slide-up rounded-[26px] border border-[#e7e3d8] bg-[#fefefe] p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-[#14453a] text-[20px] font-bold text-white">
                 A
@@ -75,7 +75,7 @@ function MyPage() {
             </div>
           </div>
 
-          <div>
+          <div className="animate-fade-slide-up" style={{ animationDelay: '60ms' }}>
             <p className="mb-2.5 text-[13px] font-bold text-[#6b7268]">내 기록</p>
             <div className="grid grid-cols-4 gap-2 rounded-[26px] border border-[#e7e3d8] bg-[#fefefe] p-4">
               {records.map((record) => (
@@ -94,7 +94,10 @@ function MyPage() {
             </div>
           </div>
 
-          <div className="divide-y divide-[#e7e3d8] rounded-[20px] border border-[#e7e3d8] bg-[#fefefe]">
+          <div
+            className="animate-fade-slide-up divide-y divide-[#e7e3d8] rounded-[20px] border border-[#e7e3d8] bg-[#fefefe]"
+            style={{ animationDelay: '120ms' }}
+          >
             {menuItems.map((item) => (
               <button
                 key={item.label}

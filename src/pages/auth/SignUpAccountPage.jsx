@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useViewportScale } from "../../hooks/useViewportScale";
+
+const DESIGN_WIDTH = 393;
+const DESIGN_HEIGHT = 852;
 
 function SignUpAccountPage() {
   const navigate = useNavigate();
+  const scale = useViewportScale(DESIGN_WIDTH);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -17,13 +22,20 @@ function SignUpAccountPage() {
     }));
   };
 
+  const passwordsMatch = formData.password === formData.passwordConfirm;
+  const isValid =
+    formData.username.trim() &&
+    formData.password.trim() &&
+    formData.passwordConfirm.trim() &&
+    passwordsMatch;
+
   const handleNext = () => {
-    // TODO: Add validation and API call
+    if (!isValid) return;
     navigate("/onboarding/basic-info");
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f6f3]">
+    <div className="flex min-h-screen justify-center bg-[#f7f6f3]">
       <style>{`
         .signup2-screen {
           position: relative;
@@ -31,7 +43,6 @@ function SignUpAccountPage() {
           height: 852px;
           overflow: hidden;
           background: #f7f6f3;
-          margin: 0 auto;
         }
 
         .signup2-title {
@@ -42,9 +53,9 @@ function SignUpAccountPage() {
           height: 98px;
           margin: 0;
           font-size: 25px;
-          line-height: 35px;
-          font-weight: 900;
-          letter-spacing: -0.06em;
+          line-height: 1.3;
+          font-weight: 700;
+          letter-spacing: normal;
           color: #000000;
         }
 
@@ -144,14 +155,34 @@ function SignUpAccountPage() {
           font-family: Pretendard Variable, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
         }
 
-        .signup2-input::placeholder {
+        .signup2-complete:disabled {
+          background: #bababa;
+          cursor: not-allowed;
+        }
+
+        .signup2-error {
+          position: absolute;
+          left: 26px;
+          top: 429px;
+          margin: 0;
+          font-size: 11px;
+          font-weight: 600;
+          color: #d9573b;
+        }
+
+        .signup2-input::placeholder,
+        .signup2-password-confirm-input::placeholder {
           color: #bababa;
           font-size: 14px;
           font-weight: 500;
         }
       `}</style>
 
-      <div className="signup2-screen">
+      <div style={{ width: DESIGN_WIDTH * scale, height: DESIGN_HEIGHT * scale }}>
+      <div
+        className="signup2-screen"
+        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
         <h1 className="signup2-title">
           아이디와 비밀번호를
           <br />
@@ -193,8 +224,7 @@ function SignUpAccountPage() {
             aria-label="비밀번호 확인"
           />
           <div className="signup2-password-confirm-check">
-            {formData.passwordConfirm &&
-            formData.password === formData.passwordConfirm ? (
+            {formData.passwordConfirm && passwordsMatch ? (
               <img
                 src="/images/Check.svg"
                 alt="확인 완료"
@@ -204,9 +234,19 @@ function SignUpAccountPage() {
           </div>
         </div>
 
-        <button type="button" className="signup2-complete" onClick={handleNext}>
+        {formData.passwordConfirm && !passwordsMatch ? (
+          <p className="signup2-error">비밀번호가 일치하지 않아요.</p>
+        ) : null}
+
+        <button
+          type="button"
+          className="signup2-complete"
+          onClick={handleNext}
+          disabled={!isValid}
+        >
           완료
         </button>
+      </div>
       </div>
     </div>
   );

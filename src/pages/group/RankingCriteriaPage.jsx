@@ -10,7 +10,7 @@ export default function RankingCriteriaPage() {
   const example = calcScore(SAMPLE);
 
   return (
-    <div className="mx-auto min-h-full max-w-md bg-bg p-5">
+    <div className="mx-auto min-h-full max-w-[402px] bg-bg p-5">
       <Header title="순위 평가 기준" />
 
       <p className="mb-5 text-body text-muted">
