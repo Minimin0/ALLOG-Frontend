@@ -61,7 +61,7 @@ export default function CreateGroupScreen() {
       name: name.trim(),
       visibility: visibility === 'private' ? 'PRIVATE' : 'PUBLIC',
       maxMembers: capacity,
-      // 개인 목표 70%는 온보딩 안내와 홈 게이지가 쓰는 것과 같은 기준이다.
+      // 현재 MVP의 70% 완주 기준으로 서버가 표시할 목표 횟수를 정한다.
       requiredCompletionCount: Math.max(1, Math.round(days * 0.7)),
       // 사진 인증 템플릿은 지금 식사 루틴 하나만 승인돼 있다. 그 외에는 기록형 그룹으로 만든다.
       verificationTemplateKey: key === 'MEAL' ? 'MEAL_PHOTO_RECORD' : null,
@@ -135,6 +135,14 @@ export default function CreateGroupScreen() {
                 </Pressable>
               );
             })}
+          </View>
+        </View>
+
+        <View>
+          <Text className="mb-2 text-[15px] font-bold text-ink">인증 일정</Text>
+          <View className="rounded-[15px] border border-line bg-surface px-4 py-4">
+            <Text className="text-[14px] font-bold text-ink">매일 · 오후 11시 마감</Text>
+            <Text className="mt-1 text-[11px] font-medium text-subtle">현재 그룹은 이 일정으로 생성돼요.</Text>
           </View>
         </View>
 

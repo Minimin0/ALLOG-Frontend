@@ -10,7 +10,7 @@ import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useUserStore } from '@/stores/userStore';
 
 // 온보딩 완료. 4단계에서 모은 값을 POST /api/v1/users 한 번으로 보낸다.
-// 하트 3개는 백엔드가 같은 트랜잭션에서 지급한다 — 프론트가 지급하지 않고, 결과만 읽어서 보여준다.
+// 초기 하트는 백엔드가 지급하고, 프론트는 stats의 실제 잔액만 표시한다.
 export default function OnboardingCompleteScreen() {
   const router = useRouter();
   const [state, setState] = useState('submitting'); // submitting | done | error
@@ -25,10 +25,8 @@ export default function OnboardingCompleteScreen() {
       const response = await useUserStore.getState().createProfile(body);
       if (cancelled) return;
 
-      // 이미 프로필이 있으면(재진입) 실패가 아니라 완료로 본다.
-      const alreadyDone =
-        response.errorCode === ApiError.CONFLICT &&
-        (response.data?.error?.code === 'PROFILE_ALREADY_EXISTS' || response.status === 409);
+      // 명시적인 기계 코드가 있는 재진입만 완료로 취급한다.
+      const alreadyDone = response.data?.error?.code === 'PROFILE_ALREADY_EXISTS';
 
       if (response.ok || alreadyDone) {
         useOnboardingStore.getState().reset();
@@ -90,7 +88,7 @@ export default function OnboardingCompleteScreen() {
         </View>
 
         <Text className="mt-6 text-center text-[18px] font-semibold text-subtle">
-          <Text className="font-bold text-[#d9573b]">하트</Text>는 <Text className="font-bold text-ink">그룹 참가</Text>에만 사용돼요.
+          <Text className="font-bold text-[#d9573b]">하트</Text>는 <Text className="font-bold text-ink">그룹 참가</Text>에 사용돼요.
         </Text>
 
         <View className="mt-6 w-full gap-4 rounded-[23px] border border-line bg-surface p-5">
@@ -98,11 +96,9 @@ export default function OnboardingCompleteScreen() {
             그룹에 참가할 때 <Text className="font-bold text-[#d9573b]">하트 1개</Text>를 사용해요.
           </Text>
           <View className="h-px w-full bg-line" />
-          <View className="flex-row items-center justify-between gap-2">
-            <Text className="flex-1 text-center text-[13px] font-semibold text-subtle" style={{ lineHeight: 20 }}>그룹 공동 성공률 80% 이상{'\n'}+{'\n'}개인 달성율 70% 이상</Text>
-            <Text className="text-[16px] text-subtle">→</Text>
-            <Text className="flex-1 text-center text-[13px] font-semibold text-[#d9573b]" style={{ lineHeight: 20 }}>하트 1개를{'\n'}다시 받아요.</Text>
-          </View>
+          <Text className="text-center text-[13px] font-semibold text-subtle" style={{ lineHeight: 20 }}>
+            시작 전에 참가를 취소하거나 그룹이 취소되면{ '\n' }환급은 서버에서 자동 처리돼요.
+          </Text>
         </View>
       </View>
 

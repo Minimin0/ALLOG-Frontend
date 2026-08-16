@@ -9,9 +9,8 @@ import AnimatedGauge from '@/components/common/AnimatedGauge';
 import { useGroupStore } from '@/stores/groupStore';
 import { useUserStore } from '@/stores/userStore';
 
-// 홈 화면. 하트/포인트는 GET /users/me/stats, 오늘의 루틴과 성공률은
-// GET /me/groups + GET /me/groups/{id}/progress에서 온다. 프론트는 계산하지 않고 표시만 한다.
-const SUCCESS_GOAL = 70;
+// 홈 화면. 하트/포인트는 GET /users/me/stats, 오늘의 루틴과 진행 정보는
+// GET /me/groups + GET /me/groups/{id}/progress에서 온다. 프론트는 서버가 정한 완주 목표 대비 진행률만 표시한다.
 
 function formatDeadline(iso) {
   if (!iso) return null;
@@ -62,7 +61,9 @@ export default function HomeScreen() {
   const current = myGroups.find((g) => g.groupStatus === 'ACTIVE') ?? myGroups[0] ?? null;
   const personal = progress?.personal ?? null;
   const required = personal?.requiredCompletionCount ?? 0;
-  const successRate = required > 0 ? Math.round((personal.completedCount / required) * 100) : 0;
+  const completed = personal?.completedCount ?? 0;
+  const completedTowardGoal = Math.min(completed, required);
+  const completionProgress = required > 0 ? Math.round((completedTowardGoal / required) * 100) : 0;
   const deadline = formatDeadline(personal?.certificationDeadline);
 
   return (
@@ -89,7 +90,7 @@ export default function HomeScreen() {
               <Text className="text-[18px] font-bold text-ink">{stats?.hearts ?? '–'}</Text>
             </View>
             <Text className="mt-2 text-[12px] font-semibold text-[#d9573b]">보유 하트</Text>
-            <Text className="mt-1 text-[12px] font-semibold text-muted">하트 얻으러 가기 ›</Text>
+            <Text className="mt-1 text-[12px] font-semibold text-muted">하트 안내 보기 ›</Text>
           </Pressable>
 
           <Pressable
@@ -153,19 +154,16 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        {/* 개인 성공률 게이지 */}
+        {/* 서버가 정한 완주 목표(requiredCompletionCount) 대비 진행률 */}
         <View className="rounded-[14px] border border-line bg-surface p-4">
           <View className="flex-row items-center justify-between">
-            <Text className="text-[13px] font-semibold text-ink">개인 성공률</Text>
-            <Text className="text-[20px] font-bold text-[#669884]">{successRate}%</Text>
+            <Text className="text-[13px] font-semibold text-ink">완주 목표 진행률</Text>
+            <Text className="text-[20px] font-bold text-[#669884]">{completionProgress}%</Text>
           </View>
           <View className="mt-3 h-[9px] w-full rounded-full bg-[#efefef]">
-            <AnimatedGauge percent={successRate} color="#669884" height={9} />
-            <View className="absolute top-[13px] -translate-x-1/2 items-center" style={{ left: `${SUCCESS_GOAL}%` }}>
-              <Text className="text-[10px] leading-none text-reward">▲</Text>
-            </View>
+            <AnimatedGauge percent={completionProgress} color="#669884" height={9} />
           </View>
-          <Text className="mt-2 text-right text-[11px] font-bold text-reward">개인 목표 {SUCCESS_GOAL}%</Text>
+          <Text className="mt-2 text-right text-[11px] font-bold text-reward">완주 목표 {completedTowardGoal} / {required}회</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

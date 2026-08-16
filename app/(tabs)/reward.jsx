@@ -1,33 +1,18 @@
-import { useState } from 'react';
 import { View, Text, Pressable, ScrollView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
 import { useUserStore } from '@/stores/userStore';
 
-// 리워드 화면 (웹 src/pages/reward/RewardPage.jsx 포팅).
-const categories = ['체험', '상품', '기타', '전체'];
-const sortOptions = ['인기 높은 순', '가격 높은 순', '가격 낮은 순'];
+// 보유 포인트는 백엔드 stats가 authority다. 혜택 카탈로그·교환 API는 아직 제공되지 않는다.
 const rewards = [
-  { id: 'serum-trial', title: 'AAC 시그니처 세럼 체험권', cost: 1500, note: '교환 후 30일 이내 사용', icon: 'ticket' },
-  { id: 'discount-15', title: '공식몰 15% 할인 쿠폰', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'coupon' },
-  { id: 'free-shipping', title: '무료 배송 쿠폰(3만원 이상)', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'shipping' },
+  { id: 'serum-trial', title: 'AAC 시그니처 세럼 체험권', icon: 'ticket' },
+  { id: 'discount-15', title: '공식몰 할인 쿠폰', icon: 'coupon' },
+  { id: 'free-shipping', title: '무료 배송 쿠폰', icon: 'shipping' },
 ];
 
 export default function RewardScreen() {
-  const router = useRouter();
-  // 보유 포인트는 GET /users/me/stats가 authority다. 아래 상품 목록은 아직 API가 없는 정적 콘텐츠.
   const points = useUserStore((s) => s.stats?.rewardPoints ?? 0);
-  const [category, setCategory] = useState('전체');
-  const [sort, setSort] = useState(sortOptions[0]);
-  const [sortOpen, setSortOpen] = useState(false);
-
-  const sortedRewards = [...rewards].sort((a, b) => {
-    if (sort === '가격 높은 순') return b.cost - a.cost;
-    if (sort === '가격 낮은 순') return a.cost - b.cost;
-    return 0;
-  });
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-bg">
@@ -36,9 +21,8 @@ export default function RewardScreen() {
       </View>
 
       <ScrollView className="flex-1 px-[30px]" contentContainerClassName="gap-5 pb-8 pt-4">
-        {/* 포인트 카드 */}
         <View className="rounded-[13px] bg-[#4a3a18] p-5">
-          <Text className="text-[15px] font-semibold text-[#e7e3d8]">사용가능한 리워드 포인트</Text>
+          <Text className="text-[15px] font-semibold text-[#e7e3d8]">보유 리워드 포인트</Text>
           <View className="mt-2 flex-row items-end justify-between">
             <View className="flex-row items-center gap-2">
               <Icon name="coin" size={24} />
@@ -49,79 +33,32 @@ export default function RewardScreen() {
             </Pressable>
           </View>
           <View className="my-3 h-px bg-[#e7e3d8]/30" />
-          <Text className="text-[10px] font-medium text-[#e7e3d8]">포인트는 ACC 상품과 웰니스 혜택에만 사용돼요.</Text>
+          <Text className="text-[10px] font-medium text-[#e7e3d8]">포인트 사용 혜택은 준비 중이에요.</Text>
         </View>
 
-        {/* 카테고리 */}
-        <View className="flex-row gap-2.5">
-          {categories.map((item) => {
-            const active = category === item;
-            return (
-              <Pressable
-                key={item}
-                onPress={() => setCategory(item)}
-                className="flex-1 items-center rounded-[10px] bg-surface py-2.5"
-              >
-                <Text className={`text-[13px] font-semibold ${active ? 'text-ink' : 'text-muted'}`}>{item}</Text>
-              </Pressable>
-            );
-          })}
+        <View className="rounded-[13px] border border-line bg-surface p-4">
+          <Text className="text-[15px] font-bold text-ink">혜택 준비 중</Text>
+          <Text className="mt-1 text-[11px] font-medium text-muted">카탈로그와 교환 기능은 아직 제공되지 않아요.</Text>
         </View>
 
-        {/* 정렬 */}
-        <View className="z-10 items-end">
-          <Pressable
-            onPress={() => setSortOpen((p) => !p)}
-            className="flex-row items-center gap-1.5 rounded-[6px] bg-line px-3.5 py-1.5"
-          >
-            <Text className="text-[13px] font-semibold text-[#696973]">{sort}</Text>
-            <Text className="text-[10px] text-[#696973]">{sortOpen ? '⌃' : '⌄'}</Text>
-          </Pressable>
-          {sortOpen && (
-            <View className="absolute right-0 top-[36px] w-[140px] overflow-hidden rounded-[12px] bg-surface py-1 shadow">
-              {sortOptions.map((option) => (
-                <Pressable
-                  key={option}
-                  onPress={() => {
-                    setSort(option);
-                    setSortOpen(false);
-                  }}
-                  className="px-4 py-2.5"
-                >
-                  <Text className={`text-[12px] font-semibold ${sort === option ? 'text-ink' : 'text-[#696973]'}`}>{option}</Text>
-                </Pressable>
-              ))}
-            </View>
-          )}
-        </View>
-
-        {/* 리워드 목록 */}
         <View className="gap-3">
-          {sortedRewards.map((reward) => {
-            const canAfford = points >= reward.cost;
-            return (
-              <Pressable
-                key={reward.id}
-                onPress={() => router.push(`/reward/${reward.id}`)}
-                className="flex-row items-center gap-3 rounded-[13px] bg-surface p-4"
-              >
-                <View className="h-[54px] w-[54px] items-center justify-center rounded-[12px] bg-[#f3efe4]">
-                  <Icon name={reward.icon} size={26} />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-[15px] font-bold text-ink">{reward.title}</Text>
-                  <Text className="mt-1 text-[10px] font-medium text-muted">{reward.note}</Text>
-                  <View className="mt-1.5 flex-row items-center gap-1">
-                    <Icon name="coin" size={14} />
-                    <Text className="text-[15px] font-bold text-ink">{reward.cost}</Text>
-                  </View>
-                </View>
-                <View className={`rounded-full px-3.5 py-1.5 ${canAfford ? 'bg-primary' : 'bg-disabled'}`}>
-                  <Text className="text-[10px] font-bold text-white">{canAfford ? '교환하기' : '포인트 부족'}</Text>
-                </View>
-              </Pressable>
-            );
-          })}
+          {rewards.map((reward) => (
+            <View
+              key={reward.id}
+              className="flex-row items-center gap-3 rounded-[13px] bg-surface p-4 opacity-70"
+            >
+              <View className="h-[54px] w-[54px] items-center justify-center rounded-[12px] bg-[#f3efe4]">
+                <Icon name={reward.icon} size={26} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-[15px] font-bold text-ink">{reward.title}</Text>
+                <Text className="mt-1 text-[10px] font-medium text-muted">혜택 준비 중</Text>
+              </View>
+              <View className="rounded-full bg-disabled px-3.5 py-1.5">
+                <Text className="text-[10px] font-bold text-white">준비 중</Text>
+              </View>
+            </View>
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
