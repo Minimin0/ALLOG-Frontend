@@ -1,15 +1,43 @@
-import { useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-// 아이디/비밀번호 설정 (웹 SignUpAccountPage 포팅).
+import { authErrorMessage, signUp } from '@/services/authApi';
+import { AuthStatus, useAuthStore } from '@/stores/authStore';
+
+// 계정 만들기. Firebase 이메일/비밀번호 계정을 실제로 생성한다.
+// 백엔드에는 회원가입 API가 없다 — 첫 인증 요청에서 내부 사용자가 만들어지고,
+// 프로필은 온보딩 마지막 단계의 POST /api/v1/users가 만든다.
 export default function SignUpAccountScreen() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const status = useAuthStore((s) => s.status);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
   const match = confirm.length > 0 && password === confirm;
+
+  // 계정이 생기면 프로필이 없으므로 GET /users/me는 404 → 온보딩으로 간다.
+  useEffect(() => {
+    if (status === AuthStatus.ONBOARDING) router.replace('/onboarding/basic-info');
+    else if (status === AuthStatus.READY) router.replace('/home');
+  }, [status, router]);
+
+  const submit = async () => {
+    if (busy || !match) return;
+    setError('');
+    setBusy(true);
+    try {
+      await signUp(email, password);
+    } catch (e) {
+      setError(authErrorMessage(e));
+      setBusy(false);
+    }
+  };
+
+  const waiting = busy || status === AuthStatus.LOADING;
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
@@ -18,15 +46,17 @@ export default function SignUpAccountScreen() {
           <Text className="text-2xl text-ink">‹</Text>
         </Pressable>
 
-        <Text className="text-[25px] font-black text-ink" style={{ lineHeight: 35 }}>아이디와 비밀번호를{'\n'}입력해 주세요.</Text>
+        <Text className="text-[25px] font-black text-ink" style={{ lineHeight: 35 }}>이메일과 비밀번호를{'\n'}입력해 주세요.</Text>
 
-        <Text className="mt-8 text-[15px] font-bold text-subtle">아이디</Text>
+        <Text className="mt-8 text-[15px] font-bold text-subtle">이메일</Text>
         <TextInput
-          value={username}
-          onChangeText={setUsername}
-          placeholder="아이디 (4~13자리 이내)"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="allog@example.com"
           placeholderTextColor="#bababa"
           autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="email-address"
           className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
         />
 
@@ -35,7 +65,7 @@ export default function SignUpAccountScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="비밀번호 (10~12자리 이내)"
+          placeholder="비밀번호 (6자리 이상)"
           placeholderTextColor="#bababa"
           className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
         />
@@ -52,10 +82,16 @@ export default function SignUpAccountScreen() {
           {match && <Text className="text-primary">✓</Text>}
         </View>
 
+        {error ? <Text className="mt-3 text-[12px] font-semibold text-danger">{error}</Text> : null}
+
         <View className="flex-1" />
 
-        <Pressable onPress={() => router.replace('/onboarding/basic-info')} className="mb-4 h-[50px] items-center justify-center rounded-[20px] bg-ink">
-          <Text className="text-[18px] font-bold text-[#f2f2f6]">완료</Text>
+        <Pressable
+          onPress={submit}
+          disabled={waiting || !match || !email}
+          className={`mb-4 h-[50px] items-center justify-center rounded-[20px] bg-ink ${waiting || !match || !email ? 'opacity-50' : ''}`}
+        >
+          {waiting ? <ActivityIndicator color="#fff" /> : <Text className="text-[18px] font-bold text-[#f2f2f6]">완료</Text>}
         </Pressable>
       </View>
     </SafeAreaView>

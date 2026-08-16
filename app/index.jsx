@@ -1,12 +1,22 @@
+import { useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+
+import { AuthStatus, useAuthStore } from '@/stores/authStore';
 
 // 시작 화면 (웹 src/pages/auth/StartPage.jsx의 RN 포팅). 앱 진입점 "/".
 // 웹→RN: div→View, p/h1→Text, button→Pressable, useNavigate→useRouter,
 //        CSS gradient→<LinearGradient>, 고정 폰 프레임(w-[393px])은 제거(화면=폰).
 export default function StartScreen() {
   const router = useRouter();
+  const status = useAuthStore((s) => s.status);
+
+  // Firebase 세션이 AsyncStorage에 남아 있으면 다시 로그인시키지 않는다.
+  useEffect(() => {
+    if (status === AuthStatus.READY) router.replace('/home');
+    else if (status === AuthStatus.ONBOARDING) router.replace('/onboarding/basic-info');
+  }, [status, router]);
 
   return (
     <LinearGradient
