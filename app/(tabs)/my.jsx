@@ -1,17 +1,21 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { View, Text, Pressable, ScrollView, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
+import { useAuthStore } from '@/stores/authStore';
+import { useUserStore } from '@/stores/userStore';
 
-// 마이 페이지 (웹 src/pages/my/MyPage.jsx 포팅).
-const records = [
-  { label: '운동', count: '3회', icon: 'exercise' },
-  { label: '수면', count: '5회', icon: 'sleep' },
-  { label: '식사', count: '4회', icon: 'meal' },
-  { label: '셀프케어', count: '1회', icon: 'selfcare' },
-];
+// 마이 페이지. 하트/리워드/성공한 루틴은 GET /users/me/stats, 닉네임과 관심 루틴은
+// GET /users/me에서 온다. 루틴별 인증 횟수 API는 없으므로 관심 루틴을 대신 보여준다.
+const INTEREST_META = {
+  hydration: { label: '수분케어', icon: 'selfcare' },
+  exercise: { label: '운동', icon: 'exercise' },
+  meal: { label: '식사', icon: 'meal' },
+  sleep: { label: '수면', icon: 'sleep' },
+  skincare: { label: '피부관리', icon: 'selfcare' },
+};
 const menuItems = [
   { label: '알림 설정', icon: 'bell', path: '/my/notifications' },
   { label: '개인정보 보호', icon: 'privacy', path: '/my/privacy' },
@@ -22,9 +26,23 @@ const menuItems = [
 export default function MyScreen() {
   const router = useRouter();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const profile = useUserStore((s) => s.profile);
+  const stats = useUserStore((s) => s.stats);
+  const firebaseUser = useAuthStore((s) => s.firebaseUser);
 
-  const confirmLogout = () => {
+  useFocusEffect(
+    useCallback(() => {
+      useUserStore.getState().loadStats();
+    }, []),
+  );
+
+  const interests = (profile?.onboarding?.interestRoutines ?? [])
+    .map((key) => INTEREST_META[key])
+    .filter(Boolean);
+
+  const confirmLogout = async () => {
     setLogoutOpen(false);
+    await useAuthStore.getState().signOut();
     router.replace('/');
   };
 
@@ -39,11 +57,11 @@ export default function MyScreen() {
         <View className="rounded-[26px] border border-line bg-surface p-5">
           <View className="flex-row items-center gap-4">
             <View className="h-[56px] w-[56px] items-center justify-center rounded-full bg-primary">
-              <Text className="text-[20px] font-bold text-white">A</Text>
+              <Text className="text-[20px] font-bold text-white">{profile?.nickname?.[0] ?? 'A'}</Text>
             </View>
             <View className="flex-1">
-              <Text className="text-[18px] font-bold text-ink">민지</Text>
-              <Text className="mt-0.5 text-[12px] font-medium text-muted">minzi@gmail.com</Text>
+              <Text className="text-[18px] font-bold text-ink">{profile?.nickname ?? '–'}</Text>
+              <Text className="mt-0.5 text-[12px] font-medium text-muted">{firebaseUser?.email ?? ''}</Text>
             </View>
             <Pressable
               onPress={() => router.push('/my/edit-profile')}
@@ -58,34 +76,35 @@ export default function MyScreen() {
           <View className="flex-row">
             <View className="flex-1 items-center">
               <Text className="text-[10px] font-semibold text-[#d9573b]">하트</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="heart" size={13} /><Text className="text-[15px] font-bold text-ink">3</Text></View>
+              <View className="mt-1 flex-row items-center gap-1"><Icon name="heart" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.hearts ?? '–'}</Text></View>
             </View>
             <View className="flex-1 items-center">
               <Text className="text-[10px] font-semibold text-muted">리워드</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="coin" size={13} /><Text className="text-[15px] font-bold text-ink">1540</Text></View>
+              <View className="mt-1 flex-row items-center gap-1"><Icon name="coin" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.rewardPoints ?? '–'}</Text></View>
             </View>
             <View className="flex-1 items-center">
               <Text className="text-[10px] font-semibold text-muted">성공한 루틴</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="check" size={13} /><Text className="text-[15px] font-bold text-ink">13회</Text></View>
+              <View className="mt-1 flex-row items-center gap-1"><Icon name="check" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.successfulRoutines ?? 0}회</Text></View>
             </View>
           </View>
         </View>
 
-        {/* 내 기록 */}
-        <View>
-          <Text className="mb-2.5 text-[13px] font-bold text-muted">내 기록</Text>
-          <View className="flex-row justify-between rounded-[26px] border border-line bg-surface p-4">
-            {records.map((record) => (
-              <View key={record.label} className="items-center">
-                <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-[#f3efe4]">
-                  <Icon name={record.icon} size={24} />
+        {/* 관심 루틴 (온보딩에서 고른 값) */}
+        {interests.length > 0 && (
+          <View>
+            <Text className="mb-2.5 text-[13px] font-bold text-muted">관심 루틴</Text>
+            <View className="flex-row justify-between rounded-[26px] border border-line bg-surface p-4">
+              {interests.map((item) => (
+                <View key={item.label} className="items-center">
+                  <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-[#f3efe4]">
+                    <Icon name={item.icon} size={24} />
+                  </View>
+                  <Text className="mt-2 text-[11px] font-semibold text-ink">{item.label}</Text>
                 </View>
-                <Text className="mt-2 text-[11px] font-semibold text-ink">{record.label}</Text>
-                <Text className="mt-0.5 text-[15px] font-bold text-primary">{record.count}</Text>
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* 메뉴 */}
         <View className="overflow-hidden rounded-[20px] border border-line bg-surface">

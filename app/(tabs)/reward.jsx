@@ -4,11 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
+import { useUserStore } from '@/stores/userStore';
 
 // 리워드 화면 (웹 src/pages/reward/RewardPage.jsx 포팅).
 const categories = ['체험', '상품', '기타', '전체'];
 const sortOptions = ['인기 높은 순', '가격 높은 순', '가격 낮은 순'];
-const points = 1540;
 const rewards = [
   { id: 'serum-trial', title: 'AAC 시그니처 세럼 체험권', cost: 1500, note: '교환 후 30일 이내 사용', icon: 'ticket' },
   { id: 'discount-15', title: '공식몰 15% 할인 쿠폰', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'coupon' },
@@ -17,6 +17,8 @@ const rewards = [
 
 export default function RewardScreen() {
   const router = useRouter();
+  // 보유 포인트는 GET /users/me/stats가 authority다. 아래 상품 목록은 아직 API가 없는 정적 콘텐츠.
+  const points = useUserStore((s) => s.stats?.rewardPoints ?? 0);
   const [category, setCategory] = useState('전체');
   const [sort, setSort] = useState(sortOptions[0]);
   const [sortOpen, setSortOpen] = useState(false);

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import Icon from '@/components/common/Icon';
+import { useOnboardingStore } from '@/stores/onboardingStore';
 
 const coaches = [
   { name: '응원형', tone: '따뜻하게 격려해드려요', icon: 'coach' },
@@ -14,7 +15,8 @@ const coaches = [
 
 export default function CoachStyleScreen() {
   const router = useRouter();
-  const [selected, setSelected] = useState('응원형');
+  const patch = useOnboardingStore((s) => s.patch);
+  const [selected, setSelected] = useState(useOnboardingStore.getState().coachStyle);
 
   return (
     <OnboardingShellRN
@@ -23,7 +25,10 @@ export default function CoachStyleScreen() {
       title="어떤 방식으로 응원받고 싶나요?"
       subtitle="선택한 스타일로 AI 코치가 매일 말을 걸어드려요."
       onBack={() => router.back()}
-      onNext={() => router.push('/onboarding/lifestyle')}
+      onNext={() => {
+        patch({ coachStyle: selected });
+        router.push('/onboarding/lifestyle');
+      }}
       canNext={!!selected}
     >
       <View className="flex-row flex-wrap gap-3">

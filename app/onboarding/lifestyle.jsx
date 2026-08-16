@@ -3,6 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
+import { useOnboardingStore } from '@/stores/onboardingStore';
 
 const EXERCISE = ['주 1회', '주 2회', '주 3회', '주 4회', '주 5회', '거의 안함'];
 const MEAL = ['먹지 않음', '1회', '2회', '3회 이상'];
@@ -31,7 +32,12 @@ function Stepper({ label, value, onDec, onInc }) {
 
 export default function LifestyleScreen() {
   const router = useRouter();
-  const [form, setForm] = useState({ sleepH: 6, sleepM: 30, exercise: null, meal: null, period: null });
+  const patch = useOnboardingStore((s) => s.patch);
+  const saved = useOnboardingStore.getState();
+  const [form, setForm] = useState({
+    sleepH: saved.sleepH, sleepM: saved.sleepM,
+    exercise: saved.exercise, meal: saved.meal, period: saved.period,
+  });
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
   const isValid = form.exercise && form.meal && form.period;
 
@@ -42,7 +48,10 @@ export default function LifestyleScreen() {
       title="생활 패턴을 알려주세요"
       subtitle="AI가 최적의 그룹과 루틴 시간을 추천해 드려요."
       onBack={() => router.back()}
-      onNext={() => router.push('/onboarding/complete')}
+      onNext={() => {
+        patch(form);
+        router.push('/onboarding/complete');
+      }}
       canNext={!!isValid}
     >
       <View className="gap-6">

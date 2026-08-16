@@ -3,12 +3,19 @@ import { View, Text, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
+import { useOnboardingStore } from '@/stores/onboardingStore';
 
 const genders = ['여성', '남성', '선택 안함'];
 
 export default function BasicInfoScreen() {
   const router = useRouter();
-  const [form, setForm] = useState({ nickname: '', gender: '여성', birth: '', height: '', weight: '' });
+  const patch = useOnboardingStore((s) => s.patch);
+  const saved = useOnboardingStore.getState();
+  // 키·몸무게는 백엔드 프로필에 없는 필드라 전송하지 않는다(보내면 400 UNKNOWN_FIELD).
+  // 화면은 그대로 두고 이 단계 안에서만 들고 있는다.
+  const [form, setForm] = useState({
+    nickname: saved.nickname, gender: saved.gender, birth: saved.birth, height: '', weight: '',
+  });
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
   const isValid = form.nickname.trim() && form.birth && form.height && form.weight;
 
@@ -19,7 +26,10 @@ export default function BasicInfoScreen() {
       title="기본 정보를 입력해주세요."
       subtitle="입력하신 정보로 맞춤 루틴을 추천해드려요."
       onBack={() => router.back()}
-      onNext={() => router.push('/onboarding/habits')}
+      onNext={() => {
+        patch({ nickname: form.nickname, gender: form.gender, birth: form.birth });
+        router.push('/onboarding/habits');
+      }}
       nextLabel="다음 단계로"
       canNext={!!isValid}
     >

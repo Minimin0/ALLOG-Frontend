@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import Icon from '@/components/common/Icon';
+import { useOnboardingStore } from '@/stores/onboardingStore';
 
 const habits = [
   { label: '수분케어', subtitle: '충분한 수분 섭취', icon: 'selfcare' },
@@ -14,7 +15,8 @@ const habits = [
 
 export default function HabitsScreen() {
   const router = useRouter();
-  const [selected, setSelected] = useState([]);
+  const patch = useOnboardingStore((s) => s.patch);
+  const [selected, setSelected] = useState(useOnboardingStore.getState().interests);
   const toggle = (l) => setSelected((p) => (p.includes(l) ? p.filter((x) => x !== l) : [...p, l]));
 
   return (
@@ -24,7 +26,10 @@ export default function HabitsScreen() {
       title="어떤 루틴을 개선하고 싶나요?"
       subtitle="여러 개를 선택할 수 있어요. AI가 맞춤 그룹을 추천해드립니다."
       onBack={() => router.back()}
-      onNext={() => router.push('/onboarding/coach-style')}
+      onNext={() => {
+        patch({ interests: selected });
+        router.push('/onboarding/coach-style');
+      }}
       canNext={selected.length > 0}
     >
       <View className="flex-row flex-wrap gap-3">
