@@ -1,28 +1,45 @@
 import { useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-import { mockGroup } from '@/data/mockGroups.js';
+import { ApiError } from '@/services/api';
+import { joinByInviteCode } from '@/services/inviteApi';
+import { useUserStore } from '@/stores/userStore';
 
-// 코드로 참여하기 (웹 JoinByCodePage 포팅). 6자리 초대 코드 → 그룹 이동.
+// 코드로 참여하기. 비공개 그룹은 공개 join으로 우회하지 않고 반드시 이 경로를 쓴다.
+// 공개 참가와 동일하게 하트 1개를 쓰며, 차감은 백엔드가 한다.
 export default function JoinByCodeScreen() {
   const router = useRouter();
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
 
   const onChange = (v) => {
-    setCode(v.toUpperCase().slice(0, 6));
+    setCode(v.toUpperCase().slice(0, 32)); // 백엔드 제한: 공백 아님, 32자 이하
     setError('');
   };
 
-  const submit = () => {
-    if (code.trim().length < 6) return;
-    if (code === mockGroup.inviteCode) {
-      router.replace('/group');
-    } else {
-      setError('존재하지 않는 코드예요. 코드를 다시 확인해주세요.');
+  const submit = async () => {
+    const trimmed = code.trim();
+    if (!trimmed || busy) return;
+    setBusy(true);
+    setError('');
+
+    const response = await joinByInviteCode(trimmed);
+    setBusy(false);
+
+    if (response.ok) {
+      await useUserStore.getState().loadStats();
+      router.replace({ pathname: '/group/join-complete', params: { code: trimmed } });
+      return;
     }
+
+    if (response.errorCode === ApiError.INSUFFICIENT_HEARTS) setError('하트가 부족해요. 하트를 먼저 얻어주세요.');
+    else if (response.errorCode === ApiError.NOT_FOUND) setError('존재하지 않는 코드예요. 코드를 다시 확인해주세요.');
+    else if (response.errorCode === ApiError.CONFLICT) setError('이미 참가했거나 정원이 찬 그룹이에요.');
+    else if (response.errorCode === ApiError.NETWORK) setError('서버에 연결할 수 없어요.');
+    else setError('참여에 실패했어요. 잠시 후 다시 시도해주세요.');
   };
 
   return (
@@ -35,7 +52,7 @@ export default function JoinByCodeScreen() {
       </View>
 
       <View className="flex-1 px-5">
-        <Text className="mt-2 text-[13px] font-medium text-muted">친구에게 받은 6자리 초대 코드를 입력해주세요.</Text>
+        <Text className="mt-2 text-[13px] font-medium text-muted">친구에게 받은 초대 코드를 입력해주세요.</Text>
 
         <TextInput
           value={code}
@@ -43,8 +60,10 @@ export default function JoinByCodeScreen() {
           placeholder="ABC123"
           placeholderTextColor="#bababa"
           autoCapitalize="characters"
+          autoCorrect={false}
           autoFocus
-          maxLength={6}
+          maxLength={32}
+          onSubmitEditing={submit}
           className="mt-5 rounded-[15px] border border-line bg-surface px-4 py-4 text-center text-[22px] font-bold text-ink"
           style={{ letterSpacing: 6 }}
         />
@@ -55,10 +74,10 @@ export default function JoinByCodeScreen() {
       <View className="px-5 pb-8">
         <Pressable
           onPress={submit}
-          disabled={code.trim().length < 6}
-          className={`items-center justify-center rounded-[27.5px] py-4 ${code.trim().length < 6 ? 'bg-ink opacity-40' : 'bg-ink'}`}
+          disabled={!code.trim() || busy}
+          className={`items-center justify-center rounded-[27.5px] py-4 ${!code.trim() || busy ? 'bg-ink opacity-40' : 'bg-ink'}`}
         >
-          <Text className="text-[15px] font-bold text-white">참여하기</Text>
+          {busy ? <ActivityIndicator color="#fff" /> : <Text className="text-[15px] font-bold text-white">참여하기</Text>}
         </Pressable>
       </View>
     </SafeAreaView>

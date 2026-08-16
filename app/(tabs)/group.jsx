@@ -1,134 +1,29 @@
-import { useState } from 'react';
-import { View, Text, Pressable, ScrollView, Image } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View, Text, Pressable, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import Svg, { Path } from 'react-native-svg';
-import Animated, { FadeInUp, FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
-import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
 import CheerOverlay from '@/components/group/CheerOverlay';
-import ReverifyRequestSheet from '@/components/group/ReverifyRequestSheet';
-import RankingItemRN from '@/components/group/RankingItemRN';
+import { ApiError } from '@/services/api';
+import { issueInviteCode } from '@/services/inviteApi';
+import { leaveGroup, cancelGroup } from '@/services/groupApi';
+import { useGroupStore } from '@/stores/groupStore';
+import { useUserStore } from '@/stores/userStore';
 
-const WORKOUT = require('../../assets/images/workout-verify.png');
-import { mockGroup, mockGroupRanking, mockFeed } from '@/data/mockGroups.js';
-import { rankMembers } from '@/utils/ranking.js';
-import { calcScore, rewardFromScore } from '@/utils/score.js';
-
+// 내 그룹. GET /me/groups/{id} + GET /me/groups/{id}/progress가 authority다.
+// 멤버 목록·개인 랭킹·멤버별 인증 피드 API는 아직 없어서, 없는 것을 지어내지 않고
+// 백엔드가 실제로 주는 값(내 진행률 / 그룹 집계)만 보여준다.
 const TABS = [
   { key: 'feed', label: '인증' },
   { key: 'ranking', label: '랭킹' },
   { key: 'info', label: '정보' },
 ];
 
-// 클립 아이콘 (SVG — 이모지는 기기별 폰트 미지원 시 깨진 도형으로 보일 수 있어 벡터로 대체).
-function ClipIcon({ size = 14, color = '#111111' }) {
-  return (
-    <Svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <Path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-    </Svg>
-  );
-}
+const GROUP_GOAL_RATE = 80; // 온보딩 안내와 같은 기준
 
-// ── 랭킹 탭 ──
-function RankingView() {
-  const router = useRouter();
-  const ranked = rankMembers(mockGroupRanking.map((m) => ({ ...m, score: m.minutes })));
-  return (
-    <View className="gap-2.5 p-5">
-      {ranked.map((m, i) => (
-        <Animated.View key={m.id} entering={FadeInUp.delay(i * 70).duration(320)}>
-          <RankingItemRN rank={m.rank} name={m.name} caption={`누적 운동 시간 ${m.score}분`} isMe={m.isMe} />
-        </Animated.View>
-      ))}
-      <Pressable onPress={() => router.push('/ranking')} className="items-center rounded-item border border-line bg-surface py-3">
-        <Text className="text-[13px] font-bold text-ink">전체 랭킹 보기</Text>
-      </Pressable>
-    </View>
-  );
-}
-
-// ── 인증(피드) 탭 ──
-function FeedCard({ item, onVerify, onCheer, onReport }) {
-  if (item.status === 'verified') {
-    return (
-      <View style={{ width: '47%', aspectRatio: 3 / 4 }} className="overflow-hidden rounded-card bg-ink">
-        {/* 사용자가 업로드한 인증 영상 화면 */}
-        <Image source={WORKOUT} resizeMode="cover" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
-        {/* 우측 상단 점3개 → 재인증 요청 */}
-        <Pressable onPress={onReport} hitSlop={8} className="absolute right-1 top-0 h-8 w-8 items-center justify-center">
-          <Text className="text-xl font-bold text-white">⋯</Text>
-        </Pressable>
-        <View className="absolute bottom-2 left-2 flex-row items-center gap-1.5">
-          <View className="h-6 w-6 items-center justify-center rounded-full bg-surface">
-            <Text className="text-[10px] font-semibold text-ink">{item.name[0]}</Text>
-          </View>
-          <View>
-            <Text className="text-[11px] font-semibold text-white">{item.name}</Text>
-            <Text className="text-[10px] text-white/80">{item.timeAgo}</Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
-  const isMe = item.status === 'me';
-  return (
-    <View style={{ width: '47%', aspectRatio: 3 / 4 }} className={`rounded-card border border-line p-4 ${isMe ? 'bg-primary-tint' : 'bg-surface'}`}>
-      <Text className="text-[15px] font-bold text-ink">{isMe ? '아직 오늘\n인증을 안했어요.' : '인증을\n기다리는 중이에요.'}</Text>
-      <View className="flex-1 items-center justify-center">
-        <Pressable onPress={isMe ? onVerify : onCheer} className="rounded-pill bg-ink px-5 py-2">
-          <Text className="text-[11px] font-bold text-white">{isMe ? '인증하기' : '응원하기'}</Text>
-        </Pressable>
-      </View>
-      <View className="flex-row items-center gap-1.5">
-        <View className="h-6 w-6 items-center justify-center rounded-full bg-ink">
-          <Text className="text-[10px] font-semibold text-white">{isMe ? '나' : item.name[0]}</Text>
-        </View>
-        <Text className="text-[11px] text-ink">{isMe ? '나' : item.name}</Text>
-      </View>
-    </View>
-  );
-}
-
-function FeedView({ toast, cheer }) {
-  const router = useRouter();
-  const [reportTarget, setReportTarget] = useState(null);
-  // 2열 그리드: 2개씩 묶어 행으로
-  const rows = [];
-  for (let i = 0; i < mockFeed.length; i += 2) rows.push(mockFeed.slice(i, i + 2));
-  return (
-    <View className="gap-3 p-5">
-      {rows.map((row, ri) => (
-        <View key={ri} className="flex-row justify-between">
-          {row.map((item) => (
-            <FeedCard
-              key={item.id}
-              item={item}
-              onVerify={() => router.push('/verify')}
-              onCheer={cheer}
-              onReport={() => setReportTarget(item.name)}
-            />
-          ))}
-          {row.length === 1 && <View style={{ width: '47%' }} />}
-        </View>
-      ))}
-
-      <ReverifyRequestSheet
-        open={reportTarget !== null}
-        targetName={reportTarget}
-        onClose={() => setReportTarget(null)}
-        onSubmit={() => {
-          setReportTarget(null);
-          toast('재인증 요청이 전송되었어요!');
-        }}
-      />
-    </View>
-  );
-}
-
-// ── 정보 탭 ──
 function InfoRow({ label, value }) {
   return (
     <View className="flex-row items-center justify-between border-b border-line py-3">
@@ -138,118 +33,52 @@ function InfoRow({ label, value }) {
   );
 }
 
-function Podium({ items }) {
-  const H = { 1: 120, 2: 92, 3: 62 };
-  const order = [2, 1, 3]; // 은-금-동 배치
-  const medal = { 1: '🥇', 2: '🥈', 3: '🥉' };
-  // 순위별 바 색(금/은/동) — 메달 색과 맞춰 한눈에 구분되도록.
-  const BAR_BG = { 1: '#fbe6ab', 2: '#e6e6e6', 3: '#ecd2ac' };
-  return (
-    <View className="mt-2 flex-row items-end justify-center gap-3">
-      {order.map((rank) => {
-        const it = items.find((x) => x.rank === rank);
-        if (!it) return <View key={rank} className="w-20" />;
-        return (
-          <View key={rank} className="w-20 items-center">
-            <Text className="text-2xl">{medal[rank]}</Text>
-            <Text className="text-[12px] font-bold text-ink">{it.name}</Text>
-            <View className="mb-1 flex-row items-center gap-1">
-              <Icon name="coin" size={11} />
-              <Text className="text-[11px] font-semibold text-reward">{it.reward}</Text>
-            </View>
-            <View className="w-full rounded-t-xl" style={{ height: H[rank], backgroundColor: BAR_BG[rank] }} />
-          </View>
-        );
-      })}
-    </View>
-  );
+function daysBetween(from, to) {
+  if (!from || !to) return null;
+  const diff = new Date(to).getTime() - new Date(from).getTime();
+  return Number.isNaN(diff) ? null : Math.round(diff / 86400000);
 }
 
-function InfoView({ toast }) {
-  const [membersOpen, setMembersOpen] = useState(false);
-  const scored = mockGroupRanking.map((m) => ({ ...m, score: calcScore(m.breakdown).total }));
-  const ranked = rankMembers(scored);
-  const top3 = ranked.filter((m) => m.rank <= 3);
-  const me = ranked.find((m) => m.isMe);
-
-  return (
-    <View className="gap-6 px-5 pb-5 pt-8">
-      <View>
-        <InfoRow label="그룹명" value={mockGroup.title} />
-        <InfoRow label="기간" value={mockGroup.periodText} />
-        <Pressable
-          onPress={() => setMembersOpen((o) => !o)}
-          className="flex-row items-center justify-between border-b border-line py-3"
-        >
-          <Text className="text-[15px] text-muted">현재 인원</Text>
-          <Text className="text-[15px] font-semibold text-ink">{mockGroup.totalMembers} 명 {membersOpen ? '⌄' : '›'}</Text>
-        </Pressable>
-        {membersOpen && (
-          <Animated.View
-            entering={FadeIn.duration(240)}
-            exiting={FadeOut.duration(180)}
-            className="flex-row flex-wrap gap-3 border-b border-line py-4"
-          >
-            {ranked.map((m) => (
-              <View key={m.id} className="w-12 items-center gap-1">
-                <View className="h-10 w-10 items-center justify-center rounded-full bg-ink">
-                  <Text className="text-[12px] font-bold text-white">{m.name[0]}</Text>
-                </View>
-                <Text className="text-[10px] text-ink">{m.isMe ? '나' : m.name}</Text>
-              </View>
-            ))}
-          </Animated.View>
-        )}
-        <Animated.View layout={LinearTransition.duration(240)}>
-          <Pressable onPress={() => toast('복사 되었어요! 🌱')} className="flex-row items-center justify-between border-b border-line py-3">
-            <Text className="text-[15px] text-muted">초대 코드</Text>
-            <View className="flex-row items-center gap-1.5">
-              <ClipIcon size={14} color="#111111" />
-              <Text className="text-[15px] font-semibold text-ink">{mockGroup.inviteCode}</Text>
-            </View>
-          </Pressable>
-        </Animated.View>
-      </View>
-
-      <View className="rounded-item border border-line bg-surface p-4">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-[11px] font-semibold text-ink">우리 그룹 공동 성공률</Text>
-          <Text className="text-[25px] font-bold text-primary">{mockGroup.successRate}%</Text>
-        </View>
-        <View className="mt-2 h-2 w-full rounded-pill bg-disabled">
-          <AnimatedGauge percent={mockGroup.successRate} color="#14453a" height={8} />
-          <View className="absolute -top-1 h-4 w-0.5 bg-reward" style={{ left: `${mockGroup.goalRate}%` }} />
-        </View>
-        <View className="mt-1 flex-row justify-between">
-          <Text className="text-[11px] text-muted">{mockGroup.verifiedToday}/{mockGroup.totalMembers}명 완료</Text>
-          <Text className="text-[11px] text-reward">그룹 목표 {mockGroup.goalRate}%</Text>
-        </View>
-      </View>
-
-      <View className="flex-row rounded-item border border-line bg-surface py-4">
-        <View className="flex-1 items-center border-r border-line">
-          <Text className="text-[12px] font-bold text-ink">남은 기간</Text>
-          <Text className="mt-1 text-[30px] font-bold text-primary">D-{mockGroup.dday}</Text>
-        </View>
-        <View className="flex-1 items-center">
-          <Text className="text-[12px] font-bold text-ink">내 순위</Text>
-          <Text className="mt-1 text-[30px] font-bold text-primary">{me?.rank}위</Text>
-        </View>
-      </View>
-
-      <Podium items={top3.map((m) => ({ rank: m.rank, name: m.name, reward: rewardFromScore(m.score) }))} />
-    </View>
-  );
-}
-
-// ── 내 그룹 (메인) ──
 export default function GroupScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const paramGroupId = Array.isArray(params.groupId) ? params.groupId[0] : params.groupId;
+
   const [tab, setTab] = useState('feed');
   const [toastMsg, setToastMsg] = useState('');
   const [cheerKey, setCheerKey] = useState(0);
   const [cheerOn, setCheerOn] = useState(false);
   const [cheerCount, setCheerCount] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [inviteCode, setInviteCode] = useState(null);
+  const [leaving, setLeaving] = useState(false);
+
+  const myGroups = useGroupStore((s) => s.myGroups);
+  const detail = useGroupStore((s) => s.detail);
+  const progress = useGroupStore((s) => s.progress);
+  const loading = useGroupStore((s) => s.detailLoading);
+  const listLoading = useGroupStore((s) => s.myGroupsLoading);
+  const detailError = useGroupStore((s) => s.detailError);
+
+  const load = useCallback(async () => {
+    const store = useGroupStore.getState();
+    await store.loadMyGroups();
+    const target = paramGroupId ?? store.currentGroup()?.groupId;
+    if (target) await store.loadGroup(target);
+  }, [paramGroupId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setInviteCode(null);
+      load();
+    }, [load]),
+  );
+
+  const refresh = async () => {
+    setRefreshing(true);
+    await load();
+    setRefreshing(false);
+  };
 
   const toast = (msg) => {
     setToastMsg(msg);
@@ -257,10 +86,71 @@ export default function GroupScreen() {
   };
 
   const cheer = () => {
-    setCheerCount((c) => (c % 3) + 1); // 1→2→3→1 (하트 캐릭터가 하나씩 플레인으로)
+    setCheerCount((c) => (c % 3) + 1);
     setCheerKey((k) => k + 1);
     setCheerOn(true);
     setTimeout(() => setCheerOn(false), 1900);
+  };
+
+  if ((loading || listLoading) && !detail) {
+    return (
+      <SafeAreaView edges={['top']} className="flex-1 items-center justify-center bg-bg">
+        <ActivityIndicator size="large" color="#4b7f63" />
+      </SafeAreaView>
+    );
+  }
+
+  if (!detail) {
+    return (
+      <SafeAreaView edges={['top']} className="flex-1 items-center justify-center gap-4 bg-bg px-8">
+        <Text className="text-center text-[17px] font-bold text-ink">
+          {detailError === ApiError.NETWORK ? '서버에 연결할 수 없어요' : '참여 중인 그룹이 없어요'}
+        </Text>
+        <Text className="text-center text-[13px] text-muted">
+          {detailError === ApiError.NETWORK ? '잠시 후 다시 시도해주세요.' : '탐색에서 마음에 드는 그룹을 찾아보세요.'}
+        </Text>
+        <Pressable onPress={() => (detailError ? load() : router.push('/explore'))} className="w-full items-center rounded-[27.5px] bg-primary py-4">
+          <Text className="text-[15px] font-bold text-white">{detailError ? '다시 시도' : '그룹 탐색하기'}</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
+
+  const group = detail.group ?? {};
+  const schedule = detail.schedule ?? null;
+  const membership = detail.membership ?? {};
+  const personal = progress?.personal ?? null;
+  const groupProgress = progress?.group ?? null;
+  const isOwner = membership.myRole === 'OWNER';
+  const started = group.status === 'ACTIVE' || group.status === 'COMPLETED';
+
+  const day = schedule?.startDate ? (daysBetween(schedule.startDate, new Date().toISOString().slice(0, 10)) ?? 0) + 1 : null;
+  const dday = schedule?.endDate ? daysBetween(new Date().toISOString().slice(0, 10), schedule.endDate) : null;
+  const successRate = groupProgress ? Math.round((groupProgress.groupCompletionRate ?? 0) * 100) : 0;
+
+  const showInvite = async () => {
+    const response = await issueInviteCode(group.groupId);
+    if (response.ok) setInviteCode(response.data?.code ?? null);
+    else if (response.errorCode === ApiError.CONFLICT) toast('공개 그룹은 초대 코드가 필요 없어요.');
+    else toast('초대 코드를 만들지 못했어요.');
+  };
+
+  // 방장은 취소, 멤버는 탈퇴. 하트 환급은 백엔드가 자동으로 한다 — 프론트가 계산하지 않는다.
+  const leave = async () => {
+    if (leaving) return;
+    setLeaving(true);
+    const response = isOwner ? await cancelGroup(group.groupId) : await leaveGroup(group.groupId);
+    setLeaving(false);
+
+    if (response.ok) {
+      await useUserStore.getState().loadStats();
+      toast(isOwner ? '그룹을 취소했어요.' : '그룹에서 나왔어요.');
+      router.replace('/explore');
+      return;
+    }
+    if (response.errorCode === ApiError.CONFLICT) toast('이미 시작된 그룹은 나갈 수 없어요.');
+    else if (response.errorCode === ApiError.NETWORK) toast('서버에 연결할 수 없어요.');
+    else toast('처리하지 못했어요.');
   };
 
   return (
@@ -270,7 +160,7 @@ export default function GroupScreen() {
         <Text className="text-[28px] font-bold text-ink">내 그룹</Text>
         {tab !== 'info' ? (
           <CoachMascotButton
-            to={`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`}
+            to={`/ai?groupId=${group.groupId}&from=${tab === 'feed' ? 'feed' : 'ranking'}`}
             circle={54}
             size={44}
             style={{ marginTop: 8, marginRight: 10 }}
@@ -283,12 +173,21 @@ export default function GroupScreen() {
       {/* 요약 카드 */}
       <View className="px-5 pt-3">
         <View className="rounded-card border border-line bg-primary-tint p-4">
-          <Text className="text-[12px] font-bold text-ink">DAY {mockGroup.day}</Text>
-          <Text className="text-[22px] font-bold text-ink">{mockGroup.title}</Text>
-          <Text className="mt-1 text-[11px] text-muted">오늘 {mockGroup.verifiedToday}/{mockGroup.totalMembers}명 인증완료</Text>
+          <Text className="text-[12px] font-bold text-ink">
+            {started && day ? `DAY ${day}` : group.status === 'RECRUITING' ? '모집중' : group.status}
+          </Text>
+          <Text className="text-[22px] font-bold text-ink">{group.name}</Text>
+          <Text className="mt-1 text-[11px] text-muted">
+            {groupProgress
+              ? `목표 달성 ${groupProgress.goalAchievedMemberCount}/${groupProgress.eligibleMemberCount}명`
+              : '아직 시작 전이에요.'}
+          </Text>
           <View className="mt-3 flex-row gap-2">
-            {Array.from({ length: mockGroup.totalMembers }).map((_, i) => (
-              <View key={i} className={`h-8 w-8 rounded-full ${i < mockGroup.verifiedToday ? 'bg-primary' : 'bg-surface-alt'}`} />
+            {Array.from({ length: group.maxMembers ?? 0 }).map((_, i) => (
+              <View
+                key={i}
+                className={`h-8 w-8 rounded-full ${i < (groupProgress?.goalAchievedMemberCount ?? 0) ? 'bg-primary' : 'bg-surface-alt'}`}
+              />
             ))}
           </View>
         </View>
@@ -306,17 +205,121 @@ export default function GroupScreen() {
         })}
       </View>
 
-      {/* 선택된 뷰 */}
-      <ScrollView className="flex-1" contentContainerClassName="pb-6">
-        {tab === 'feed' && <FeedView toast={toast} cheer={cheer} />}
-        {tab === 'ranking' && <RankingView />}
-        {tab === 'info' && <InfoView toast={toast} />}
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="pb-6"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
+      >
+        {/* 인증 탭 — 멤버별 피드 API가 없어 내 인증 상태만 보여준다 */}
+        {tab === 'feed' && (
+          <View className="gap-3 p-5">
+            <View className="rounded-card border border-line bg-primary-tint p-5">
+              <Text className="text-[15px] font-bold text-ink">
+                {!personal
+                  ? '그룹이 시작되면 인증할 수 있어요.'
+                  : personal.todayCompleted
+                    ? '오늘 인증을 완료했어요!'
+                    : personal.todayVerificationPending
+                      ? '인증을 검토하고 있어요.'
+                      : personal.todayScheduled
+                        ? '아직 오늘 인증을 안했어요.'
+                        : '오늘은 인증하는 날이 아니에요.'}
+              </Text>
+              <Text className="mt-2 text-[12px] text-muted">
+                {personal ? `${personal.completedCount}/${personal.requiredCompletionCount}회 완료 · 연속 ${personal.currentStreak}일` : ''}
+              </Text>
+              {personal?.todayScheduled && !personal.todayCompleted && (
+                <Pressable
+                  onPress={() => router.push({ pathname: '/verify', params: { groupId: String(group.groupId) } })}
+                  className="mt-4 items-center rounded-pill bg-ink py-3"
+                >
+                  <Text className="text-[13px] font-bold text-white">인증하기</Text>
+                </Pressable>
+              )}
+            </View>
+
+            <Pressable onPress={cheer} className="items-center rounded-item border border-line bg-surface py-3">
+              <Text className="text-[13px] font-bold text-ink">그룹원 응원하기</Text>
+            </Pressable>
+            <Text className="text-center text-[11px] text-muted">
+              멤버별 인증 피드는 아직 준비 중이에요.
+            </Text>
+          </View>
+        )}
+
+        {/* 랭킹 탭 — 랭킹 API가 없다. 가짜 순위를 만들지 않는다. */}
+        {tab === 'ranking' && (
+          <View className="items-center gap-2 px-5 py-16">
+            <Text className="text-[15px] font-bold text-ink">랭킹은 아직 준비 중이에요</Text>
+            <Text className="text-center text-[13px] text-muted">
+              그룹 공동 진행률은 정보 탭에서 확인할 수 있어요.
+            </Text>
+          </View>
+        )}
+
+        {/* 정보 탭 */}
+        {tab === 'info' && (
+          <View className="gap-6 px-5 pb-5 pt-8">
+            <View>
+              <InfoRow label="그룹명" value={group.name} />
+              <InfoRow
+                label="기간"
+                value={schedule ? `${schedule.startDate} ~ ${schedule.endDate}` : '미정'}
+              />
+              <InfoRow label="정원" value={`${group.maxMembers}명`} />
+              <InfoRow label="목표 인증" value={`${group.requiredCompletionCount}회`} />
+              <InfoRow label="내 역할" value={membership.myRole === 'OWNER' ? '방장' : '멤버'} />
+
+              {group.visibility === 'PRIVATE' && isOwner && (
+                <Pressable onPress={showInvite} className="flex-row items-center justify-between border-b border-line py-3">
+                  <Text className="text-[15px] text-muted">초대 코드</Text>
+                  <Text className="text-[15px] font-semibold text-ink">{inviteCode ?? '코드 받기 ›'}</Text>
+                </Pressable>
+              )}
+            </View>
+
+            <View className="rounded-item border border-line bg-surface p-4">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-[11px] font-semibold text-ink">우리 그룹 공동 성공률</Text>
+                <Text className="text-[25px] font-bold text-primary">{successRate}%</Text>
+              </View>
+              <View className="mt-2 h-2 w-full rounded-pill bg-disabled">
+                <AnimatedGauge percent={successRate} color="#14453a" height={8} />
+                <View className="absolute -top-1 h-4 w-0.5 bg-reward" style={{ left: `${GROUP_GOAL_RATE}%` }} />
+              </View>
+              <View className="mt-1 flex-row justify-between">
+                <Text className="text-[11px] text-muted">
+                  {groupProgress ? `${groupProgress.completedRequirementCount}/${groupProgress.totalRequiredCount}회 완료` : '시작 전'}
+                </Text>
+                <Text className="text-[11px] text-reward">그룹 목표 {GROUP_GOAL_RATE}%</Text>
+              </View>
+            </View>
+
+            <View className="flex-row rounded-item border border-line bg-surface py-4">
+              <View className="flex-1 items-center border-r border-line">
+                <Text className="text-[12px] font-bold text-ink">남은 기간</Text>
+                <Text className="mt-1 text-[30px] font-bold text-primary">{dday === null ? '–' : `D-${Math.max(0, dday)}`}</Text>
+              </View>
+              <View className="flex-1 items-center">
+                <Text className="text-[12px] font-bold text-ink">내 달성</Text>
+                <Text className="mt-1 text-[30px] font-bold text-primary">
+                  {personal ? `${personal.completedCount}/${personal.requiredCompletionCount}` : '–'}
+                </Text>
+              </View>
+            </View>
+
+            {/* 시작 후 나가기는 백엔드 정책상 지원하지 않는다(409). 시작 전에만 노출한다. */}
+            {!started && (
+              <Pressable onPress={leave} disabled={leaving} className={`items-center rounded-item border border-line bg-surface py-3 ${leaving ? 'opacity-50' : ''}`}>
+                <Text className="text-[13px] font-bold text-danger">{isOwner ? '그룹 취소하기' : '그룹 나가기'}</Text>
+              </Pressable>
+            )}
+          </View>
+        )}
       </ScrollView>
 
-      {/* 응원 오버레이 (캐릭터 3개, 응원할수록 하트→플레인) */}
       {cheerOn && <CheerOverlay key={cheerKey} usedCount={cheerCount} />}
 
-      {/* 토스트 (화면 정중앙, 부드럽게 페이드 인/아웃) */}
       {!!toastMsg && (
         <View pointerEvents="none" className="absolute inset-0 items-center justify-center">
           <Animated.View

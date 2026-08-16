@@ -1,14 +1,22 @@
+import { useEffect } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
+import { useUserStore } from '@/stores/userStore';
 
-// 그룹 참가 완료 (웹 JoinCompletePage 포팅). title/groupId는 쿼리 파라미터로.
+// 그룹 참가 완료. 하트 차감은 이미 백엔드가 끝냈다 — 잔여 하트는 계산하지 않고 stats에서 읽는다.
 export default function JoinCompleteScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const title = (Array.isArray(params.title) ? params.title[0] : params.title) ?? '매일 물 1.5L 마시기';
+  const groupId = Array.isArray(params.groupId) ? params.groupId[0] : params.groupId;
+  const title = (Array.isArray(params.title) ? params.title[0] : params.title) ?? '새 그룹';
+  const hearts = useUserStore((s) => s.stats?.hearts);
+
+  useEffect(() => {
+    useUserStore.getState().loadStats();
+  }, []);
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg px-5">
@@ -30,7 +38,7 @@ export default function JoinCompleteScreen() {
           <Text className="text-[15px] font-semibold text-[#d9573b]">잔여 하트 수</Text>
           <View className="mt-1 flex-row items-center gap-2">
             <Icon name="heart" size={20} />
-            <Text className="text-[18px] font-bold text-ink">2</Text>
+            <Text className="text-[18px] font-bold text-ink">{hearts ?? '–'}</Text>
           </View>
           <Pressable onPress={() => router.push('/heart-event')} className="mt-2">
             <Text className="text-[12px] font-semibold text-muted">하트 얻으러 가기 ›</Text>
@@ -39,7 +47,7 @@ export default function JoinCompleteScreen() {
       </View>
 
       <View className="gap-4 pb-8">
-        <Pressable onPress={() => router.replace('/group')} className="h-[50px] items-center justify-center rounded-[27.5px] bg-primary">
+        <Pressable onPress={() => router.replace(groupId ? { pathname: '/group', params: { groupId } } : '/group')} className="h-[50px] items-center justify-center rounded-[27.5px] bg-primary">
           <Text className="text-[15px] font-bold text-white">그룹으로 이동</Text>
         </Pressable>
         <Pressable onPress={() => router.replace('/explore')} className="items-center">
