@@ -111,7 +111,7 @@ export default function SignUpPhoneScreen() {
         <FieldError>{phoneError}</FieldError>
 
         {/* 인증번호 + 확인 버튼 */}
-        <View className={`mt-3 h-11 flex-row items-center rounded-[15px] border bg-surface pl-4 pr-1.5 ${codeError ? 'border-danger' : codeVerified ? 'border-primary' : 'border-line'}`}>
+        <View className={`mt-3 h-11 flex-row items-center rounded-[15px] border bg-surface pr-1.5 ${codeError ? 'border-danger' : codeVerified ? 'border-primary' : 'border-line'}`}>
           <TextInput
             value={code}
             onChangeText={onChangeCode}
@@ -121,7 +121,7 @@ export default function SignUpPhoneScreen() {
             placeholder="인증번호 6자리"
             placeholderTextColor="#9c9c9c"
             textAlignVertical="center"
-            className="flex-1 text-[12px] font-semibold text-ink"
+            className="flex-1 px-4 text-[12px] font-semibold text-ink"
             style={{ minWidth: 0, paddingVertical: 0, height: '100%' }}
           />
           <Pressable

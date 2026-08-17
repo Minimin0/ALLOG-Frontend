@@ -1,4 +1,5 @@
 import { View, Text, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 
@@ -14,7 +15,7 @@ export default function StartScreen() {
       locations={[0, 0.8125, 1]}
       style={{ flex: 1 }}
     >
-      <View className="flex-1 px-12">
+      <SafeAreaView edges={['top', 'bottom']} className="flex-1 px-12">
         <View className="flex-1 items-center pt-32">
           {/* TODO: 실제 로고 에셋으로 교체 → <Image source={require('../assets/images/Logo.png')} /> */}
           <View className="h-[76px] w-[76px] items-center justify-center rounded-2xl bg-primary-tint">
@@ -47,7 +48,7 @@ export default function StartScreen() {
             </Pressable>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </LinearGradient>
   );
 }
