@@ -2,7 +2,9 @@
 // ALLOG 백엔드 요청에 Firebase ID Token을 자동으로 Authorization 헤더에 실어 보냅니다.
 import { getCurrentIdToken } from "./authApi";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+// import.meta는 Hermes에 없어서 babel-preset-expo가 변환 단계에서 바로 예외를 던진다.
+// 이 파일이 app/ 그래프에 한 번이라도 닿는 순간 expo export가 실패하므로 RN 규격을 쓴다.
+const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
 /**
  * @param {string} path - 예: "/api/v1/me/groups/1/progress"
