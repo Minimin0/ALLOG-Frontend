@@ -1,22 +1,18 @@
 import { Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, Easing, runOnJS } from 'react-native-reanimated';
 
 import Mascot from '@/components/common/Mascot';
 
 // 우측 상단 코치 캐릭터: 누르면 한 번 폴짝 뛴 뒤 AI 코칭으로 이동 (웹 hop 애니 포팅).
-export default function CoachMascotButton({ to = '/ai', circle = 54, size = 44, style: outerStyle }) {
-  const router = useRouter();
+export default function CoachMascotButton({ onPress: navigate, circle = 54, size = 44, style: outerStyle }) {
   const y = useSharedValue(0);
   const style = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
-
-  const go = () => router.push(to);
 
   const onPress = () => {
     y.value = withSequence(
       withTiming(-14, { duration: 130, easing: Easing.out(Easing.quad) }),
       withTiming(0, { duration: 220, easing: Easing.bounce }, (finished) => {
-        if (finished) runOnJS(go)();
+        if (finished && navigate) runOnJS(navigate)();
       }),
     );
   };
