@@ -173,7 +173,7 @@ function InfoView({ toast }) {
   const me = ranked.find((m) => m.isMe);
 
   return (
-    <View className="gap-6 px-5 pb-5 pt-8">
+    <View className="gap-6 p-5">
       <View>
         <InfoRow label="그룹명" value={mockGroup.title} />
         <InfoRow label="기간" value={mockGroup.periodText} />
@@ -265,23 +265,18 @@ export default function GroupScreen() {
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-bg">
-      {/* 헤더 */}
-      <View className="flex-row items-center justify-between px-5 pt-2">
+      {/* 헤더 (탐색/홈과 동일한 px-[30px] pt-4 — AI코치 버튼 위치를 다른 화면과 통일) */}
+      <View className="flex-row items-center justify-between px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">내 그룹</Text>
         {tab !== 'info' ? (
-          <CoachMascotButton
-            to={`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`}
-            circle={54}
-            size={44}
-            style={{ marginTop: 8, marginRight: 10 }}
-          />
+          <CoachMascotButton to={`/ai?from=${tab === 'feed' ? 'feed' : 'ranking'}`} circle={54} size={44} />
         ) : (
           <View className="h-14 w-14" />
         )}
       </View>
 
       {/* 요약 카드 */}
-      <View className="px-5 pt-3">
+      <View className="px-[30px] pt-3">
         <View className="rounded-card border border-line bg-primary-tint p-4">
           <Text className="text-[12px] font-bold text-ink">DAY {mockGroup.day}</Text>
           <Text className="text-[22px] font-bold text-ink">{mockGroup.title}</Text>
@@ -295,7 +290,7 @@ export default function GroupScreen() {
       </View>
 
       {/* 세그먼트 탭 */}
-      <View className="mt-4 flex-row border-b border-line px-5">
+      <View className="mt-4 flex-row border-b border-line px-[30px]">
         {TABS.map((t) => {
           const active = tab === t.key;
           return (
