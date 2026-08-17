@@ -51,12 +51,12 @@ function classify(status, data) {
  * @param {string} [options.overrideToken] - 값을 주면 실제 토큰 대신 이 값을 사용 (잘못된 토큰 케이스 테스트용)
  */
 export async function apiRequest(path, options = {}) {
-  const { method = "GET", body, headers = {}, skipAuth = false, overrideToken } = options;
+  const { method = "GET", body, headers = {}, skipAuth = false, overrideToken, _getToken = getCurrentIdToken, _hasRetriedAuth = false } = options;
 
   const finalHeaders = { "Content-Type": "application/json", ...headers };
 
   if (!skipAuth) {
-    const token = overrideToken !== undefined ? overrideToken : await getCurrentIdToken();
+    const token = overrideToken !== undefined ? overrideToken : await _getToken();
     // 토큰 값은 절대 로그에 남기지 않는다.
     if (token) {
       finalHeaders.Authorization = `Bearer ${token}`;
@@ -82,6 +82,16 @@ export async function apiRequest(path, options = {}) {
     data = text ? JSON.parse(text) : null;
   } catch (error) {
     data = null;
+  }
+
+  if (response.status === 401 && !skipAuth && overrideToken === undefined && !_hasRetriedAuth) {
+    let refreshedToken;
+    try {
+      refreshedToken = await _getToken(true);
+    } catch (error) {
+      refreshedToken = null;
+    }
+    return apiRequest(path, { ...options, overrideToken: refreshedToken, _getToken, _hasRetriedAuth: true });
   }
 
   return {
