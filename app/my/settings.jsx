@@ -1,5 +1,5 @@
-import SubPagePlaceholder from '@/components/common/SubPagePlaceholder';
+import MobileScreenRoute from '@/components/MobileScreenRoute';
 
-export default function Settings() {
-  return <SubPagePlaceholder title="설정" />;
+export default function SettingsRoute() {
+  return <MobileScreenRoute screen="Settings" />;
 }
