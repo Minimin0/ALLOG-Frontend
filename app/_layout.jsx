@@ -25,8 +25,8 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <AppStateProvider>
+      <AppStateProvider>
+        <SafeAreaProvider>
           <StatusBar style="dark" backgroundColor="#f7f6f3" />
           <Stack
             screenOptions={{
@@ -35,8 +35,8 @@ export default function RootLayout() {
               animation: 'fade',
             }}
           />
-        </AppStateProvider>
-      </SafeAreaProvider>
+        </SafeAreaProvider>
+      </AppStateProvider>
     </GestureHandlerRootView>
   );
 }

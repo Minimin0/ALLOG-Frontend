@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import StartScreen from '../../mobile/src/screens/auth/StartScreen';
 import LoginScreen from '../../mobile/src/screens/auth/LoginScreen';
@@ -73,6 +74,16 @@ const PATHS = {
   FirebaseDebug: '/auth/firebase-debug', InviteLanding: '/group/invite', Placeholder: '/my/settings',
 };
 
+// /mobile의 Stack.Group에서 상단 Safe Area를 제공하던 HW 상세 화면들.
+// 탭 화면은 app/(tabs)/_layout.jsx가 이미 처리하고, bananayeon 화면은 이
+// 어댑터를 사용하지 않으므로 각 영역의 레이아웃에 영향을 주지 않는다.
+const TOP_SAFE_AREA_SCREENS = new Set([
+  'CreateGroup', 'GroupCreated', 'WaitingRoom', 'JoinByCode', 'JoinComplete',
+  'InviteGroup', 'RewardDetail', 'EditProfile', 'Notifications', 'Privacy',
+  'Terms', 'Support', 'Settings', 'HeartEvent', 'GroupDetail', 'FirebaseDebug',
+  'InviteLanding',
+]);
+
 function encodeParams(params = {}) {
   return Object.fromEntries(Object.entries(params).map(([key, value]) => [
     key,
@@ -110,5 +121,13 @@ export default function MobileScreenRoute({ screen }) {
     };
   }, [router]);
   const Screen = SCREENS[screen] || PlaceholderScreen;
-  return <Screen navigation={navigation} route={route} />;
+  const content = <Screen navigation={navigation} route={route} />;
+
+  if (!TOP_SAFE_AREA_SCREENS.has(screen)) return content;
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f7f6f3' }} edges={['top']}>
+      {content}
+    </SafeAreaView>
+  );
 }
