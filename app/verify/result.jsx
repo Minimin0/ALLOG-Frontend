@@ -5,10 +5,12 @@ import { useRouter } from 'expo-router';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, Easing } from 'react-native-reanimated';
 
 import Mascot from '@/components/common/Mascot';
-import { mockRetryGuide, mockVerifyFeedback } from '@/data/mockGroups.js';
+import { ApiError } from '@/services/api';
+import { useGroupStore } from '@/stores/groupStore';
 import { useVerificationStore } from '@/stores/verificationStore.js';
 
-// 성공 화면 진입 시 마스코트가 한 번 폴짝 뛰는 연출. 착지 후엔 Mascot의 continuous sway로 이어짐.
+// 인증 결과. 제출이 끝났다는 것과 승인됐다는 것은 다르다 —
+// AI 판정은 백엔드에서 비동기로 일어나므로 여기서 "성공"이라고 단정하지 않는다.
 function HopMascot({ size }) {
   const y = useSharedValue(0);
   useEffect(() => {
@@ -28,17 +30,34 @@ function HopMascot({ size }) {
 const PRAISES = [
   '오늘도 해냈어요! 🌱', '역시 최고예요! 👏', '꾸준함이 멋져요! ✨', '완벽한 인증이에요! 🎉',
   '이 기세 그대로! 💪', '오늘도 한 걸음 더! 🌿', '몸도 마음도 튼튼! 🌞', '작은 습관이 큰 힘이 돼요 🌳',
-  '오늘의 나, 칭찬해요! 👍', '멈추지 않는 게 멋져요 🔥', '루틴 완성, 대단해요! 🏅', '한결같은 당신이 최고 💚',
-  '오늘도 새싹이 쑥쑥! 🌱', '해낼 줄 알았어요! ⭐', '내일도 함께해요! 🤝',
 ];
 
-// 인증 결과 (웹 VerificationResultPage 포팅). 성공 / 재인증 분기.
+function failureMessage(errorCode) {
+  switch (errorCode) {
+    case ApiError.NETWORK:
+      return '서버에 연결할 수 없어요. 잠시 후 다시 시도해주세요.';
+    case ApiError.VALIDATION:
+      return '이 사진은 올릴 수 없어요. 용량이나 형식을 확인해주세요.';
+    case ApiError.CONFLICT:
+      return '이미 오늘 인증을 제출했거나, 지금은 제출할 수 없는 상태예요.';
+    case ApiError.NOT_FOUND:
+      return '이 그룹의 오늘 인증을 찾을 수 없어요.';
+    case ApiError.UNAUTHORIZED:
+      return '로그인이 만료됐어요. 다시 로그인해주세요.';
+    default:
+      return '인증을 제출하지 못했어요. 잠시 후 다시 시도해주세요.';
+  }
+}
+
 export default function ResultScreen() {
   const router = useRouter();
-  const result = useVerificationStore((s) => s.result) ?? 'success';
+  const outcome = useVerificationStore((s) => s.outcome);
   const reset = useVerificationStore((s) => s.reset);
-  const isSuccess = result === 'success';
+  const progress = useGroupStore((s) => s.progress);
   const [praise] = useState(() => PRAISES[Math.floor(Math.random() * PRAISES.length)]);
+
+  const state = outcome?.state ?? 'failed';
+  const personal = progress?.personal ?? null;
 
   const goToGroup = () => {
     reset();
@@ -48,72 +67,73 @@ export default function ResultScreen() {
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 items-center bg-bg p-6">
       <View className="flex-1 items-center justify-center gap-4">
-        {isSuccess ? (
+        {state === 'submitted' && (
           <>
-            {/* 칭찬 말풍선 */}
             <View className="rounded-2xl bg-surface px-4 py-2.5 shadow" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
               <Text className="text-[15px] font-semibold text-ink">{praise}</Text>
             </View>
 
-            {/* 마스코트 (등장 시 한 번 폴짝) */}
             <View className="h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-primary-tint">
               <HopMascot size={120} />
             </View>
-            <Text className="text-[22px] font-bold text-ink">인증 성공!</Text>
+            <Text className="text-[22px] font-bold text-ink">인증 제출 완료!</Text>
+            <Text className="text-center text-[13px] text-muted">
+              결과는 검토가 끝나면 그룹 화면에 반영돼요.
+            </Text>
 
-            {/* 패턴 피드백 */}
-            <View className="w-full max-w-[280px] flex-row gap-2">
-              <View className="flex-1 rounded-card bg-primary-tint px-3 py-2.5">
-                <Text className="text-[11px] text-muted">연속 성공</Text>
-                <Text className="text-[22px] font-bold text-primary">{mockVerifyFeedback.streak}<Text className="text-[11px] font-bold">일 🔥</Text></Text>
+            {personal && (
+              <View className="w-full max-w-[280px] flex-row gap-2">
+                <View className="flex-1 rounded-card bg-primary-tint px-3 py-2.5">
+                  <Text className="text-[11px] text-muted">연속 성공</Text>
+                  <Text className="text-[22px] font-bold text-primary">{personal.currentStreak}<Text className="text-[11px] font-bold">일 🔥</Text></Text>
+                </View>
+                <View className="flex-1 rounded-card bg-primary-tint px-3 py-2.5">
+                  <Text className="text-[11px] text-muted">누적 완료</Text>
+                  <Text className="pt-1 text-[15px] font-bold text-primary">{personal.completedCount}/{personal.requiredCompletionCount}회</Text>
+                </View>
               </View>
-              <View className="flex-1 rounded-card bg-primary-tint px-3 py-2.5">
-                <Text className="text-[11px] text-muted">최근 인증</Text>
-                <Text className="pt-1 text-[15px] font-bold text-primary">{mockVerifyFeedback.bestTime}</Text>
-              </View>
-            </View>
-            <Text className="text-center text-[11px] text-muted">주로 {mockVerifyFeedback.bestTime}에 인증했어요. 이 페이스 그대로! 💪</Text>
+            )}
           </>
-        ) : (
+        )}
+
+        {/* 저장소 미구성(503)은 사용자 잘못이 아니라 배포 단계의 문제다. 실패로 표시하지 않는다. */}
+        {state === 'unavailable' && (
+          <>
+            <View className="h-20 w-20 items-center justify-center rounded-full bg-primary-tint">
+              <Text className="text-4xl">🛠️</Text>
+            </View>
+            <Text className="text-[22px] font-bold text-ink">사진 인증은 준비 중이에요</Text>
+            <Text className="text-center text-[15px] text-muted">
+              인증 사진 저장소가 아직 연결되지 않았어요.{'\n'}오늘 인증 기록 자체는 만들어져 있어요.
+            </Text>
+          </>
+        )}
+
+        {state === 'failed' && (
           <>
             <View className="h-20 w-20 items-center justify-center rounded-full bg-danger">
               <Text className="text-4xl text-white">!</Text>
             </View>
-            <Text className="text-[22px] font-bold text-ink">재인증이 필요해요</Text>
-            <Text className="text-center text-[15px] text-muted">실패가 아니에요 — 아래 항목이 확인되지 않았을 뿐이에요.</Text>
-
-            <View className="w-full max-w-[280px] rounded-card bg-surface px-4 py-3">
-              <Text className="mb-1.5 text-[11px] font-bold text-danger">확인되지 않은 점</Text>
-              {mockRetryGuide.notConfirmed.map((r) => (
-                <Text key={r} className="text-[11px] text-subtle">• {r}</Text>
-              ))}
-            </View>
-
-            <View className="w-full max-w-[280px] rounded-card bg-primary-tint px-4 py-3">
-              <Text className="mb-1.5 text-[11px] font-bold text-primary">이렇게 다시 찍어보세요</Text>
-              {mockRetryGuide.tips.map((t) => (
-                <Text key={t} className="text-[11px] text-muted">✓ {t}</Text>
-              ))}
-            </View>
+            <Text className="text-[22px] font-bold text-ink">인증을 제출하지 못했어요</Text>
+            <Text className="text-center text-[15px] text-muted">{failureMessage(outcome?.errorCode)}</Text>
           </>
         )}
       </View>
 
-      {/* 액션 */}
       <View className="w-full gap-2">
-        {isSuccess ? (
-          <Pressable onPress={goToGroup} className="h-[52px] items-center justify-center rounded-pill bg-primary">
-            <Text className="text-[15px] font-bold text-white">내 그룹으로</Text>
-          </Pressable>
-        ) : (
+        {state === 'failed' ? (
           <>
             <Pressable onPress={() => router.replace('/verify/camera')} className="h-[52px] items-center justify-center rounded-pill bg-primary">
               <Text className="text-[15px] font-bold text-white">다시 촬영하기</Text>
             </Pressable>
-            <Pressable onPress={() => router.push('/report')} className="items-center py-2">
-              <Text className="text-[11px] font-semibold text-danger">판정에 이의 있어요 · 재인증 요청</Text>
+            <Pressable onPress={goToGroup} className="items-center py-2">
+              <Text className="text-[13px] font-semibold text-muted">내 그룹으로</Text>
             </Pressable>
           </>
+        ) : (
+          <Pressable onPress={goToGroup} className="h-[52px] items-center justify-center rounded-pill bg-primary">
+            <Text className="text-[15px] font-bold text-white">내 그룹으로</Text>
+          </Pressable>
         )}
       </View>
     </SafeAreaView>

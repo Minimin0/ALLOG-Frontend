@@ -4,13 +4,12 @@ import { useRouter } from 'expo-router';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 
 import RankingItemRN from '@/components/group/RankingItemRN';
-import { mockFullRanking } from '@/data/mockGroups.js';
-import { rankMembers } from '@/utils/ranking.js';
 
-// 전체(방 간 통합) 랭킹 (웹 FullRankingPage 포팅). 그룹 상세 "전체 랭킹 보기"에서 진입.
+// 전체(방 간 통합) 랭킹. 랭킹 API가 아직 없어 가짜 순위를 만들지 않는다 —
+// 엔드포인트가 생기면 여기서 받아 ranked에 넣으면 화면은 그대로 동작한다.
 export default function FullRankingScreen() {
   const router = useRouter();
-  const ranked = rankMembers(mockFullRanking);
+  const ranked = [];
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-bg">
@@ -22,11 +21,18 @@ export default function FullRankingScreen() {
       </View>
 
       <ScrollView className="flex-1 px-5" contentContainerClassName="gap-2.5 pb-8 pt-2">
-        {ranked.map((m, i) => (
-          <Animated.View key={m.id} entering={FadeInUp.delay(i * 70).duration(320)}>
-            <RankingItemRN rank={m.rank} name={m.name} caption={m.group} isMe={m.isMe} score={m.score} />
-          </Animated.View>
-        ))}
+        {ranked.length === 0 ? (
+          <View className="items-center gap-2 py-16">
+            <Text className="text-[15px] font-bold text-ink">랭킹은 아직 준비 중이에요</Text>
+            <Text className="text-center text-[13px] text-muted">그룹 공동 진행률은 내 그룹 정보 탭에서 볼 수 있어요.</Text>
+          </View>
+        ) : (
+          ranked.map((m, i) => (
+            <Animated.View key={m.id} entering={FadeInUp.delay(i * 70).duration(320)}>
+              <RankingItemRN rank={m.rank} name={m.name} caption={m.group} isMe={m.isMe} score={m.score} />
+            </Animated.View>
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );
