@@ -16,10 +16,10 @@ export default function BasicInfoScreen() {
   const [form, setForm] = useState({ nickname: '', gender: '여성', birth: '', height: '', weight: '' });
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
   const heightError = form.height && (Number(form.height) < HEIGHT_MIN || Number(form.height) > HEIGHT_MAX)
-    ? `${HEIGHT_MIN}~${HEIGHT_MAX}cm 사이로 정확히 입력해주세요`
+    ? '정확히 입력해주세요'
     : '';
   const weightError = form.weight && (Number(form.weight) < WEIGHT_MIN || Number(form.weight) > WEIGHT_MAX)
-    ? `${WEIGHT_MIN}~${WEIGHT_MAX}kg 사이로 정확히 입력해주세요`
+    ? '정확히 입력해주세요'
     : '';
   const isValid = form.nickname.trim() && form.birth && form.height && form.weight && !heightError && !weightError;
 
@@ -37,8 +37,8 @@ export default function BasicInfoScreen() {
       <View className="gap-4">
         <View>
           <Text className="mb-2 text-[13px] font-bold text-subtle">닉네임</Text>
-          <TextInput value={form.nickname} onChangeText={(v) => set('nickname', v)} placeholder="사용하실 닉네임을 입력해주세요." placeholderTextColor="#bababa"
-            className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" />
+          <TextInput value={form.nickname} onChangeText={(v) => set('nickname', v)} placeholder="사용하실 닉네임을 입력해주세요." placeholderTextColor="#9c9c9c"
+            className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[12px] font-semibold text-ink" />
         </View>
 
         <View>

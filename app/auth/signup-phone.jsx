@@ -105,7 +105,7 @@ export default function SignUpPhoneScreen() {
           keyboardType="phone-pad"
           maxLength={13}
           placeholder="010-0000-0000"
-          placeholderTextColor="#bababa"
+          placeholderTextColor="#9c9c9c"
           className={`mt-2 h-11 rounded-[15px] border bg-surface px-4 text-[12px] font-semibold text-ink ${phoneError ? 'border-danger' : 'border-line'}`}
         />
         <FieldError>{phoneError}</FieldError>
@@ -119,8 +119,9 @@ export default function SignUpPhoneScreen() {
             maxLength={6}
             editable={!codeVerified}
             placeholder="인증번호 6자리"
-            placeholderTextColor="#bababa"
+            placeholderTextColor="#9c9c9c"
             className="flex-1 text-[12px] font-semibold text-ink"
+            style={{ minWidth: 0 }}
           />
           <Pressable
             onPress={verifyCode}
