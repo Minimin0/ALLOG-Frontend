@@ -28,7 +28,7 @@ import {
   RewardDetailScreen, EditProfileScreen, NotificationsScreen, PrivacyScreen,
   TermsScreen, SupportScreen, SettingsScreen,
 } from '../../mobile/src/screens/details/AccountRewardScreens';
-import { AiCoachScreen, HeartEventScreen, ReportScreen } from '../../mobile/src/screens/details/AuxScreens';
+import { AiCoachScreen, ReportScreen } from '../../mobile/src/screens/details/AuxScreens';
 import {
   FullRankingScreen, RankingCriteriaScreen, GroupResultScreen, ExploreGroupDetailScreen,
 } from '../../mobile/src/screens/group/GroupMoreScreens';
@@ -48,7 +48,7 @@ const SCREENS = {
   VerificationLoading: VerificationLoadingScreen, VerificationResult: VerificationResultScreen,
   RewardDetail: RewardDetailScreen, EditProfile: EditProfileScreen, Notifications: NotificationsScreen,
   Privacy: PrivacyScreen, Terms: TermsScreen, Support: SupportScreen, Settings: SettingsScreen,
-  AiCoach: AiCoachScreen, HeartEvent: HeartEventScreen, Report: ReportScreen,
+  AiCoach: AiCoachScreen, Report: ReportScreen,
   FullRanking: FullRankingScreen, RankingCriteria: RankingCriteriaScreen, GroupResult: GroupResultScreen,
   GroupDetail: ExploreGroupDetailScreen, FirebaseDebug: FirebaseDebugScreen,
   PreferPeriod: PreferPeriodScreen, GroupRecommend: GroupRecommendScreen,
@@ -69,7 +69,7 @@ const PATHS = {
   VerificationLoading: '/verify/loading', VerificationResult: '/verify/result',
   RewardDetail: '/reward/reward', EditProfile: '/my/edit-profile', Notifications: '/my/notifications',
   Privacy: '/my/privacy', Terms: '/my/terms', Support: '/my/support', Settings: '/my/settings',
-  AiCoach: '/ai', HeartEvent: '/heart-event', Report: '/report', FullRanking: '/ranking',
+  AiCoach: '/ai', Report: '/report', FullRanking: '/ranking',
   RankingCriteria: '/ranking', GroupResult: '/group/join-complete', GroupDetail: '/explore/group/group',
   FirebaseDebug: '/auth/firebase-debug', InviteLanding: '/group/invite', Placeholder: '/my/settings',
 };
@@ -80,7 +80,7 @@ const PATHS = {
 const TOP_SAFE_AREA_SCREENS = new Set([
   'CreateGroup', 'GroupCreated', 'WaitingRoom', 'JoinByCode', 'JoinComplete',
   'InviteGroup', 'RewardDetail', 'EditProfile', 'Notifications', 'Privacy',
-  'Terms', 'Support', 'Settings', 'HeartEvent', 'GroupDetail', 'FirebaseDebug',
+  'Terms', 'Support', 'Settings', 'GroupDetail', 'FirebaseDebug',
   'InviteLanding',
 ]);
 
