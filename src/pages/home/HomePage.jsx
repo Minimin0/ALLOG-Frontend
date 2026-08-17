@@ -43,22 +43,6 @@ function HomePage() {
 
         <main className="flex-1 space-y-4 px-[30px] pb-8 pt-5">
           <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => navigate("/heart-event")}
-              className="rounded-[17px] border border-[#e7e3d8] bg-[#fefefe] px-4 py-3 text-left"
-            >
-              <div className="flex items-center gap-2">
-                <img src="/images/하트.svg" alt="" className="h-[19px] w-[21px]" />
-                <span className="text-[18px] font-bold text-black">3</span>
-              </div>
-              <p className="mt-2 text-[12px] font-semibold text-[#d9573b]">
-                보유 하트
-              </p>
-              <p className="mt-1 text-[12px] font-semibold text-[#6b7268]">
-                하트 얻으러 가기 &gt;
-              </p>
-            </button>
 
             <button
               type="button"

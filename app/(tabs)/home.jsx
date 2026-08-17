@@ -80,20 +80,7 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       >
         {/* 하트 / 포인트 */}
-        <View className="flex-row gap-3">
-          <Pressable
-            onPress={() => router.push('/heart-event')}
-            className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3"
-          >
-            <View className="flex-row items-center gap-2">
-              <Icon name="heart" size={18} />
-              <Text className="text-[18px] font-bold text-ink">{stats?.hearts ?? '–'}</Text>
-            </View>
-            <Text className="mt-2 text-[12px] font-semibold text-[#d9573b]">보유 하트</Text>
-            <Text className="mt-1 text-[12px] font-semibold text-muted">하트 안내 보기 ›</Text>
-          </Pressable>
-
-          <Pressable
+        <View className="flex-row gap-3"><Pressable
             onPress={() => router.push('/reward')}
             className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3"
           >

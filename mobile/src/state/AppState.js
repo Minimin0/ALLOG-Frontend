@@ -103,7 +103,7 @@ export function AppStateProvider({ children }) {
   const claimHeartEvent = (eventId) => {
     if (completedHeartEvents.includes(eventId)) return false;
     const nextEvents = [...completedHeartEvents, eventId];
-    const nextHearts = hearts + 1;
+    const nextHearts = hearts;
     setCompletedHeartEvents(nextEvents);
     setHeartsState(nextHearts);
     AsyncStorage.multiSet([

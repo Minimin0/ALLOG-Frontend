@@ -69,7 +69,7 @@ const PATHS = {
   VerificationLoading: '/verify/loading', VerificationResult: '/verify/result',
   RewardDetail: '/reward/reward', EditProfile: '/my/edit-profile', Notifications: '/my/notifications',
   Privacy: '/my/privacy', Terms: '/my/terms', Support: '/my/support', Settings: '/my/settings',
-  AiCoach: '/ai', HeartEvent: '/heart-event', Report: '/report', FullRanking: '/ranking',
+  AiCoach: '/ai', Report: '/report', FullRanking: '/ranking',
   RankingCriteria: '/ranking', GroupResult: '/group/join-complete', GroupDetail: '/explore/group/group',
   FirebaseDebug: '/auth/firebase-debug', InviteLanding: '/group/invite', Placeholder: '/my/settings',
 };

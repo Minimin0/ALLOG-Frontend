@@ -33,13 +33,6 @@ function JoinCompletePage() {
               <span className="text-[20px] text-[#d9573b]">♥</span>
               <span className="text-[18px] font-bold text-black">2</span>
             </div>
-            <button
-              type="button"
-              onClick={() => navigate("/heart-event")}
-              className="mt-2 text-[12px] font-semibold text-[#6b7268]"
-            >
-              하트 얻으러 가기 &gt;
-            </button>
           </div>
         </div>
 

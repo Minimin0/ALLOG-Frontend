@@ -22,7 +22,6 @@ import NotificationSettingsPage from "../pages/my/NotificationSettingsPage";
 import PrivacyPage from "../pages/my/PrivacyPage";
 import TermsPage from "../pages/my/TermsPage";
 import CustomerSupportPage from "../pages/my/CustomerSupportPage";
-import HeartEventPage from "../pages/heart/HeartEventPage";
 import CreateGroupPage from "../pages/group/CreateGroupPage";
 import GroupCreatedPage from "../pages/group/GroupCreatedPage";
 import WaitingRoomPage from "../pages/group/WaitingRoomPage";
@@ -82,7 +81,6 @@ function AppRouter() {
       <Route path="/my/privacy" element={<PrivacyPage />} />
       <Route path="/my/terms" element={<TermsPage />} />
       <Route path="/my/support" element={<CustomerSupportPage />} />
-      <Route path="/heart-event" element={<HeartEventPage />} />
 
       {/* 그룹 생성 / 초대 / 대기방 (HW) */}
       <Route path="/group/create" element={<CreateGroupPage />} />

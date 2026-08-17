@@ -40,9 +40,6 @@ export default function JoinCompleteScreen() {
             <Icon name="heart" size={20} />
             <Text className="text-[18px] font-bold text-ink">{hearts ?? '–'}</Text>
           </View>
-          <Pressable onPress={() => router.push('/heart-event')} className="mt-2">
-            <Text className="text-[12px] font-semibold text-muted">하트 안내 보기 ›</Text>
-          </Pressable>
         </View>
       </View>
 
