@@ -66,7 +66,7 @@ export default function BasicInfoScreen() {
             onPress={() => setDateOpen(true)}
             className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface pl-4"
           >
-            <Text className={`flex-1 text-[15px] ${form.birth ? 'text-ink' : 'text-[#bababa]'}`}>
+            <Text className={`flex-1 text-[12px] font-semibold ${form.birth ? 'text-ink' : 'text-[#9c9c9c]'}`}>
               {form.birth || 'YYYY-MM-DD'}
             </Text>
             <View className="h-11 w-11 items-center justify-center">
@@ -96,7 +96,7 @@ export default function BasicInfoScreen() {
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">키</Text>
             <View className={`h-11 flex-row items-center rounded-[15px] border bg-surface px-4 ${heightError ? 'border-danger' : 'border-line'}`}>
-              <TextInput value={form.height} onChangeText={(v) => set('height', v.replace(/\D/g, '').slice(0, 3))} placeholder="165" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+              <TextInput value={form.height} onChangeText={(v) => set('height', v.replace(/\D/g, '').slice(0, 3))} placeholder="165" placeholderTextColor="#9c9c9c" keyboardType="number-pad" className="flex-1 text-center text-[12px] font-semibold text-ink" />
               <Text className="text-[12px] text-subtle">cm</Text>
             </View>
             <FieldError>{heightError}</FieldError>
@@ -104,7 +104,7 @@ export default function BasicInfoScreen() {
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">몸무게</Text>
             <View className={`h-11 flex-row items-center rounded-[15px] border bg-surface px-4 ${weightError ? 'border-danger' : 'border-line'}`}>
-              <TextInput value={form.weight} onChangeText={(v) => set('weight', v.replace(/\D/g, '').slice(0, 3))} placeholder="50" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+              <TextInput value={form.weight} onChangeText={(v) => set('weight', v.replace(/\D/g, '').slice(0, 3))} placeholder="50" placeholderTextColor="#9c9c9c" keyboardType="number-pad" className="flex-1 text-center text-[12px] font-semibold text-ink" />
               <Text className="text-[12px] text-subtle">kg</Text>
             </View>
             <FieldError>{weightError}</FieldError>
