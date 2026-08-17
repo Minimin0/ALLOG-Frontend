@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import Icon from '@/components/common/Icon';
+import PopOnSelect from '@/components/common/PopOnSelect';
 
 const coaches = [
   { name: '응원형', tone: '따뜻하게 격려해드려요', icon: 'coach' },
@@ -34,9 +35,11 @@ export default function CoachStyleScreen() {
               key={c.name}
               onPress={() => setSelected(c.name)}
               style={{ width: '47%', height: 160 }}
-              className={`items-center justify-center rounded-[15px] border px-3 py-3 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}
+              className={`items-center justify-center rounded-[15px] border-2 px-3 py-3 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}
             >
-              <View className="mb-2"><Icon name={c.icon} size={72} /></View>
+              <PopOnSelect active={active}>
+                <View className="mb-2"><Icon name={c.icon} size={72} /></View>
+              </PopOnSelect>
               <Text className="text-[15px] font-bold text-ink">{c.name}</Text>
               <Text className="mt-1 text-[10px] font-medium text-subtle">{c.tone}</Text>
             </Pressable>

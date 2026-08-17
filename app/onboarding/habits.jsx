@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import Icon from '@/components/common/Icon';
+import PopOnSelect from '@/components/common/PopOnSelect';
 
 const habits = [
   { label: '수분케어', subtitle: '충분한 수분 섭취', icon: 'selfcare' },
@@ -35,9 +36,11 @@ export default function HabitsScreen() {
               key={h.label}
               onPress={() => toggle(h.label)}
               style={{ width: '47%' }}
-              className={`items-center gap-1 rounded-[15px] border px-3 py-4 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}
+              className={`items-center gap-1 rounded-[15px] border-2 px-3 py-4 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}
             >
-              <View className="mb-1"><Icon name={h.icon} size={24} /></View>
+              <PopOnSelect active={active}>
+                <View className="mb-1"><Icon name={h.icon} size={24} /></View>
+              </PopOnSelect>
               <Text className="text-[15px] font-bold text-ink">{h.label}</Text>
               <Text className="text-[10px] font-medium text-subtle">{h.subtitle}</Text>
             </Pressable>

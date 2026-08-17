@@ -10,7 +10,7 @@ const PERIOD = ['7일', '14일', '30일'];
 
 function Chip({ label, active, onPress, width }) {
   return (
-    <Pressable onPress={onPress} style={{ width }} className={`items-center rounded-[15px] border py-3 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
+    <Pressable onPress={onPress} style={{ width }} className={`items-center rounded-[15px] border-2 py-3 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
       <Text className={`text-[14px] font-semibold ${active ? 'text-primary' : 'text-ink'}`}>{label}</Text>
     </Pressable>
   );
