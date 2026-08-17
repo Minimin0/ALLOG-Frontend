@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import Svg, { Circle, Line, Path, Rect } from "react-native-svg";
 import HomeScreen from "../screens/main/HomeNative";
 import ExploreScreen from "../screens/main/ExploreScreen";
-import MyGroupScreen from "../screens/main/MyGroupCurrent";
+import MyGroupScreen from "../screens/main/MyGroupNative";
 import RewardScreen from "../screens/main/RewardScreen";
 import MyScreen from "../screens/main/MyScreen";
 const Tab = createBottomTabNavigator();
