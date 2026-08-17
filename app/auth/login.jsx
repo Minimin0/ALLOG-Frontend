@@ -16,14 +16,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
       <ScrollView contentContainerClassName="flex-grow px-12 pt-16 pb-8">
-        <View className="mb-10 h-[64px] items-center justify-center overflow-visible">
-          <Text
-            className="text-center text-[40px] text-ink"
-            style={{ fontWeight: '800', letterSpacing: 1, lineHeight: 56, paddingTop: 4 }}
-          >
-            LOGIN
-          </Text>
-        </View>
+        <Text className="mb-10 text-center text-[40px] font-bold text-ink">LOGIN</Text>
 
         <TextInput
           placeholder="아이디"
