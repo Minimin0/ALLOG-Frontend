@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { Platform, View, Text, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Svg, { Line, Path, Rect } from 'react-native-svg';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import FieldError from '@/components/common/FieldError';
@@ -14,6 +16,7 @@ const WEIGHT_MAX = 120;
 export default function BasicInfoScreen() {
   const router = useRouter();
   const [form, setForm] = useState({ nickname: '', gender: '여성', birth: '', height: '', weight: '' });
+  const [dateOpen, setDateOpen] = useState(false);
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
   const heightError = form.height && (Number(form.height) < HEIGHT_MIN || Number(form.height) > HEIGHT_MAX)
     ? '정확히 입력해주세요'
@@ -57,8 +60,36 @@ export default function BasicInfoScreen() {
 
         <View>
           <Text className="mb-2 text-[13px] font-bold text-subtle">생년월일</Text>
-          <TextInput value={form.birth} onChangeText={(v) => set('birth', v)} placeholder="YYYY-MM-DD" placeholderTextColor="#bababa" keyboardType="numbers-and-punctuation"
-            className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="생년월일 달력 열기"
+            onPress={() => setDateOpen(true)}
+            className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface pl-4"
+          >
+            <Text className={`flex-1 text-[15px] ${form.birth ? 'text-ink' : 'text-[#bababa]'}`}>
+              {form.birth || 'YYYY-MM-DD'}
+            </Text>
+            <View className="h-11 w-11 items-center justify-center">
+              <CalendarIcon />
+            </View>
+          </Pressable>
+          {dateOpen ? (
+            <DateTimePicker
+              value={form.birth ? new Date(`${form.birth}T00:00:00`) : new Date(2000, 0, 1)}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'inline' : 'calendar'}
+              maximumDate={new Date()}
+              onChange={(event, selectedDate) => {
+                setDateOpen(false);
+                if (event.type === 'set' && selectedDate) {
+                  const year = selectedDate.getFullYear();
+                  const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+                  const day = String(selectedDate.getDate()).padStart(2, '0');
+                  set('birth', `${year}-${month}-${day}`);
+                }
+              }}
+            />
+          ) : null}
         </View>
 
         <View className="flex-row gap-3">
@@ -81,5 +112,15 @@ export default function BasicInfoScreen() {
         </View>
       </View>
     </OnboardingShellRN>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 20 20">
+      <Rect x={2} y={3.5} width={16} height={14.5} rx={3} fill="none" stroke="#14453a" strokeWidth={1.7} />
+      <Line x1={2} y1={8} x2={18} y2={8} stroke="#14453a" strokeWidth={1.7} />
+      <Path d="M6 2 L6 5 M14 2 L14 5" stroke="#14453a" strokeWidth={1.7} strokeLinecap="round" />
+    </Svg>
   );
 }
