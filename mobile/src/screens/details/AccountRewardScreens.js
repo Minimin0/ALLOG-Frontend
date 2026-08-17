@@ -41,8 +41,11 @@ function Button({ children, onPress, danger = false }) {
     </Pressable>
   );
 }
+// 교환은 백엔드에 catalogue도 redemption도 없다. 예전에는 여기서 AsyncStorage의
+// 포인트를 직접 깎고 "구매가 완료됐어요"를 띄웠는데, 서버에는 아무 일도 일어나지
+// 않으므로 앱을 지우면 사라지는 잔액과 존재하지 않는 쿠폰을 보여주는 셈이었다.
+// 실제 교환 API가 생기기 전까지는 상품만 보여주고 아무것도 차감하지 않는다.
 export function RewardDetailScreen({ navigation, route }) {
-  const { points, deductPoints } = useAppState();
   const reward = route.params?.reward || {
     id: "serum-trial",
     title: "AAC 시그니처 세럼\n체험권",
@@ -55,8 +58,6 @@ export function RewardDetailScreen({ navigation, route }) {
       : reward.id === "free-shipping"
         ? ShippingIcon
         : TrialIcon;
-  const [done, setDone] = useState(false);
-  const afford = points >= reward.cost;
   return (
     <View style={s.screen}>
       <Header navigation={navigation} title="리워드 상세" />
@@ -73,74 +74,14 @@ export function RewardDetailScreen({ navigation, route }) {
           </View>
         </View>
         <View style={s.balanceCard}>
-          <Row label="보유 포인트" value={points} />
-          <View style={s.line} />
-          <Row
-            label="교환 후 남는 포인트"
-            value={afford ? points - reward.cost : "포인트 부족"}
-            danger={!afford}
-          />
+          <Row label="교환" value="혜택 준비 중" />
         </View>
       </ScrollView>
       <View style={s.footer}>
-        <Pressable
-          disabled={!afford}
-          style={[s.button, !afford && { backgroundColor: "#bababa" }]}
-          onPress={() => {
-            deductPoints(reward.cost);
-            setDone(true);
-          }}
-        >
-          <Text style={s.buttonText}>
-            {afford ? "교환하기" : "포인트 부족"}
-          </Text>
+        <Pressable disabled style={[s.button, { backgroundColor: "#bababa" }]}>
+          <Text style={s.buttonText}>혜택 준비 중</Text>
         </Pressable>
       </View>
-      <Modal visible={done} transparent animationType="fade">
-        <View style={s.dim}>
-          <AnimatedEntrance distance={8} duration={260} style={s.purchase}>
-            <View style={s.successHalo}>
-              <View style={s.check}>
-                <Text style={s.checkText}>✓</Text>
-              </View>
-            </View>
-            <View style={s.successBadge}>
-              <Text style={s.successBadgeText}>교환 완료</Text>
-            </View>
-            <Text style={s.purchaseTitle}>구매가 완료됐어요!</Text>
-            <Text style={s.purchaseSub}>
-              새로운 리워드가 내 쿠폰함에 추가됐어요.
-            </Text>
-            <View style={s.purchasedItem}>
-              <View style={s.purchasedIcon}>
-                <DetailIcon width={32} height={32} />
-              </View>
-              <View style={s.purchasedCopy}>
-                <Text style={s.purchaseName}>{reward.title}</Text>
-                <Text style={s.purchaseNote}>{reward.note}</Text>
-              </View>
-              <View style={s.purchaseCostRow}>
-                <RewardIcon width={15} height={15} />
-                <Text style={s.purchaseCost}>{reward.cost}</Text>
-              </View>
-            </View>
-            <View style={s.remain}>
-              <Text style={s.remainLabel}>남은 포인트</Text>
-              <Text style={s.remainValue}>{points}</Text>
-            </View>
-            <View style={s.purchaseAction}>
-              <Button
-                onPress={() => {
-                  setDone(false);
-                  navigation.goBack();
-                }}
-              >
-                확인
-              </Button>
-            </View>
-          </AnimatedEntrance>
-        </View>
-      </Modal>
     </View>
   );
 }
