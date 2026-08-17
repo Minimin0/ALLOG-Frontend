@@ -93,7 +93,7 @@ export default function LoginScreen() {
 
         <View className="mt-5 flex-row justify-center">
           <Text className="text-[13px] text-ink">계정이 없다면? </Text>
-          <Pressable onPress={() => router.push('/auth/signup-phone')}>
+          <Pressable onPress={() => router.push('/auth/signup-account')}>
             <Text className="text-[13px] font-semibold text-ink underline">회원 가입하기</Text>
           </Pressable>
         </View>
