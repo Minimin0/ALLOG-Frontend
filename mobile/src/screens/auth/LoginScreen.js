@@ -101,7 +101,7 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 40,
     fontWeight: "700",
-    lineHeight: 35,
+    lineHeight: 48,
     letterSpacing: -1.6,
   },
   input: {
