@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
@@ -16,10 +16,12 @@ export default function CameraScreen() {
   const [recording, setRecording] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    if (camPerm && !camPerm.granted) requestCam();
-    if (micPerm && !micPerm.granted) requestMic();
-  }, [camPerm, micPerm]);
+  const requestRequiredPermissions = async () => {
+    const cameraPermission = camPerm?.granted ? camPerm : await requestCam();
+    if (cameraPermission.granted && !micPerm?.granted) {
+      await requestMic();
+    }
+  };
 
   const startRecording = async () => {
     if (recording || !cameraRef.current) return;
@@ -41,13 +43,13 @@ export default function CameraScreen() {
     }
   };
 
-  if (!camPerm) return <View className="flex-1 bg-black" />;
+  if (!camPerm || !micPerm) return <View className="flex-1 bg-black" />;
 
-  if (!camPerm.granted) {
+  if (!camPerm.granted || !micPerm.granted) {
     return (
       <View className="flex-1 items-center justify-center bg-black px-8">
-        <Text className="text-center text-[15px] text-white/80">운동 인증 영상을 찍으려면 카메라 권한이 필요해요.</Text>
-        <Pressable onPress={requestCam} className="mt-4 rounded-pill bg-white px-6 py-3">
+        <Text className="text-center text-[15px] text-white/80">운동 인증 영상을 찍으려면 카메라와 마이크 권한이 필요해요.</Text>
+        <Pressable onPress={requestRequiredPermissions} className="mt-4 rounded-pill bg-white px-6 py-3">
           <Text className="font-bold text-black">권한 허용</Text>
         </Pressable>
       </View>
