@@ -4,14 +4,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import TermsAgreementModal from '@/components/auth/TermsAgreementModal';
+import FieldError from '@/components/common/FieldError';
 
 // 본인 인증 (웹 SignUpPhonePage 포팅). 약관 동의는 바텀시트 모달로.
 const carriers = ['SKT', 'KT', 'LG U+'];
+const PHONE_RE = /^010-\d{4}-\d{4}$/;
+
+// 입력하는 대로 010-0000-0000 형태로 자동 정렬.
+function formatPhone(raw) {
+  const digits = raw.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
 
 export default function SignUpPhoneScreen() {
   const router = useRouter();
   const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [code, setCode] = useState('');
+  const [codeVerified, setCodeVerified] = useState(false);
+  const [codeError, setCodeError] = useState('');
   const [carrier, setCarrier] = useState('SKT');
   const [carrierOpen, setCarrierOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
@@ -24,6 +37,38 @@ export default function SignUpPhoneScreen() {
       const next = !(a.terms && a.privacy && a.marketing);
       return { terms: next, privacy: next, marketing: next };
     });
+
+  const onChangePhone = (v) => {
+    setPhone(formatPhone(v));
+    if (phoneError) setPhoneError('');
+  };
+
+  const verifyCode = () => {
+    if (code.length !== 6) {
+      setCodeError('인증번호 6자리를 입력해주세요');
+      return;
+    }
+    setCodeError('');
+    setCodeVerified(true);
+  };
+
+  const onChangeCode = (v) => {
+    setCode(v.replace(/\D/g, '').slice(0, 6));
+    setCodeVerified(false);
+    if (codeError) setCodeError('');
+  };
+
+  const handleNext = () => {
+    if (!PHONE_RE.test(phone)) {
+      setPhoneError('010-0000-0000 형식으로 입력해주세요');
+      return;
+    }
+    if (!codeVerified) {
+      setCodeError('인증번호를 먼저 확인해주세요');
+      return;
+    }
+    router.push('/auth/signup-account');
+  };
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
@@ -38,14 +83,14 @@ export default function SignUpPhoneScreen() {
         <Text className="mt-8 text-[15px] font-bold text-subtle">통신사</Text>
         <View className="mt-2 w-[148px]">
           <Pressable onPress={() => setCarrierOpen((o) => !o)} className="h-11 flex-row items-center justify-between rounded-[15px] border border-line bg-surface px-3">
-            <Text className="text-[12px] text-[#9c9c9c]">{carrier}</Text>
+            <Text className="text-[12px] font-semibold text-[#9c9c9c]">{carrier}</Text>
             <Text className="text-[#555]">⌄</Text>
           </Pressable>
           {carrierOpen && (
             <View className="mt-1 overflow-hidden rounded-[15px] border border-line bg-surface">
               {carriers.map((c) => (
                 <Pressable key={c} onPress={() => { setCarrier(c); setCarrierOpen(false); }} className="px-3 py-2.5">
-                  <Text className="text-[12px] text-ink">{c}</Text>
+                  <Text className="text-[12px] font-semibold text-ink">{c}</Text>
                 </Pressable>
               ))}
             </View>
@@ -56,26 +101,36 @@ export default function SignUpPhoneScreen() {
         <Text className="mt-6 text-[15px] font-bold text-subtle">전화번호</Text>
         <TextInput
           value={phone}
-          onChangeText={setPhone}
+          onChangeText={onChangePhone}
           keyboardType="phone-pad"
+          maxLength={13}
           placeholder="010-0000-0000"
           placeholderTextColor="#bababa"
-          className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] font-semibold text-ink"
+          className={`mt-2 h-11 rounded-[15px] border bg-surface px-4 text-[12px] font-semibold text-ink ${phoneError ? 'border-danger' : 'border-line'}`}
         />
+        <FieldError>{phoneError}</FieldError>
 
-        {/* 인증번호 */}
-        <View className="mt-3 h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
+        {/* 인증번호 + 확인 버튼 */}
+        <View className={`mt-3 h-11 flex-row items-center rounded-[15px] border bg-surface py-1 pl-4 pr-1.5 ${codeError ? 'border-danger' : codeVerified ? 'border-primary' : 'border-line'}`}>
           <TextInput
             value={code}
-            onChangeText={setCode}
+            onChangeText={onChangeCode}
             keyboardType="number-pad"
             maxLength={6}
+            editable={!codeVerified}
             placeholder="인증번호 6자리"
             placeholderTextColor="#bababa"
             className="flex-1 text-[12px] font-semibold text-ink"
           />
-          <Text className="text-[12px] text-[#bababa]">00:00</Text>
+          <Pressable
+            onPress={verifyCode}
+            disabled={codeVerified}
+            className={`h-8 items-center justify-center rounded-[11px] px-3.5 ${codeVerified ? 'bg-primary-tint' : 'bg-ink'}`}
+          >
+            <Text className={`text-[12px] font-bold ${codeVerified ? 'text-primary' : 'text-white'}`}>{codeVerified ? '확인됨' : '확인'}</Text>
+          </Pressable>
         </View>
+        <FieldError>{codeError}</FieldError>
 
         {/* 약관 동의 (모달 열기) */}
         <Pressable onPress={() => setTermsOpen(true)} className="mt-4 flex-row items-center gap-2">
@@ -89,7 +144,7 @@ export default function SignUpPhoneScreen() {
         <View className="flex-1" />
 
         <Pressable
-          onPress={() => agreed && router.push('/auth/signup-account')}
+          onPress={handleNext}
           disabled={!agreed}
           className={`mb-4 h-[50px] items-center justify-center rounded-[20px] ${agreed ? 'bg-ink' : 'bg-disabled'}`}
         >

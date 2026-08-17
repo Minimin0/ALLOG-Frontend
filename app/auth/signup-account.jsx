@@ -3,12 +3,23 @@ import { View, Text, Pressable, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import FieldError from '@/components/common/FieldError';
+
 // 아이디/비밀번호 설정 (웹 SignUpAccountPage 포팅).
+// 아이디: 영문 대소문자, 4~13자 / 비밀번호: 영문 대소문자+숫자, 10~12자.
 export default function SignUpAccountScreen() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+
+  const usernameError = username.length > 0 && (username.length < 4 || username.length > 13)
+    ? '아이디는 4~13자로 입력해주세요'
+    : '';
+  const passwordError = password.length > 0 && (password.length < 10 || password.length > 12)
+    ? '비밀번호는 10~12자로 입력해주세요'
+    : '';
+  const mismatch = confirm.length > 0 && password !== confirm;
   const match = confirm.length > 0 && password === confirm;
 
   return (
@@ -24,33 +35,36 @@ export default function SignUpAccountScreen() {
         <TextInput
           value={username}
           onChangeText={setUsername}
-          placeholder="아이디 (4~13자리 이내)"
+          placeholder="아이디 (영문 대소문자, 4~13자)"
           placeholderTextColor="#bababa"
           autoCapitalize="none"
-          className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
+          className={`mt-2 h-11 rounded-[15px] border bg-surface px-4 text-[13px] text-ink ${usernameError ? 'border-danger' : 'border-line'}`}
         />
+        <FieldError>{usernameError}</FieldError>
 
         <Text className="mt-6 text-[15px] font-bold text-subtle">비밀번호</Text>
         <TextInput
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="비밀번호 (10~12자리 이내)"
+          placeholder="비밀번호 (영문 대소문자+숫자, 10~12자)"
           placeholderTextColor="#bababa"
-          className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
+          className={`mt-2 h-11 rounded-[15px] border bg-surface px-4 text-[13px] text-ink ${passwordError || mismatch ? 'border-danger' : 'border-line'}`}
         />
+        <FieldError>{passwordError}</FieldError>
 
-        <View className="mt-3 h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
+        <View className={`mt-3 h-11 flex-row items-center rounded-[15px] border bg-surface px-4 ${mismatch ? 'border-danger' : 'border-line'}`}>
           <TextInput
             value={confirm}
             onChangeText={setConfirm}
             secureTextEntry
             placeholder="비밀번호 확인"
             placeholderTextColor="#bababa"
-            className="flex-1 text-[16px] text-ink"
+            className="flex-1 text-[13px] text-ink"
           />
           {match && <Text className="text-primary">✓</Text>}
         </View>
+        <FieldError>{mismatch ? '비밀번호가 일치하지 않아요' : ''}</FieldError>
 
         <View className="flex-1" />
 

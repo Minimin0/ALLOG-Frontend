@@ -3,14 +3,25 @@ import { View, Text, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
+import FieldError from '@/components/common/FieldError';
 
 const genders = ['여성', '남성', '선택 안함'];
+const HEIGHT_MIN = 120;
+const HEIGHT_MAX = 250;
+const WEIGHT_MIN = 30;
+const WEIGHT_MAX = 120;
 
 export default function BasicInfoScreen() {
   const router = useRouter();
   const [form, setForm] = useState({ nickname: '', gender: '여성', birth: '', height: '', weight: '' });
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
-  const isValid = form.nickname.trim() && form.birth && form.height && form.weight;
+  const heightError = form.height && (Number(form.height) < HEIGHT_MIN || Number(form.height) > HEIGHT_MAX)
+    ? `${HEIGHT_MIN}~${HEIGHT_MAX}cm 사이로 정확히 입력해주세요`
+    : '';
+  const weightError = form.weight && (Number(form.weight) < WEIGHT_MIN || Number(form.weight) > WEIGHT_MAX)
+    ? `${WEIGHT_MIN}~${WEIGHT_MAX}kg 사이로 정확히 입력해주세요`
+    : '';
+  const isValid = form.nickname.trim() && form.birth && form.height && form.weight && !heightError && !weightError;
 
   return (
     <OnboardingShellRN
@@ -53,17 +64,19 @@ export default function BasicInfoScreen() {
         <View className="flex-row gap-3">
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">키</Text>
-            <View className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
-              <TextInput value={form.height} onChangeText={(v) => set('height', v)} placeholder="165" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+            <View className={`h-11 flex-row items-center rounded-[15px] border bg-surface px-4 ${heightError ? 'border-danger' : 'border-line'}`}>
+              <TextInput value={form.height} onChangeText={(v) => set('height', v.replace(/\D/g, '').slice(0, 3))} placeholder="165" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
               <Text className="text-[12px] text-subtle">cm</Text>
             </View>
+            <FieldError>{heightError}</FieldError>
           </View>
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">몸무게</Text>
-            <View className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
-              <TextInput value={form.weight} onChangeText={(v) => set('weight', v)} placeholder="50" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+            <View className={`h-11 flex-row items-center rounded-[15px] border bg-surface px-4 ${weightError ? 'border-danger' : 'border-line'}`}>
+              <TextInput value={form.weight} onChangeText={(v) => set('weight', v.replace(/\D/g, '').slice(0, 3))} placeholder="50" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
               <Text className="text-[12px] text-subtle">kg</Text>
             </View>
+            <FieldError>{weightError}</FieldError>
           </View>
         </View>
       </View>
