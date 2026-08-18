@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
+const previousApiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
+process.env.EXPO_PUBLIC_API_BASE_URL = 'https://api.allog-app.store';
 const source = fs.readFileSync(new URL('./api.js', import.meta.url), 'utf8')
   .replace('import { getCurrentIdToken } from "./authApi";', 'const getCurrentIdToken = async () => null;');
+assert.equal(source.includes('http://localhost:8080'), false);
 const { ApiError, apiRequest } = await import(
   `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`,
 );
@@ -61,5 +64,10 @@ try {
 
   console.log('api 401 refresh retry OK');
 } finally {
+  if (previousApiBaseUrl === undefined) {
+    delete process.env.EXPO_PUBLIC_API_BASE_URL;
+  } else {
+    process.env.EXPO_PUBLIC_API_BASE_URL = previousApiBaseUrl;
+  }
   globalThis.fetch = originalFetch;
 }

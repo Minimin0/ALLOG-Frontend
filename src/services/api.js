@@ -3,7 +3,7 @@
 // Expo(RN)에서는 import.meta가 없으므로 EXPO_PUBLIC_* 환경변수를 사용합니다.
 import { getCurrentIdToken } from "./authApi";
 
-export const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
+export const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "";
 
 // 화면이 분기해야 하는 최소 단위. 백엔드는 같은 409를 body 있이/없이 모두 보내므로
 // INSUFFICIENT_HEARTS와 그 밖의 CONFLICT를 반드시 다른 케이스로 취급합니다.
@@ -51,6 +51,7 @@ function classify(status, data) {
  * @param {string} [options.overrideToken] - 값을 주면 실제 토큰 대신 이 값을 사용 (잘못된 토큰 케이스 테스트용)
  */
 export async function apiRequest(path, options = {}) {
+  if (!BASE_URL) return { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
   const { method = "GET", body, headers = {}, skipAuth = false, overrideToken, _getToken = getCurrentIdToken, _hasRetriedAuth = false } = options;
 
   const finalHeaders = { "Content-Type": "application/json", ...headers };
