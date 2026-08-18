@@ -3,7 +3,8 @@ import { View, Text, Pressable, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
-import { useOnboardingStore } from '@/stores/onboardingStore';
+import FieldError from '@/components/common/FieldError';
+import { formatBirthInput, toIsoBirthDate, useOnboardingStore } from '@/stores/onboardingStore';
 
 const genders = ['여성', '남성', '선택 안함'];
 
@@ -17,7 +18,10 @@ export default function BasicInfoScreen() {
     nickname: saved.nickname, gender: saved.gender, birth: saved.birth, height: '', weight: '',
   });
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
-  const isValid = form.nickname.trim() && form.birth && form.height && form.weight;
+  // 서버는 birthDate를 LocalDate로 파싱한다. 형식이 어긋난 값을 들고 다음 단계로
+  // 넘어가면 온보딩을 다 끝낸 뒤에야 400을 보게 되므로 여기서 막는다.
+  const birthIso = toIsoBirthDate(form.birth);
+  const isValid = form.nickname.trim() && birthIso && form.height && form.weight;
 
   return (
     <OnboardingShellRN
@@ -56,8 +60,9 @@ export default function BasicInfoScreen() {
 
         <View>
           <Text className="mb-2 text-[13px] font-bold text-subtle">생년월일</Text>
-          <TextInput value={form.birth} onChangeText={(v) => set('birth', v)} placeholder="YYYY-MM-DD" placeholderTextColor="#bababa" keyboardType="numbers-and-punctuation"
+          <TextInput value={form.birth} onChangeText={(v) => set('birth', formatBirthInput(v))} placeholder="YYYY-MM-DD" placeholderTextColor="#bababa" keyboardType="number-pad" maxLength={10}
             className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" />
+          <FieldError>{form.birth && !birthIso ? '생년월일을 YYYY-MM-DD 형식의 실제 날짜로 입력해주세요.' : null}</FieldError>
         </View>
 
         <View className="flex-row gap-3">
