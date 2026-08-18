@@ -1,7 +1,7 @@
 // 실행: node src/stores/onboardingStore.check.mjs
 // 온보딩 라벨 → 백엔드 계약값 매핑 확인. 값이 하나라도 틀리면 POST /api/v1/users가 400이다.
 import assert from 'node:assert/strict';
-import { useOnboardingStore } from './onboardingStore.js';
+import { formatBirthInput, toIsoBirthDate, useOnboardingStore } from './onboardingStore.js';
 
 const s = useOnboardingStore.getState();
 
@@ -42,5 +42,22 @@ for (const m of [0, 30]) {
   const hours = useOnboardingStore.getState().toCreateProfileRequest().onboarding.averageSleepHours;
   assert.ok(Number.isInteger(hours * 10), `sleepM=${m} → ${hours}`);
 }
+
+// 생년월일은 서버가 LocalDate로 파싱한다. 숫자만 친 입력에 하이픈을 넣어주고,
+// 달력에 없는 날짜나 미래는 요청에 실리지 않아야 한다 (실리면 400이다).
+assert.equal(formatBirthInput('20000730'), '2000-07-30');
+assert.equal(formatBirthInput('2000-07-30'), '2000-07-30');
+assert.equal(formatBirthInput('1111'), '1111');
+assert.equal(formatBirthInput('200007301234'), '2000-07-30');
+assert.equal(toIsoBirthDate('2000-07-30'), '2000-07-30');
+for (const bad of ['11112233', '1111-22-33', '2000-02-30', '2099-01-01', '2000-7-3', '']) {
+  assert.equal(toIsoBirthDate(bad), null, `허용되면 안 되는 값: ${bad}`);
+}
+
+// 화면이 못 걸러도 요청 본문에는 절대 실리지 않는다.
+useOnboardingStore.getState().patch({ birth: '11112233' });
+assert.ok(!('birthDate' in useOnboardingStore.getState().toCreateProfileRequest()));
+useOnboardingStore.getState().patch({ birth: '2000-07-30' });
+assert.equal(useOnboardingStore.getState().toCreateProfileRequest().birthDate, '2000-07-30');
 
 console.log('onboarding mapping OK');

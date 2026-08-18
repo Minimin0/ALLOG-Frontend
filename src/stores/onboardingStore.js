@@ -22,6 +22,37 @@ const EXERCISE_DAYS = {
 };
 const MEALS = { "먹지 않음": 0, "1회": 1, "2회": 2, "3회 이상": 3 };
 
+// 생년월일 칸은 숫자 키보드로 열리고 서버는 ISO(yyyy-MM-dd)만 파싱한다. 하이픈을
+// 직접 치는 사람이 드물어 20000730처럼 들어오는데, 그대로 보내면 온보딩을 다 끝낸
+// 마지막 단계에서 400으로 되돌아온다. 입력하는 동안 하이픈을 대신 넣어준다.
+export function formatBirthInput(raw) {
+  const digits = String(raw ?? "").replace(/[^0-9]/g, "").slice(0, 8);
+  if (digits.length <= 4) return digits;
+  if (digits.length <= 6) return digits.slice(0, 4) + "-" + digits.slice(4);
+  return digits.slice(0, 4) + "-" + digits.slice(4, 6) + "-" + digits.slice(6);
+}
+
+// 달력에 실제로 있는 날짜이고 미래가 아닐 때만 ISO 문자열을 돌려준다. 1111-22-33처럼
+// 자릿수만 맞는 값도 서버 LocalDate에서 깨지므로 여기서 걸러 화면이 먼저 알려준다.
+export function toIsoBirthDate(value) {
+  const m = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.exec(String(value ?? "").trim());
+  if (!m) return null;
+  const year = Number(m[1]);
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  const at = Date.UTC(year, month - 1, day);
+  const date = new Date(at);
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  if (at > Date.now()) return null;
+  return m[1] + "-" + m[2] + "-" + m[3];
+}
+
 export const useOnboardingStore = create((set, get) => ({
   nickname: "",
   gender: "여성",
@@ -64,7 +95,8 @@ export const useOnboardingStore = create((set, get) => ({
       },
     };
     if (GENDER[s.gender]) request.gender = GENDER[s.gender];
-    if (s.birth) request.birthDate = s.birth;
+    const birthDate = toIsoBirthDate(s.birth);
+    if (birthDate) request.birthDate = birthDate;
     return request;
   },
 }));
