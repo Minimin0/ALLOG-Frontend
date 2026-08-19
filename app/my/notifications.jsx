@@ -10,7 +10,7 @@ const initialSettings = [
   { key: 'routine', label: '루틴 인증 알림', desc: '마감 임박, 인증 리마인드', value: true },
   { key: 'group', label: '그룹 활동 알림', desc: '응원, 댓글, 새 멤버 참가', value: true },
   { key: 'goal', label: '공동 목표 달성 알림', desc: '그룹 공동 목표 달성 시 알림', value: true },
-  { key: 'reward', label: '리워드 · 이벤트 알림', desc: '하트 이벤트, 신규 리워드 소식', value: true },
+  { key: 'reward', label: '리워드 안내 알림', desc: '하트 및 신규 리워드 안내', value: true },
   { key: 'marketing', label: '마케팅 알림', desc: 'AAC 혜택 및 프로모션 소식', value: false },
 ];
 

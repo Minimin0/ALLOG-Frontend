@@ -9,7 +9,7 @@ import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useUserStore } from '@/stores/userStore';
 
 // 온보딩 완료. 4단계에서 모은 값을 POST /api/v1/users 한 번으로 보낸다.
-// 하트는 백엔드가 같은 트랜잭션에서 지급한다 — 프론트가 지급하지 않고, 결과만 읽어서 보여준다.
+// 초기 하트는 백엔드가 지급하고, 프론트는 stats의 실제 잔액만 표시한다.
 // 완료 화면 디자인은 팀원 최신본(mobile/src/screens/onboarding/CompleteScreen.js) 이식.
 // 단, 도너가 "하트 3개"로 박아둔 값은 쓰지 않고 실제 stats.hearts를 그대로 보여준다.
 
@@ -60,10 +60,8 @@ export default function OnboardingCompleteScreen() {
       const response = await useUserStore.getState().createProfile(body);
       if (cancelled) return;
 
-      // 이미 프로필이 있으면(재진입) 실패가 아니라 완료로 본다.
-      const alreadyDone =
-        response.errorCode === ApiError.CONFLICT &&
-        (response.data?.error?.code === 'PROFILE_ALREADY_EXISTS' || response.status === 409);
+      // 명시적인 기계 코드가 있는 재진입만 완료로 취급한다.
+      const alreadyDone = response.data?.error?.code === 'PROFILE_ALREADY_EXISTS';
 
       if (response.ok || alreadyDone) {
         useOnboardingStore.getState().reset();
@@ -122,24 +120,16 @@ export default function OnboardingCompleteScreen() {
           ))}
         </View>
         <Text style={s.copy}>
-          <Text style={s.red}>하트</Text>는 <Text style={s.bold}>그룹 참가</Text>에만 사용돼요.
+          <Text style={s.red}>하트</Text>는 <Text style={s.bold}>그룹 참가</Text>에 사용돼요.
         </Text>
         <View style={s.card}>
           <Text style={s.cardHead}>
             그룹에 참가할 때 <Text style={s.red}>하트 1개</Text>를 사용해요
           </Text>
           <View style={s.line} />
-          <View style={s.flowRow}>
-            <View style={s.condBox}>
-              <Text style={s.condText}>
-                그룹 공동 성공률 80% 이상{`\n`}+{`\n`}개인 달성률 70% 이상
-              </Text>
-            </View>
-            <Text style={s.arrow}>→</Text>
-            <View style={s.rewardBox}>
-              <Text style={s.rewardText}>하트 1개를{`\n`}다시 받아요</Text>
-            </View>
-          </View>
+          <Text style={s.refundText}>
+            시작 전에 참가를 취소하거나 그룹이 취소되면{`\n`}환급은 서버에서 자동 처리돼요.
+          </Text>
         </View>
       </View>
       <Pressable style={s.button} onPress={() => router.replace('/home')}>
@@ -197,29 +187,8 @@ const s = StyleSheet.create({
     gap: 16,
   },
   cardHead: { textAlign: 'center', fontSize: 15, lineHeight: 21, fontWeight: '700', color: '#000' },
+  refundText: { textAlign: 'center', fontSize: 13, fontWeight: '600', lineHeight: 20, color: '#4a4a4a' },
   line: { height: 1, backgroundColor: '#e7e3d8' },
-  flowRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  condBox: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#dfe6e1',
-    backgroundColor: '#eef3ef',
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 10,
-  },
-  condText: { textAlign: 'center', fontSize: 13, fontWeight: '700', lineHeight: 20, color: '#14453a' },
-  arrow: { fontSize: 20, fontWeight: '700', color: '#9aa39c' },
-  rewardBox: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#f6d4c8',
-    backgroundColor: '#fdece5',
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 10,
-  },
-  rewardText: { textAlign: 'center', fontSize: 13, fontWeight: '700', lineHeight: 20, color: '#d9573b' },
   button: {
     height: 55,
     borderRadius: 27.5,

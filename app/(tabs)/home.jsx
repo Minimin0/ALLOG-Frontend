@@ -13,7 +13,7 @@ import { useUserStore } from '@/stores/userStore';
 // GET /me/groups + GET /me/groups/{id}/progress에서 온다. 프론트는 계산하지 않고 표시만 한다.
 // 화면 디자인은 팀원 최신본(mobile/src/screens/main/HomeNative.js) 이식 —
 // 도너가 박아둔 값("하루 운동 30분", "2위 / 5명", "60%")은 쓰지 않고 실제 백엔드 값을 그대로 쓴다.
-const SUCCESS_GOAL = 70;
+// 진행률은 서버가 정한 완주 목표(requiredCompletionCount) 대비로만 표시한다.
 
 function formatDeadline(iso) {
   if (!iso) return null;
@@ -64,7 +64,9 @@ export default function HomeScreen() {
   const current = myGroups.find((g) => g.groupStatus === 'ACTIVE') ?? myGroups[0] ?? null;
   const personal = progress?.personal ?? null;
   const required = personal?.requiredCompletionCount ?? 0;
-  const successRate = required > 0 ? Math.round((personal.completedCount / required) * 100) : 0;
+  const completed = personal?.completedCount ?? 0;
+  const completedTowardGoal = Math.min(completed, required);
+  const completionProgress = required > 0 ? Math.round((completedTowardGoal / required) * 100) : 0;
   const deadline = formatDeadline(personal?.certificationDeadline);
 
   return (
@@ -84,7 +86,7 @@ export default function HomeScreen() {
             icon={<Icon name="heart" size={19} />}
             value={String(stats?.hearts ?? '–')}
             label="보유 하트"
-            note="하트 얻으러 가기 >"
+            note="하트 안내 보기 >"
             onPress={() => router.push('/heart-event')}
           />
           <Card
@@ -147,19 +149,16 @@ export default function HomeScreen() {
           </View>
         </AnimatedEntrance>
 
-        {/* 개인 성공률 게이지 */}
+        {/* 서버가 정한 완주 목표(requiredCompletionCount) 대비 진행률 */}
         <AnimatedEntrance delay={180} style={s.gaugeCard}>
           <View style={s.between}>
-            <Text style={s.gaugeLabel}>개인 성공률</Text>
-            <Text style={s.rate}>{successRate}%</Text>
+            <Text style={s.gaugeLabel}>완주 목표 진행률</Text>
+            <Text style={s.rate}>{completionProgress}%</Text>
           </View>
           <View style={s.track}>
-            <AnimatedGauge percent={successRate} color="#669884" height={9} />
-            <View style={s.goalMarker}>
-              <Text style={s.goalMarkerText}>▲</Text>
-            </View>
+            <AnimatedGauge percent={completionProgress} color="#669884" height={9} />
           </View>
-          <Text style={s.goal}>개인 목표 {SUCCESS_GOAL}%</Text>
+          <Text style={s.goal}>완주 목표 {completedTowardGoal} / {required}회</Text>
         </AnimatedEntrance>
       </ScrollView>
     </View>
@@ -267,7 +266,5 @@ const s = StyleSheet.create({
   gaugeLabel: { fontSize: 13, fontWeight: '600' },
   rate: { fontSize: 20, fontWeight: '900', color: '#669884' },
   track: { position: 'relative', marginTop: 12, height: 9, borderRadius: 5, backgroundColor: '#efefef' },
-  goalMarker: { position: 'absolute', top: 13, left: `${SUCCESS_GOAL}%`, transform: [{ translateX: -5 }] },
-  goalMarkerText: { fontSize: 10, lineHeight: 10, color: '#c08a24' },
   goal: { marginTop: 8, textAlign: 'right', fontSize: 11, fontWeight: '700', color: '#c08a24' },
 });
