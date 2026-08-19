@@ -1,7 +1,9 @@
 # ALLOG UI Baseline Handoff
 
-> **기준 시각:** 2026-08-19 (KST)  
-> **Frontend baseline:** `origin/main` `61f6212b0a98ad575d4dda25f8f94ee382f04bba`  
+> **기준 시각:** 2026-08-19 (KST)
+>
+> **Frontend baseline:** `origin/main` `61f6212b0a98ad575d4dda25f8f94ee382f04bba`
+>
 > **Backend baseline:** `origin/main` `70cf3410931fde6323e8b80f6b3ddb848ff7cc1b`
 
 이 문서는 ALLOG의 UI/UX polishing 시작 전 상태를 사람이 재검토할 수 있도록 정리한 handoff다. 사실 주장에는 실행 명령 또는 GitHub artifact를 함께 적고, **실제 Android runtime에서 확인하지 못한 항목을 통과로 표시하지 않는다.**
