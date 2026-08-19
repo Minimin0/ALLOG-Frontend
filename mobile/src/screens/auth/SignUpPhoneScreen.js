@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import DesignScreen from "../../components/DesignScreen";
 import CheckIcon from "../../../assets/images/Check.svg";
-import { colors } from "../../theme";
 
 export default function SignUpPhoneScreen({ navigation }) {
   const [phone, setPhone] = useState("");
@@ -42,11 +41,11 @@ export default function SignUpPhoneScreen({ navigation }) {
           </Text>
           <Text style={[s.label, { top: 209 }]}>통신사</Text>
           <Pressable
-            style={s.carrier}
+            style={[s.carrier, carrierOpen && s.carrierOpen]}
             onPress={() => setCarrierOpen((value) => !value)}
           >
             <Text style={s.carrierText}>{carrier}</Text>
-            <Text>⌄</Text>
+            <Text>{carrierOpen ? "⌃" : "⌄"}</Text>
           </Pressable>
           {carrierOpen ? (
             <View style={s.carrierMenu}>
@@ -75,37 +74,46 @@ export default function SignUpPhoneScreen({ navigation }) {
             returnKeyType="next"
             onSubmitEditing={Keyboard.dismiss}
             placeholder="010-0000-0000"
-            placeholderTextColor={colors.disabled}
+            placeholderTextColor="#bababa"
             style={[s.input, { top: 334 }]}
           />
           <View style={s.codeWrap}>
-            <TextInput
-              value={code}
-              onChangeText={(value) => {
-                setCode(value);
-                if (value.length === 6) Keyboard.dismiss();
-              }}
-              maxLength={6}
-              keyboardType="number-pad"
-              returnKeyType="done"
-              onSubmitEditing={Keyboard.dismiss}
-              inputAccessoryViewID={
-                Platform.OS === "ios" ? "verificationDone" : undefined
-              }
-              placeholder="인증번호 6자리"
-              placeholderTextColor={colors.disabled}
-              style={[
-                s.input,
-                {
-                  position: "relative",
-                  left: 0,
-                  top: 0,
-                  width: 233,
-                  paddingRight: 60,
-                },
-              ]}
-            />
-            <Text style={s.timer}>00:00</Text>
+            <View style={s.codeInputBox}>
+              <TextInput
+                value={code}
+                onChangeText={(value) => {
+                  setCode(value);
+                  if (value.length === 6) Keyboard.dismiss();
+                }}
+                maxLength={6}
+                keyboardType="number-pad"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+                inputAccessoryViewID={
+                  Platform.OS === "ios" ? "verificationDone" : undefined
+                }
+                placeholder="인증번호 6자리"
+                placeholderTextColor="#bababa"
+                style={[
+                  s.input,
+                  {
+                    position: "relative",
+                    left: 0,
+                    top: 0,
+                    width: 251,
+                    paddingRight: 60,
+                  },
+                ]}
+              />
+              <Text style={s.timer}>00:00</Text>
+            </View>
+            <Pressable
+              disabled={code.trim().length !== 6}
+              style={[s.codeConfirm, code.trim().length !== 6 && s.codeConfirmDisabled]}
+              onPress={Keyboard.dismiss}
+            >
+              <Text style={s.codeConfirmText}>확인</Text>
+            </Pressable>
           </View>
           <Pressable style={s.agree} onPress={() => setOpen(true)}>
             <CheckIcon width={19} height={19} opacity={agreed ? 1 : 0.35} />
@@ -178,7 +186,7 @@ const s = StyleSheet.create({
     paddingVertical: 10,
   },
   keyboardDone: { paddingHorizontal: 8, paddingVertical: 4 },
-  keyboardDoneText: { color: colors.primary, fontSize: 16, fontWeight: "700" },
+  keyboardDoneText: { color: "#14453a", fontSize: 16, fontWeight: "700" },
   title: {
     position: "absolute",
     left: 26,
@@ -194,7 +202,7 @@ const s = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     lineHeight: 35,
-    color: colors.subtle,
+    color: "#4a4a4a",
   },
   carrier: {
     position: "absolute",
@@ -203,25 +211,28 @@ const s = StyleSheet.create({
     width: 148,
     height: 44,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
     borderRadius: 15,
-    backgroundColor: colors.surface,
+    backgroundColor: "#fefefe",
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
+  carrierOpen: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
   carrierText: { fontSize: 12, color: "#9c9c9c" },
   carrierMenu: {
     position: "absolute",
     left: 26,
-    top: 284,
+    top: 282,
     width: 148,
     zIndex: 20,
-    borderRadius: 15,
+    borderTopWidth: 0,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     overflow: "hidden",
     elevation: 5,
   },
@@ -230,16 +241,16 @@ const s = StyleSheet.create({
     paddingHorizontal: 12,
     justifyContent: "center",
   },
-  carrierOptionOn: { backgroundColor: colors.primaryPale },
+  carrierOptionOn: { backgroundColor: "#eaf4ec" },
   input: {
     position: "absolute",
     left: 26,
     width: 343,
     height: 44,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
     borderRadius: 15,
-    backgroundColor: colors.surface,
+    backgroundColor: "#fefefe",
     paddingHorizontal: 16,
     fontSize: 15,
     fontWeight: "600",
@@ -248,15 +259,29 @@ const s = StyleSheet.create({
     position: "absolute",
     left: 26,
     top: 382,
-    width: 233,
+    width: 343,
     height: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
+  codeInputBox: { width: 251, height: 44 },
+  codeConfirm: {
+    width: 84,
+    height: 44,
+    borderRadius: 15,
+    backgroundColor: "#14453a",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  codeConfirmDisabled: { backgroundColor: "#bababa" },
+  codeConfirmText: { fontSize: 14, fontWeight: "700", color: "#fff" },
   timer: {
     position: "absolute",
     right: 16,
     top: 13,
     fontSize: 12,
-    color: colors.disabled,
+    color: "#bababa",
   },
   agree: {
     position: "absolute",
@@ -272,25 +297,25 @@ const s = StyleSheet.create({
     height: 19,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: colors.disabled,
+    borderColor: "#bababa",
     alignItems: "center",
     justifyContent: "center",
   },
-  checked: { backgroundColor: colors.primary, borderColor: colors.primary },
-  tick: { fontSize: 12, color: colors.white, fontWeight: "700" },
+  checked: { backgroundColor: "#14453a", borderColor: "#14453a" },
+  tick: { fontSize: 12, color: "#fff", fontWeight: "700" },
   agreeText: { fontSize: 13, fontWeight: "500" },
   next: {
     position: "absolute",
     left: 31,
-    top: 776,
+    bottom: 52,
     width: 338,
     height: 50,
     borderRadius: 20,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  disabled: { backgroundColor: colors.disabled },
+  disabled: { backgroundColor: "#bababa" },
   nextText: { color: "#f2f2f6", fontSize: 18, fontWeight: "700" },
   dim: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,.4)" },
   sheet: {
@@ -298,7 +323,7 @@ const s = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -309,17 +334,17 @@ const s = StyleSheet.create({
     width: 42,
     height: 4,
     borderRadius: 2,
-    backgroundColor: colors.grayBorder,
+    backgroundColor: "#d9d9d9",
     marginBottom: 20,
   },
   sheetTitle: { fontSize: 22, fontWeight: "700", marginBottom: 18 },
   row: { height: 46, flexDirection: "row", alignItems: "center", gap: 10 },
   rowText: { fontSize: 14, fontWeight: "600" },
-  divider: { height: 1, backgroundColor: colors.line, marginVertical: 4 },
+  divider: { height: 1, backgroundColor: "#e7e3d8", marginVertical: 4 },
   confirm: {
     height: 50,
     borderRadius: 20,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 18,

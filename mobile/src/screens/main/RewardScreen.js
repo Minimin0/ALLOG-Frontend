@@ -13,7 +13,6 @@ import DiscountIcon from "../../../assets/images/DiscountIcon.svg";
 import ShippingIcon from "../../../assets/images/ShippingIcon.svg";
 import { useAppState } from "../../state/AppState";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
-import { colors } from "../../theme";
 const rewards = [
   {
     id: "serum-trial",
@@ -53,7 +52,7 @@ export default function RewardScreen({ navigation }) {
   );
   return (
     <View style={s.screen}>
-      <Text style={s.title}>리워드</Text>
+      <Text className="px-[30px] pt-4 text-[28px] font-black text-ink">리워드</Text>
       <ScrollView contentContainerStyle={s.content}>
         <AnimatedEntrance style={s.balance}>
           <Text style={s.balanceLabel}>사용가능한 리워드 포인트</Text>
@@ -82,7 +81,7 @@ export default function RewardScreen({ navigation }) {
               onPress={() => setCategory(x)}
             >
               <Text
-                style={[s.categoryText, category !== x && { color: colors.muted }]}
+                style={[s.categoryText, category !== x && { color: "#6b7268" }]}
               >
                 {x}
               </Text>
@@ -140,7 +139,7 @@ export default function RewardScreen({ navigation }) {
                   </View>
                 </View>
                 <View
-                  style={[s.badge, !afford && { backgroundColor: colors.disabled }]}
+                  style={[s.badge, !afford && { backgroundColor: "#bababa" }]}
                 >
                   <Text style={s.badgeText}>
                     {afford ? "교환하기" : "포인트 부족"}
@@ -155,13 +154,7 @@ export default function RewardScreen({ navigation }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    paddingHorizontal: 30,
-    paddingTop: 16,
-  },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   content: {
     paddingHorizontal: 30,
     paddingTop: 16,
@@ -174,7 +167,7 @@ const s = StyleSheet.create({
     padding: 20,
     elevation: 8,
   },
-  balanceLabel: { fontSize: 15, fontWeight: "600", color: colors.onDark },
+  balanceLabel: { fontSize: 15, fontWeight: "600", color: "#e7e3d8" },
   between: {
     marginTop: 8,
     flexDirection: "row",
@@ -182,19 +175,19 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
   },
   points: { flexDirection: "row", alignItems: "center", gap: 6 },
-  pointsText: { fontSize: 30, fontWeight: "700", color: colors.onDark },
-  link: { fontSize: 12, fontWeight: "700", color: colors.surface },
+  pointsText: { fontSize: 30, fontWeight: "700", color: "#e7e3d8" },
+  link: { fontSize: 12, fontWeight: "700", color: "#fefefe" },
   line: {
     height: 1,
     backgroundColor: "rgba(231,227,216,.3)",
     marginVertical: 12,
   },
-  note: { fontSize: 10, color: colors.onDark },
+  note: { fontSize: 10, color: "#e7e3d8" },
   categories: { flexDirection: "row", gap: 10, marginTop: 8 },
   category: {
     flex: 1,
     borderRadius: 10,
-    backgroundColor: colors.surface,
+    backgroundColor: "#fefefe",
     paddingVertical: 10,
     alignItems: "center",
     elevation: 1,
@@ -203,7 +196,7 @@ const s = StyleSheet.create({
   sortWrap: { alignItems: "flex-end", zIndex: 3 },
   sort: {
     borderRadius: 6,
-    backgroundColor: colors.line,
+    backgroundColor: "#e7e3d8",
     paddingHorizontal: 14,
     paddingVertical: 6,
   },
@@ -214,7 +207,7 @@ const s = StyleSheet.create({
     top: 36,
     width: 132,
     borderRadius: 12,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     paddingVertical: 4,
     elevation: 8,
   },
@@ -222,7 +215,7 @@ const s = StyleSheet.create({
   menuText: { fontSize: 12, fontWeight: "600" },
   item: {
     borderRadius: 13,
-    backgroundColor: colors.surface,
+    backgroundColor: "#fefefe",
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
@@ -232,20 +225,20 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 12,
-    backgroundColor: colors.beigeIcon,
+    backgroundColor: "#f3efe4",
     alignItems: "center",
     justifyContent: "center",
   },
   icon: { fontSize: 25 },
   itemTitle: { fontSize: 15, fontWeight: "700" },
-  itemNote: { marginTop: 4, fontSize: 10, color: colors.muted },
+  itemNote: { marginTop: 4, fontSize: 10, color: "#6b7268" },
   cost: { marginTop: 6, flexDirection: "row", alignItems: "center", gap: 4 },
   costText: { fontSize: 15, fontWeight: "700" },
   badge: {
     borderRadius: 99,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  badgeText: { fontSize: 10, fontWeight: "700", color: colors.white },
+  badgeText: { fontSize: 10, fontWeight: "700", color: "#fff" },
 });

@@ -12,7 +12,6 @@ import Naver from "../../../assets/images/Naver.svg";
 import Apple from "../../../assets/images/Apple.svg";
 import Google from "../../../assets/images/Google.svg";
 import Kakao from "../../../assets/images/Kakao.svg";
-import { colors } from "../../theme";
 
 const socials = [
   ["네이버 로그인", Naver],
@@ -36,7 +35,7 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setUserId}
         style={[s.input, { top: 201 }]}
         placeholder="아이디"
-        placeholderTextColor={colors.black}
+        placeholderTextColor="#bababa"
         autoCapitalize="none"
         returnKeyType="next"
       />
@@ -45,7 +44,7 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setPassword}
         style={[s.input, { top: 267, height: 49 }]}
         placeholder="비밀번호"
-        placeholderTextColor={colors.black}
+        placeholderTextColor="#bababa"
         secureTextEntry
         returnKeyType="done"
         onSubmitEditing={enterHome}
@@ -65,7 +64,7 @@ export default function LoginScreen({ navigation }) {
           style={s.signupLink}
           onPress={() => navigation.navigate("SignUpPhone")}
         >
-          회원 가입하기
+          회원가입하기
         </Text>
       </View>
       <View style={s.line} />
@@ -111,9 +110,9 @@ const s = StyleSheet.create({
     width: 296,
     height: 50,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
     borderRadius: 30,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     paddingHorizontal: 18,
     fontSize: 15,
     fontWeight: "500",
@@ -125,30 +124,37 @@ const s = StyleSheet.create({
     width: 296,
     height: 50,
     borderRadius: 20,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  loginText: { color: colors.white, fontSize: 18, fontWeight: "700" },
+  loginText: { color: "#fff", fontSize: 18, fontWeight: "700" },
   find: { position: "absolute", top: 401, height: 30 },
   findText: { fontSize: 12.643, fontWeight: "500", lineHeight: 29.5 },
   signup: {
     position: "absolute",
-    left: 44,
+    left: 0,
+    right: 0,
     top: 473,
     height: 35,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
-  signupText: { fontSize: 13, fontWeight: "500" },
-  signupLink: { marginLeft: 6, fontSize: 13, fontWeight: "600" },
+  signupText: { fontSize: 13, fontWeight: "500", color: "#6b7268" },
+  signupLink: {
+    marginLeft: 6,
+    fontSize: 13.5,
+    fontWeight: "700",
+    color: "#14453a",
+  },
   line: {
     position: "absolute",
     left: 48,
     top: 511,
     width: 298,
     height: 1,
-    backgroundColor: colors.grayBorder,
+    backgroundColor: "#d9d9d9",
   },
   easy: {
     position: "absolute",
@@ -162,9 +168,11 @@ const s = StyleSheet.create({
   },
   socials: {
     position: "absolute",
-    left: 112,
+    left: 0,
+    right: 0,
     top: 568,
     flexDirection: "row",
+    justifyContent: "center",
     gap: 19,
   },
   social: { width: 34, height: 34 },

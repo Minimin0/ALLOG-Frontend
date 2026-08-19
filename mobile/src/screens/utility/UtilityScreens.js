@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
-import { colors } from "../../theme";
 export function FirebaseDebugScreen({ navigation }) {
   const [groupId, setGroupId] = useState("1"),
     [result, setResult] = useState(null);
@@ -157,41 +156,41 @@ export function PlaceholderScreen({ navigation, route }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   content: { padding: 24, paddingBottom: 40, gap: 14 },
-  back: { fontSize: 13, fontWeight: "600", color: colors.muted },
+  back: { fontSize: 13, fontWeight: "600", color: "#6b7268" },
   title: { fontSize: 20, fontWeight: "700", marginVertical: 8 },
   card: {
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 16,
     gap: 8,
   },
   bold: { fontWeight: "700" },
-  help: { fontSize: 13, lineHeight: 20, color: colors.muted },
-  label: { marginTop: 8, fontSize: 12, fontWeight: "600", color: colors.subtle },
+  help: { fontSize: 13, lineHeight: 20, color: "#6b7268" },
+  label: { marginTop: 8, fontSize: 12, fontWeight: "600", color: "#4a4a4a" },
   input: {
     height: 40,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     paddingHorizontal: 12,
   },
   button: {
     height: 48,
     borderRadius: 14,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: { fontSize: 13, fontWeight: "700", color: colors.white },
-  error: { fontSize: 12, color: colors.heart },
+  buttonText: { fontSize: 13, fontWeight: "700", color: "#fff" },
+  error: { fontSize: 12, color: "#d9573b" },
   placeholder: {
     flex: 1,
-    backgroundColor: colors.bg,
+    backgroundColor: "#f7f6f3",
     padding: 24,
     alignItems: "center",
     justifyContent: "center",
@@ -222,17 +221,17 @@ const s = StyleSheet.create({
   badgeText: { fontSize: 10, fontWeight: "700", color: "#1f6a45" },
   recommendDetail: { marginTop: 8, fontSize: 12, color: "#67635f" },
   devTitle: { fontSize: 24, fontWeight: "700" },
-  devSub: { fontSize: 14, color: colors.muted },
+  devSub: { fontSize: 14, color: "#6b7268" },
   devSection: { gap: 8, marginTop: 14 },
-  sectionTitle: { fontSize: 14, fontWeight: "700", color: colors.muted },
+  sectionTitle: { fontSize: 14, fontWeight: "700", color: "#6b7268" },
   devLink: {
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 14,
   },
   devLinkText: { fontSize: 14, fontWeight: "600" },
-  route: { marginTop: 3, fontSize: 11, color: colors.muted },
-  ready: { fontSize: 12, fontWeight: "600", color: colors.muted },
+  route: { marginTop: 3, fontSize: 11, color: "#6b7268" },
+  ready: { fontSize: 12, fontWeight: "600", color: "#6b7268" },
 });

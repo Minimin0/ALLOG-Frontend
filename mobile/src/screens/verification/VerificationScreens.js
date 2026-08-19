@@ -12,13 +12,13 @@ import {
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useVideoPlayer, VideoView } from "expo-video";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
-import { colors } from "../../theme";
+import { useAppState } from "../../state/AppState";
 const mascot = require("../../../assets/images/mascot.png");
 function Header({ navigation, title = "오늘의 인증", green = false }) {
   return (
     <View style={s.header}>
       <Pressable
-        style={[s.back, green && { backgroundColor: colors.primary }]}
+        style={[s.back, green && { backgroundColor: "#14453a" }]}
         onPress={() => navigation.goBack()}
       >
         <Text style={s.backText}>‹</Text>
@@ -31,7 +31,7 @@ function Header({ navigation, title = "오늘의 인증", green = false }) {
 function Button({ children, onPress, secondary = false }) {
   return (
     <Pressable style={[s.button, secondary && s.secondary]} onPress={onPress}>
-      <Text style={[s.buttonText, secondary && { color: colors.subtle }]}>
+      <Text style={[s.buttonText, secondary && { color: "#4a4a4a" }]}>
         {children}
       </Text>
     </Pressable>
@@ -85,7 +85,7 @@ function Guide() {
       <View style={s.recordInfo}>
         <Text style={s.caption}>
           ▰ 기록은{" "}
-          <Text style={{ fontWeight: "700", color: colors.primary }}>
+          <Text style={{ fontWeight: "700", color: "#14453a" }}>
             3초 내외 짧은 동영상
           </Text>
           으로 저장돼요.
@@ -108,7 +108,7 @@ export function CameraScreen({ navigation }) {
   if (!permission)
     return (
       <View style={s.cameraFallback}>
-        <ActivityIndicator color={colors.white} />
+        <ActivityIndicator color="#fff" />
       </View>
     );
   if (!permission.granted)
@@ -261,7 +261,7 @@ export function VerificationLoadingScreen({ navigation }) {
                 <Text style={s.white}>✓</Text>
               </View>
             ) : i === step ? (
-              <ActivityIndicator color={colors.primary} />
+              <ActivityIndicator color="#14453a" />
             ) : (
               <View style={s.checkPending} />
             )}
@@ -273,6 +273,10 @@ export function VerificationLoadingScreen({ navigation }) {
 }
 export function VerificationResultScreen({ navigation, route }) {
   const success = (route.params?.result || "success") === "success";
+  const { setVerifiedToday } = useAppState();
+  useEffect(() => {
+    if (success) setVerifiedToday(true);
+  }, [success, setVerifiedToday]);
   return (
     <View style={s.result}>
       <View style={s.resultBody}>
@@ -321,8 +325,8 @@ export function VerificationResultScreen({ navigation, route }) {
                 (3초 미만)
               </Text>
             </View>
-            <View style={[s.retryBox, { backgroundColor: colors.primaryTint }]}>
-              <Text style={[s.retryTitle, { color: colors.primary }]}>
+            <View style={[s.retryBox, { backgroundColor: "#edf2ec" }]}>
+              <Text style={[s.retryTitle, { color: "#14453a" }]}>
                 이렇게 다시 찍어보세요
               </Text>
               <Text>
@@ -349,7 +353,7 @@ export function VerificationResultScreen({ navigation, route }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   content: { padding: 20, gap: 16, paddingBottom: 35 },
   header: {
     height: 43,
@@ -361,42 +365,42 @@ const s = StyleSheet.create({
     width: 43,
     height: 43,
     borderRadius: 9,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  backText: { fontSize: 32, color: colors.white, lineHeight: 34 },
+  backText: { fontSize: 32, color: "#fff", lineHeight: 34 },
   headerTitle: { fontSize: 22, fontWeight: "600" },
   button: {
     height: 52,
     borderRadius: 18,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  secondary: { backgroundColor: colors.line },
-  buttonText: { fontSize: 15, fontWeight: "700", color: colors.white },
+  secondary: { backgroundColor: "#e7e3d8" },
+  buttonText: { fontSize: 15, fontWeight: "700", color: "#fff" },
   dayCard: {
     alignSelf: "center",
     width: "86%",
     borderRadius: 24,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     padding: 20,
     alignItems: "center",
     elevation: 2,
   },
-  day: { fontSize: 12, color: colors.primary },
+  day: { fontSize: 12, color: "#14453a" },
   dayTitle: { fontSize: 22, fontWeight: "700" },
-  caption: { marginTop: 4, fontSize: 11, color: colors.muted },
+  caption: { marginTop: 4, fontSize: 11, color: "#6b7268" },
   dots: { marginTop: 12, flexDirection: "row", gap: 8 },
-  dot: { width: 21, height: 21, borderRadius: 11, backgroundColor: colors.surfaceAlt },
-  done: { backgroundColor: colors.primary },
+  dot: { width: 21, height: 21, borderRadius: 11, backgroundColor: "#eae9e7" },
+  done: { backgroundColor: "#14453a" },
   captureArea: {
     alignSelf: "center",
     width: 297,
     height: 396,
     borderRadius: 51,
-    backgroundColor: colors.line,
+    backgroundColor: "#e7e3d8",
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
@@ -405,21 +409,21 @@ const s = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
-  body: { fontSize: 15, color: colors.ink },
-  guide: { borderRadius: 24, backgroundColor: colors.primaryTint, padding: 20 },
+  body: { fontSize: 15, color: "#111" },
+  guide: { borderRadius: 24, backgroundColor: "#edf2ec", padding: 20 },
   guideTitle: { fontSize: 17, fontWeight: "700", marginBottom: 10 },
-  guideText: { fontSize: 15, lineHeight: 28, color: colors.muted },
+  guideText: { fontSize: 15, lineHeight: 28, color: "#6b7268" },
   recordInfo: {
     marginTop: 12,
     borderRadius: 15,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     padding: 10,
   },
-  cameraScreen: { flex: 1, backgroundColor: colors.black, paddingVertical: 24 },
+  cameraScreen: { flex: 1, backgroundColor: "#000", paddingVertical: 24 },
   progress: {
     height: 30,
     flexDirection: "row",
@@ -444,24 +448,24 @@ const s = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     borderWidth: 4,
     borderColor: "rgba(255,255,255,.4)",
   },
   cameraFallback: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
     gap: 20,
     padding: 30,
   },
-  white: { color: colors.white },
+  white: { color: "#fff" },
   preview: {
     height: 440,
     borderRadius: 24,
     overflow: "hidden",
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
   },
   empty: {
     flex: 1,
@@ -470,7 +474,7 @@ const s = StyleSheet.create({
     gap: 16,
     padding: 24,
   },
-  loading: { padding: 20, backgroundColor: colors.primaryTint },
+  loading: { padding: 20, backgroundColor: "#edf2ec" },
   mascotRingWrap: {
     marginTop: 38,
     alignSelf: "center",
@@ -484,7 +488,7 @@ const s = StyleSheet.create({
   mascotRing: {
     ...StyleSheet.absoluteFillObject,
     borderWidth: 6,
-    borderColor: colors.primary,
+    borderColor: "#14453a",
     borderTopColor: "rgba(20,69,58,0.12)",
     borderRadius: 82,
   },
@@ -495,13 +499,13 @@ const s = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
   },
-  wait: { marginTop: 8, textAlign: "center", fontSize: 20, color: colors.muted },
+  wait: { marginTop: 8, textAlign: "center", fontSize: 20, color: "#6b7268" },
   checkCard: {
     marginTop: 32,
     borderRadius: 35,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     paddingHorizontal: 8,
   },
   checkRow: {
@@ -511,15 +515,15 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  checkLine: { borderBottomWidth: 1, borderColor: colors.line },
+  checkLine: { borderBottomWidth: 1, borderColor: "#e7e3d8" },
   checkIcon: { fontSize: 26 },
   checkTitle: { fontSize: 15, fontWeight: "600" },
-  checkSub: { fontSize: 10, color: colors.muted },
+  checkSub: { fontSize: 10, color: "#6b7268" },
   checkDone: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.primary,
+    backgroundColor: "#14453a",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -528,9 +532,9 @@ const s = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
   },
-  result: { flex: 1, backgroundColor: colors.bg, padding: 24 },
+  result: { flex: 1, backgroundColor: "#f7f6f3", padding: 24 },
   resultBody: {
     flex: 1,
     alignItems: "center",
@@ -539,7 +543,7 @@ const s = StyleSheet.create({
   },
   bubble: {
     borderRadius: 16,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     paddingHorizontal: 16,
     paddingVertical: 10,
     elevation: 4,
@@ -549,7 +553,7 @@ const s = StyleSheet.create({
     width: 160,
     height: 160,
     borderRadius: 80,
-    backgroundColor: colors.primaryTint,
+    backgroundColor: "#edf2ec",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
@@ -559,37 +563,37 @@ const s = StyleSheet.create({
   feedbackBox: {
     flex: 1,
     borderRadius: 24,
-    backgroundColor: colors.primaryTint,
+    backgroundColor: "#edf2ec",
     padding: 12,
     alignItems: "center",
   },
-  feedbackValue: { fontSize: 22, fontWeight: "700", color: colors.primary },
+  feedbackValue: { fontSize: 22, fontWeight: "700", color: "#14453a" },
   feedbackTime: {
     paddingTop: 5,
     fontSize: 15,
     fontWeight: "700",
-    color: colors.primary,
+    color: "#14453a",
   },
   alert: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.danger,
+    backgroundColor: "#c0492f",
     alignItems: "center",
     justifyContent: "center",
   },
-  alertText: { fontSize: 36, color: colors.white },
-  bodyMuted: { fontSize: 15, color: colors.muted, textAlign: "center" },
+  alertText: { fontSize: 36, color: "#fff" },
+  bodyMuted: { fontSize: 15, color: "#6b7268", textAlign: "center" },
   retryBox: {
     width: "100%",
     borderRadius: 24,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     padding: 16,
   },
   retryTitle: {
     fontSize: 11,
     fontWeight: "700",
-    color: colors.danger,
+    color: "#c0492f",
     marginBottom: 8,
   },
   appeal: {
@@ -597,6 +601,6 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 11,
     fontWeight: "600",
-    color: colors.danger,
+    color: "#c0492f",
   },
 });

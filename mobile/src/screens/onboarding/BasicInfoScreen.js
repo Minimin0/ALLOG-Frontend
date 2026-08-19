@@ -11,7 +11,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Svg, { Line, Path, Rect } from "react-native-svg";
 import OnboardingShell from "../../components/OnboardingShell";
 import { useAppState } from "../../state/AppState";
-import { colors } from "../../theme";
 export default function BasicInfoScreen({ navigation }) {
   const { nickname, setNickname, setBirth } = useAppState();
   const [form, setForm] = useState({
@@ -23,8 +22,17 @@ export default function BasicInfoScreen({ navigation }) {
   });
   const [dateOpen, setDateOpen] = useState(false);
   const set = (k, v) => setForm((x) => ({ ...x, [k]: v }));
+  const heightNum = Number(form.height);
+  const weightNum = Number(form.weight);
+  const heightError = form.height && (heightNum < 120 || heightNum > 250);
+  const weightError = form.weight && (weightNum < 30 || weightNum > 120);
   const valid =
-    form.nickname.trim() && form.birth && form.height && form.weight;
+    form.nickname.trim() &&
+    form.birth &&
+    form.height &&
+    form.weight &&
+    !heightError &&
+    !weightError;
   return (
     <OnboardingShell
       step={1}
@@ -36,7 +44,6 @@ export default function BasicInfoScreen({ navigation }) {
         setBirth(form.birth);
         navigation.navigate("Habits");
       }}
-      nextLabel="다음 단계로"
       canNext={valid}
     >
       <Field label="닉네임">
@@ -112,10 +119,10 @@ export default function BasicInfoScreen({ navigation }) {
       </Field>
       <View style={s.row}>
         <Field label="키" half>
-          <View style={s.measureInput}>
+          <View style={[s.measureInput, heightError && s.measureInputError]}>
             <TextInput
               value={form.height}
-              onChangeText={(v) => set("height", v)}
+              onChangeText={(v) => set("height", v.replace(/\D/g, "").slice(0, 3))}
               placeholder="165"
               placeholderTextColor="#a2a2a2"
               keyboardType="number-pad"
@@ -123,12 +130,15 @@ export default function BasicInfoScreen({ navigation }) {
             />
             <Text style={s.measureUnit}>cm</Text>
           </View>
+          {heightError ? (
+            <Text style={s.fieldError}>정확히 입력해주세요</Text>
+          ) : null}
         </Field>
         <Field label="몸무게" half>
-          <View style={s.measureInput}>
+          <View style={[s.measureInput, weightError && s.measureInputError]}>
             <TextInput
               value={form.weight}
-              onChangeText={(v) => set("weight", v)}
+              onChangeText={(v) => set("weight", v.replace(/\D/g, "").slice(0, 3))}
               placeholder="50"
               placeholderTextColor="#a2a2a2"
               keyboardType="number-pad"
@@ -136,6 +146,9 @@ export default function BasicInfoScreen({ navigation }) {
             />
             <Text style={s.measureUnit}>kg</Text>
           </View>
+          {weightError ? (
+            <Text style={s.fieldError}>정확히 입력해주세요</Text>
+          ) : null}
         </Field>
       </View>
     </OnboardingShell>
@@ -166,13 +179,13 @@ function CalendarIcon() {
         height={14.5}
         rx={3}
         fill="none"
-        stroke={colors.primary}
+        stroke="#14453a"
         strokeWidth={1.7}
       />
-      <Line x1={2} y1={8} x2={18} y2={8} stroke={colors.primary} strokeWidth={1.7} />
+      <Line x1={2} y1={8} x2={18} y2={8} stroke="#14453a" strokeWidth={1.7} />
       <Path
         d="M6 2 L6 5 M14 2 L14 5"
-        stroke={colors.primary}
+        stroke="#14453a"
         strokeWidth={1.7}
         strokeLinecap="round"
       />
@@ -185,19 +198,19 @@ const s = StyleSheet.create({
   input: {
     height: 44,
     borderWidth: 1,
-    borderColor: colors.grayBorder,
-    backgroundColor: colors.white,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
     borderRadius: 15,
     paddingHorizontal: 14,
     fontSize: 13,
     justifyContent: "center",
   },
-  dateText: { fontSize: 13, color: colors.ink },
+  dateText: { fontSize: 13, color: "#111" },
   dateField: {
     height: 48,
     borderWidth: 1,
-    borderColor: colors.grayBorder,
-    backgroundColor: colors.white,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -219,8 +232,8 @@ const s = StyleSheet.create({
   measureInput: {
     height: 44,
     borderWidth: 1,
-    borderColor: colors.grayBorder,
-    backgroundColor: colors.white,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -233,31 +246,32 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     fontWeight: "600",
-    color: colors.ink,
+    color: "#111",
   },
   measureUnit: {
     width: 24,
     marginLeft: 4,
     fontSize: 13,
     fontWeight: "700",
-    color: colors.ink,
+    color: "#111",
   },
+  measureInputError: { borderColor: "#d9573b" },
+  fieldError: { marginTop: 6, fontSize: 11, fontWeight: "600", color: "#d9573b" },
   row: { flexDirection: "row", gap: 10 },
   choice: {
     flex: 1,
     minHeight: 54,
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderWidth: 2,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 10,
   },
   active: {
-    borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryPale,
+    borderColor: "#14453a",
+    backgroundColor: "#eaf4ec",
   },
   choiceText: { fontSize: 14, fontWeight: "700" },
   center: { textAlign: "center" },
