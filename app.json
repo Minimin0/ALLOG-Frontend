@@ -27,7 +27,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "운동 인증 영상을 촬영하기 위해 카메라 접근이 필요합니다."
+          "cameraPermission": "운동 인증 영상을 촬영하기 위해 카메라 접근이 필요합니다.",
+          "recordAudioAndroid": false
         }
       ],
       "expo-video"
