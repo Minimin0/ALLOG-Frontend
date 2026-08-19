@@ -306,7 +306,7 @@ export function WaitingRoomScreen({ navigation, route }) {
           </View>
         ))}
       </ScrollView>
-      <View style={s.footer}>
+      <SafeAreaView edges={["bottom"]} style={s.footer}>
         <Pressable
           disabled={!full}
           style={[s.primary, !full && s.disabled]}
@@ -316,7 +316,7 @@ export function WaitingRoomScreen({ navigation, route }) {
             {full ? "그룹 시작하기" : "인원을 기다리는 중..."}
           </Text>
         </Pressable>
-      </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -477,7 +477,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   backText: { fontSize: 32, color: colors.white, lineHeight: 34 },
-  headerTitle: { fontSize: 19, fontWeight: "700" },
+  headerTitle: { fontSize: 28, fontWeight: "700", lineHeight: 34 },
   content: { paddingHorizontal: 20, paddingBottom: 28, gap: 24 },
   section: { gap: 8 },
   sectionHead: {
@@ -733,7 +733,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   memberName: { fontSize: 14, fontWeight: "600" },
-  footer: { paddingHorizontal: 20, paddingBottom: 28 },
+  footer: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16, backgroundColor: colors.bg },
   help: { fontSize: 12, lineHeight: 20, color: colors.muted },
   codeInput: {
     marginTop: 8,

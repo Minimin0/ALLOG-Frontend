@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -24,12 +26,17 @@ export default function LoginScreen({ navigation }) {
   const [googleError, setGoogleError] = useState("");
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const passwordInput = useRef(null);
   const enterHome = () => {
     Keyboard.dismiss();
     navigation.reset({ index: 0, routes: [{ name: "Home" }] });
   };
   return (
     <DesignScreen>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "position" : undefined}
+        style={s.keyboard}
+      >
       <Text style={s.title}>LOGIN</Text>
       <TextInput
         value={userId}
@@ -39,8 +46,10 @@ export default function LoginScreen({ navigation }) {
         placeholderTextColor={colors.black}
         autoCapitalize="none"
         returnKeyType="next"
+        onSubmitEditing={() => passwordInput.current?.focus()}
       />
       <TextInput
+        ref={passwordInput}
         value={password}
         onChangeText={setPassword}
         style={[s.input, { top: 267, height: 49 }]}
@@ -50,7 +59,7 @@ export default function LoginScreen({ navigation }) {
         returnKeyType="done"
         onSubmitEditing={enterHome}
       />
-      <Pressable style={s.login} onPress={enterHome}>
+      <Pressable style={({ pressed }) => [s.login, pressed && s.loginPressed]} onPress={enterHome}>
         <Text style={s.loginText}>로그인</Text>
       </Pressable>
       <Pressable style={[s.find, { left: 128 }]}>
@@ -90,10 +99,12 @@ export default function LoginScreen({ navigation }) {
         ))}
       </View>
       {googleError ? <Text style={s.googleError}>{googleError}</Text> : null}
+      </KeyboardAvoidingView>
     </DesignScreen>
   );
 }
 const s = StyleSheet.create({
+  keyboard: { flex: 1 },
   title: {
     position: "absolute",
     left: 129,
@@ -130,6 +141,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   loginText: { color: colors.white, fontSize: 18, fontWeight: "700" },
+  loginPressed: { opacity: 0.82, transform: [{ scale: 0.99 }] },
   find: { position: "absolute", top: 401, height: 30 },
   findText: { fontSize: 12.643, fontWeight: "500", lineHeight: 29.5 },
   signup: {
@@ -175,7 +187,7 @@ const s = StyleSheet.create({
     width: 296,
     textAlign: "center",
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: "600",
     color: "#e75b5b",
   },
 });

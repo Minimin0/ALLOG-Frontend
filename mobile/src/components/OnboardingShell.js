@@ -23,7 +23,7 @@ export default function OnboardingShell({
   return (
     <SafeAreaView
       style={s.screen}
-      edges={step >= 1 && step <= 4 ? ["top"] : []}
+      edges={step >= 1 && step <= 4 ? ["top", "bottom"] : []}
     >
       <KeyboardAvoidingView
         style={s.screen}
@@ -75,7 +75,7 @@ const s = StyleSheet.create({
     maxWidth: 390,
     alignSelf: "center",
     padding: 20,
-    paddingBottom: 24,
+    paddingBottom: 32,
   },
   head: {
     height: 28,
@@ -110,8 +110,8 @@ const s = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 28,
+    paddingTop: 16,
+    paddingBottom: 16,
     backgroundColor: colors.bg,
   },
   secondary: {

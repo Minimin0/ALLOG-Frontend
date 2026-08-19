@@ -29,7 +29,7 @@ export default function CoachStyleScreen({ navigation }) {
           <Pressable
             key={name}
             onPress={() => setSelected(name)}
-            style={[s.card, selected === name && s.active]}
+            style={({ pressed }) => [s.card, selected === name && s.active, pressed && s.pressed]}
           >
             <Image source={image} style={s.coachImage} resizeMode="contain" />
             <Text style={s.name}>{name}</Text>
@@ -58,6 +58,7 @@ const s = StyleSheet.create({
     borderColor: colors.primary,
     backgroundColor: colors.primaryPale,
   },
+  pressed: { opacity: 0.82, transform: [{ scale: 0.98 }] },
   name: { fontSize: 15, fontWeight: "700", marginTop: 8 },
   tone: { fontSize: 10, fontWeight: "500", color: colors.subtle, marginTop: 4 },
   coachImage: { width: 80, height: 80 },

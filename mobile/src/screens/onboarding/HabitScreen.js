@@ -32,7 +32,7 @@ export default function HabitScreen({ navigation }) {
             <Pressable
               key={name}
               onPress={() => toggle(name)}
-              style={[s.card, active && s.active]}
+              style={({ pressed }) => [s.card, active && s.active, pressed && s.pressed]}
             >
               <Icon width={24} height={24} />
               <Text style={s.name}>{name}</Text>
@@ -63,6 +63,7 @@ const s = StyleSheet.create({
     borderColor: colors.primary,
     backgroundColor: colors.primaryPale,
   },
+  pressed: { opacity: 0.82, transform: [{ scale: 0.98 }] },
   name: { fontSize: 15, fontWeight: "700" },
   sub: { fontSize: 10, fontWeight: "500", color: colors.subtle },
 });
