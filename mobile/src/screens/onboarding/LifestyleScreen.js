@@ -84,10 +84,11 @@ function Option({ title, values, value, set, cols }) {
           <Pressable
             key={x}
             onPress={() => set(x)}
-            style={[
+            style={({ pressed }) => [
               s.choice,
               { width: cols === 3 ? "30.8%" : "48%" },
               value === x && s.active,
+              pressed && s.pressed,
             ]}
           >
             <Text style={s.choiceText}>{x}</Text>
@@ -142,5 +143,6 @@ const s = StyleSheet.create({
     borderColor: colors.primary,
     backgroundColor: colors.primaryPale,
   },
+  pressed: { opacity: 0.82, transform: [{ scale: 0.98 }] },
   choiceText: { fontSize: 13, fontWeight: "700" },
 });

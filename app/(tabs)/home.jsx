@@ -80,8 +80,17 @@ export default function HomeScreen() {
         contentContainerClassName="gap-4 pb-8 pt-5"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       >
-        {/* 하트 / 포인트 */}
-        <View className="flex-row gap-3"><Pressable
+        {/* 하트 / 포인트 — 잔액과 혜택 상태는 모두 서버 응답만 표시한다. */}
+        <View className="flex-row gap-3">
+          <View className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3">
+            <View className="flex-row items-center gap-2">
+              <Icon name="heart" size={18} />
+              <Text className="text-[18px] font-bold text-ink">{stats?.hearts ?? '–'}</Text>
+            </View>
+            <Text className="mt-2 text-[12px] font-semibold text-heart">하트</Text>
+            <Text className="mt-1 text-[12px] font-medium text-muted">획득 이벤트는 준비 중이에요</Text>
+          </View>
+          <Pressable
             onPress={() => router.push('/reward')}
             className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3"
           >
@@ -101,9 +110,9 @@ export default function HomeScreen() {
             <Text className="mt-2 text-[20px] font-bold text-ink">{current?.groupName ?? '아직 참여 중인 그룹이 없어요'}</Text>
             <Pressable
               onPress={() => router.push(current ? { pathname: '/verify', params: { groupId: String(current.groupId) } } : '/explore')}
-              className="mt-4 h-[35px] w-full items-center justify-center rounded-[15px] bg-primary"
+              className="mt-4 h-[44px] w-full items-center justify-center rounded-[15px] bg-primary"
             >
-              <Text className="text-[12px] font-bold text-mint-badge">{current ? '인증하러 하기' : '그룹 찾아보기'}</Text>
+              <Text className="text-[13px] font-bold text-mint-badge">{current ? '인증하러 가기' : '그룹 찾아보기'}</Text>
             </Pressable>
           </View>
           {deadline && (
@@ -137,7 +146,7 @@ export default function HomeScreen() {
             </View>
             <Text>
               <Text className="text-[25px] font-bold text-primary">{personal?.currentStreak ?? 0}</Text>
-              <Text className="text-[18px] font-bold text-ink">일째</Text>
+              <Text className="text-[12px] font-bold text-ink">일째</Text>
             </Text>
           </Pressable>
         </View>
