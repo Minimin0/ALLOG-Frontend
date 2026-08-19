@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { View, Text, Pressable, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
@@ -94,25 +93,25 @@ export default function GroupScreen() {
 
   if ((loading || listLoading) && !detail) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 items-center justify-center bg-bg">
+      <View className="flex-1 items-center justify-center bg-bg">
         <ActivityIndicator size="large" color="#4b7f63" />
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!detail) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 items-center justify-center gap-4 bg-bg px-8">
+      <View className="flex-1 items-center justify-center gap-4 bg-bg px-8">
         <Text className="text-center text-[17px] font-bold text-ink">
           {detailError === ApiError.NETWORK ? '서버에 연결할 수 없어요' : '참여 중인 그룹이 없어요'}
         </Text>
         <Text className="text-center text-[13px] text-muted">
           {detailError === ApiError.NETWORK ? '잠시 후 다시 시도해주세요.' : '탐색에서 마음에 드는 그룹을 찾아보세요.'}
         </Text>
-        <Pressable onPress={() => (detailError ? load() : router.push('/explore'))} className="w-full items-center rounded-[27.5px] bg-primary py-4">
+        <Pressable onPress={() => (detailError ? load() : router.push('/explore'))} className="w-full items-center rounded-[27.5px] bg-ink py-4">
           <Text className="text-[15px] font-bold text-white">{detailError ? '다시 시도' : '그룹 탐색하기'}</Text>
         </Pressable>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -154,24 +153,21 @@ export default function GroupScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-bg">
+    <View className="flex-1 bg-bg">
       {/* 헤더 */}
-      <View className="flex-row items-center justify-between px-5 pt-2">
-        <Text className="text-[28px] font-bold text-ink">내 그룹</Text>
+      <View className="flex-row items-center justify-between px-[30px] pt-4">
+        <Text className="text-[28px] font-black text-ink">내 그룹</Text>
         {tab !== 'info' ? (
           <CoachMascotButton
             to={`/ai?groupId=${group.groupId}&from=${tab === 'feed' ? 'feed' : 'ranking'}`}
-            circle={54}
-            size={44}
-            style={{ marginTop: 8, marginRight: 10 }}
           />
         ) : (
-          <View className="h-14 w-14" />
+          <View style={{ width: 54, height: 54 }} />
         )}
       </View>
 
       {/* 요약 카드 */}
-      <View className="px-5 pt-3">
+      <View className="px-[30px] pt-3">
         <View className="rounded-card border border-line bg-primary-tint p-4">
           <Text className="text-[12px] font-bold text-ink">
             {started && day ? `DAY ${day}` : group.status === 'RECRUITING' ? '모집중' : group.status}
@@ -194,7 +190,7 @@ export default function GroupScreen() {
       </View>
 
       {/* 세그먼트 탭 */}
-      <View className="mt-4 flex-row border-b border-line px-5">
+      <View className="mt-4 flex-row border-b border-line px-[30px]">
         {TABS.map((t) => {
           const active = tab === t.key;
           return (
@@ -249,7 +245,7 @@ export default function GroupScreen() {
 
         {/* 랭킹 탭 — 랭킹 API가 없다. 가짜 순위를 만들지 않는다. */}
         {tab === 'ranking' && (
-          <View className="items-center gap-2 px-5 py-16">
+          <View className="items-center gap-2 px-[30px] py-16">
             <Text className="text-[15px] font-bold text-ink">랭킹은 아직 준비 중이에요</Text>
             <Text className="text-center text-[13px] text-muted">
               그룹 공동 진행률은 정보 탭에서 확인할 수 있어요.
@@ -259,7 +255,7 @@ export default function GroupScreen() {
 
         {/* 정보 탭 */}
         {tab === 'info' && (
-          <View className="gap-6 px-5 pb-5 pt-8">
+          <View className="gap-6 px-[30px] pb-5 pt-8">
             <View>
               <InfoRow label="그룹명" value={group.name} />
               <InfoRow
@@ -332,6 +328,6 @@ export default function GroupScreen() {
           </Animated.View>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

@@ -47,7 +47,7 @@ export default function JoinCompleteScreen() {
       </View>
 
       <View className="gap-4 pb-8">
-        <Pressable onPress={() => router.replace(groupId ? { pathname: '/group', params: { groupId } } : '/group')} className="h-[50px] items-center justify-center rounded-[27.5px] bg-primary">
+        <Pressable onPress={() => router.replace(groupId ? { pathname: '/group', params: { groupId } } : '/group')} className="h-[50px] items-center justify-center rounded-[27.5px] bg-ink">
           <Text className="text-[15px] font-bold text-white">그룹으로 이동</Text>
         </Pressable>
         <Pressable onPress={() => router.replace('/explore')} className="items-center">

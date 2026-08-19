@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import DesignScreen from '../mobile/src/components/DesignScreen';
 import { AuthStatus, useAuthStore } from '@/stores/authStore';
 
-// 시작 화면 (웹 src/pages/auth/StartPage.jsx의 RN 포팅). 앱 진입점 "/".
-// 웹→RN: div→View, p/h1→Text, button→Pressable, useNavigate→useRouter,
-//        CSS gradient→<LinearGradient>, 고정 폰 프레임(w-[393px])은 제거(화면=폰).
+// 시작 화면. 앱 진입점 "/".
+// 라우팅/세션 로직은 이 저장소(백엔드 연동본)를 유지하고,
+// 화면 자체는 팀원 최신 디자인(mobile/src/screens/auth/StartScreen.js)을 그대로 이식했다.
 export default function StartScreen() {
   const router = useRouter();
   const status = useAuthStore((s) => s.status);
@@ -18,46 +18,85 @@ export default function StartScreen() {
     else if (status === AuthStatus.ONBOARDING) router.replace('/onboarding/basic-info');
   }, [status, router]);
 
+  const goLogin = () => router.push('/auth/login');
+
   return (
-    <LinearGradient
-      colors={['#FFFFFF', '#FFFFFF', '#F6F3EC']}
-      locations={[0, 0.8125, 1]}
-      style={{ flex: 1 }}
-    >
-      <View className="flex-1 px-12">
-        <View className="flex-1 items-center pt-32">
-          {/* TODO: 실제 로고 에셋으로 교체 → <Image source={require('../assets/images/Logo.png')} /> */}
-          <View className="h-[76px] w-[76px] items-center justify-center rounded-2xl bg-primary-tint">
-            <Text className="text-3xl font-bold text-primary">A</Text>
-          </View>
-
-          <Text className="mt-2 text-[15px] font-bold text-ink">Anti Lazing Log</Text>
-
-          <Text className="mt-3 text-center text-[28px] font-bold leading-[34px] text-ink">
-            건강한 습관을{'\n'}함께 만들어요.
-          </Text>
-
-          <Text className="mt-[18px] text-center text-[13px] font-medium leading-5 text-ink">
-            AI 코치와 함께하는 루틴 챌린지.{'\n'}크루와 함께라면 더 오래 지속할 수 있어요.
-          </Text>
+    <DesignScreen backgroundColor="#fff">
+      <View style={s.body}>
+        <View style={s.logo}>
+          <Image
+            source={require('../assets/images/Logo.png')}
+            style={s.logoImage}
+            resizeMode="contain"
+          />
         </View>
-
-        <View className="pb-10">
-          <Pressable
-            onPress={() => router.push('/auth/login')}
-            className="h-[50px] items-center justify-center rounded-[20px] bg-primary active:opacity-90"
-          >
-            <Text className="text-[18px] font-bold text-white">시작하기</Text>
-          </Pressable>
-
-          <View className="mt-3 flex-row items-center justify-center">
-            <Text className="text-[13px] font-medium text-ink">이미 계정이 있으신가요? </Text>
-            <Pressable onPress={() => router.push('/auth/login')} hitSlop={8}>
-              <Text className="text-[15px] font-bold text-ink underline">로그인</Text>
-            </Pressable>
-          </View>
-        </View>
+        <Text style={s.tagline}>Anti Lazing Log</Text>
+        <Text style={s.title}>건강한 습관을{`\n`}함께 만들어요.</Text>
+        <Text style={s.copy}>
+          AI 코치와 함께하는 루틴 챌린지.{`\n`}크루와 함께라면 더 오래 지속할 수 있어요.
+        </Text>
       </View>
-    </LinearGradient>
+      <View style={s.actions}>
+        <Pressable style={s.primary} onPress={goLogin}>
+          <Text style={s.primaryText}>시작하기</Text>
+        </Pressable>
+        <Text style={s.loginCopy}>
+          이미 계정이 있으신가요?{' '}
+          <Text style={s.loginLink} onPress={goLogin}>
+            로그인
+          </Text>
+        </Text>
+      </View>
+    </DesignScreen>
   );
 }
+
+const s = StyleSheet.create({
+  body: { alignItems: 'center', paddingTop: 47 },
+  logo: { marginTop: 120, width: 76, height: 76 },
+  logoImage: { width: 76, height: 76 },
+  tagline: {
+    marginTop: 1,
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 35,
+    letterSpacing: -0.6,
+  },
+  title: {
+    marginTop: 12,
+    width: 282,
+    textAlign: 'center',
+    fontSize: 28,
+    fontWeight: '700',
+    lineHeight: 29.5,
+    letterSpacing: 1.4,
+  },
+  copy: {
+    marginTop: 18,
+    width: 274,
+    textAlign: 'center',
+    fontSize: 12.643,
+    fontWeight: '500',
+  },
+  actions: { position: 'absolute', top: 588, left: 48, width: 296 },
+  primary: {
+    height: 50,
+    borderRadius: 20,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryText: { fontSize: 18, fontWeight: '700', color: '#fff' },
+  loginCopy: {
+    height: 35,
+    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: '500',
+    lineHeight: 35,
+  },
+  loginLink: {
+    fontSize: 15,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+  },
+});

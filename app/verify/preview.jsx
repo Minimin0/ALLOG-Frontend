@@ -33,30 +33,30 @@ export default function PreviewScreen() {
         <Text className="text-[17px] font-bold text-ink">오늘의 인증</Text>
       </View>
 
-      <ScrollView className="flex-1 px-5" contentContainerClassName="pb-6 pt-2">
-        <View className="mb-4 items-center rounded-card bg-surface p-5 shadow-sm">
-          <Text className="text-[22px] font-bold text-ink">{detail?.group?.name ?? '오늘의 루틴'}</Text>
+      <ScrollView className="flex-1 px-5" contentContainerClassName="pb-4 pt-1">
+        <View className="mb-3 items-center rounded-card bg-surface p-2 shadow-sm">
+          <Text className="text-[15px] font-bold text-ink">{detail?.group?.name ?? '오늘의 루틴'}</Text>
         </View>
 
-        {/* 촬영 사진 (3:4) */}
-        <View className="mb-4 aspect-[3/4] overflow-hidden rounded-card bg-black">
+        {/* 촬영 사진 (고정 높이 — 가이드 박스까지 한 화면에 보이도록 축소) */}
+        <View className="mb-3 h-56 w-full overflow-hidden rounded-card bg-black">
           <Image source={{ uri: media.uri }} style={{ flex: 1 }} resizeMode="cover" />
         </View>
 
-        <View className="mb-4 rounded-card border border-line bg-primary-tint p-5">
-          <Text className="mb-3 text-[17px] font-bold text-ink">인증 가이드</Text>
-          <View className="gap-2 pl-1">
-            <Text className="text-[15px] text-muted">• 오늘 촬영한 사진만 인증 가능합니다.</Text>
-            <Text className="text-[15px] text-muted">• 얼굴은 가려도 괜찮습니다.</Text>
-            <Text className="text-[15px] text-muted">• 위치 정보는 서버에서 자동으로 지워집니다.</Text>
+        <View className="mb-3 rounded-card border border-line bg-primary-tint p-4">
+          <Text className="mb-2 text-[15px] font-bold text-ink">인증 가이드</Text>
+          <View className="gap-1.5 pl-1">
+            <Text className="text-[13px] text-muted">• 오늘 촬영한 사진만 인증 가능합니다.</Text>
+            <Text className="text-[13px] text-muted">• 얼굴은 가려도 괜찮습니다.</Text>
+            <Text className="text-[13px] text-muted">• 위치 정보는 서버에서 자동으로 지워집니다.</Text>
           </View>
         </View>
 
-        <View className="gap-3">
-          <Pressable onPress={() => router.replace('/verify/loading')} className="h-[52px] items-center justify-center rounded-pill bg-ink">
+        <View className="gap-2.5">
+          <Pressable onPress={() => router.replace('/verify/loading')} className="h-[48px] items-center justify-center rounded-pill bg-ink">
             <Text className="text-[15px] font-bold text-white">인증하기</Text>
           </Pressable>
-          <Pressable onPress={retake} className="h-[52px] items-center justify-center rounded-pill bg-disabled">
+          <Pressable onPress={retake} className="h-[48px] items-center justify-center rounded-pill bg-disabled">
             <Text className="text-[15px] font-bold text-white">다시 촬영하기</Text>
           </Pressable>
         </View>

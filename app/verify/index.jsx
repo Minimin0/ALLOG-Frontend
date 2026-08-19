@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Svg, { Rect, Circle, Path } from 'react-native-svg';
 
-import BottomNavBar from '@/components/nav/BottomNavBar';
 import { ApiError } from '@/services/api';
 import { openTodayVerification } from '@/services/verificationApi';
 import { useGroupStore } from '@/stores/groupStore';
@@ -127,13 +126,12 @@ export default function VerifyStartScreen() {
         <Pressable
           onPress={goCamera}
           disabled={loading || !!error || alreadyDone}
-          className={`mt-5 h-[52px] items-center justify-center rounded-pill bg-primary ${loading || error || alreadyDone ? 'opacity-50' : ''}`}
+          className={`mt-5 h-[52px] items-center justify-center rounded-pill bg-ink ${loading || error || alreadyDone ? 'opacity-50' : ''}`}
         >
           <Text className="text-[15px] font-bold text-white">{alreadyDone ? '오늘 인증 완료' : '인증하기'}</Text>
         </Pressable>
       </ScrollView>
 
-      <BottomNavBar />
     </SafeAreaView>
   );
 }

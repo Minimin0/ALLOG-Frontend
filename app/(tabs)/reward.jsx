@@ -1,129 +1,166 @@
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView, Linking } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
+import AnimatedEntrance from '../../mobile/src/components/AnimatedEntrance';
 import { useUserStore } from '@/stores/userStore';
 
-// 리워드 화면 (웹 src/pages/reward/RewardPage.jsx 포팅).
+// 리워드 화면. 화면 디자인은 팀원 최신본(mobile/src/screens/main/RewardScreen.js) 이식.
+// 보유 포인트는 GET /users/me/stats가 authority다 — 도너의 로컬 points는 쓰지 않는다.
+// 아래 상품 목록은 아직 API가 없는 정적 콘텐츠라 그대로 둔다.
 const categories = ['체험', '상품', '기타', '전체'];
-const sortOptions = ['인기 높은 순', '가격 높은 순', '가격 낮은 순'];
+const sorts = ['인기 높은 순', '가격 높은 순', '가격 낮은 순'];
 const rewards = [
-  { id: 'serum-trial', title: 'AAC 시그니처 세럼 체험권', cost: 1500, note: '교환 후 30일 이내 사용', icon: 'ticket' },
-  { id: 'discount-15', title: '공식몰 15% 할인 쿠폰', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'coupon' },
-  { id: 'free-shipping', title: '무료 배송 쿠폰(3만원 이상)', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'shipping' },
+  { id: 'serum-trial', title: 'AAC 시그니처 세럼\n체험권', cost: 1500, note: '교환 후 30일 이내 사용', icon: 'ticket' },
+  { id: 'discount-15', title: '공식몰 15%\n할인 쿠폰', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'coupon' },
+  { id: 'free-shipping', title: '무료 배송 쿠폰\n(3만원 이상)', cost: 2000, note: '교환 후 30일 이내 사용', icon: 'shipping' },
 ];
 
 export default function RewardScreen() {
   const router = useRouter();
-  // 보유 포인트는 GET /users/me/stats가 authority다. 아래 상품 목록은 아직 API가 없는 정적 콘텐츠.
   const points = useUserStore((s) => s.stats?.rewardPoints ?? 0);
   const [category, setCategory] = useState('전체');
-  const [sort, setSort] = useState(sortOptions[0]);
-  const [sortOpen, setSortOpen] = useState(false);
+  const [sort, setSort] = useState(sorts[0]);
+  const [open, setOpen] = useState(false);
 
-  const sortedRewards = [...rewards].sort((a, b) => {
-    if (sort === '가격 높은 순') return b.cost - a.cost;
-    if (sort === '가격 낮은 순') return a.cost - b.cost;
-    return 0;
-  });
+  const list = [...rewards].sort((a, b) =>
+    sort === '가격 높은 순' ? b.cost - a.cost : sort === '가격 낮은 순' ? a.cost - b.cost : 0,
+  );
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-bg">
-      <View className="px-[30px] pt-4">
-        <Text className="text-[28px] font-bold text-ink">리워드</Text>
-      </View>
-
-      <ScrollView className="flex-1 px-[30px]" contentContainerClassName="gap-5 pb-8 pt-4">
-        {/* 포인트 카드 */}
-        <View className="rounded-[13px] bg-[#4a3a18] p-5">
-          <Text className="text-[15px] font-semibold text-[#e7e3d8]">사용가능한 리워드 포인트</Text>
-          <View className="mt-2 flex-row items-end justify-between">
-            <View className="flex-row items-center gap-2">
-              <Icon name="coin" size={24} />
-              <Text className="text-[30px] font-bold text-[#e7e3d8]">{points}</Text>
+    <View style={s.screen}>
+      <Text className="px-[30px] pt-4 text-[28px] font-black text-ink">리워드</Text>
+      <ScrollView contentContainerStyle={s.content}>
+        <AnimatedEntrance style={s.balance}>
+          <Text style={s.balanceLabel}>사용가능한 리워드 포인트</Text>
+          <View style={s.between}>
+            <View style={s.points}>
+              <Icon name="coin" size={22} />
+              <Text style={s.pointsText}>{points}</Text>
             </View>
-            <Pressable onPress={() => Linking.openURL('https://anti-agingclub.kr/')}>
-              <Text className="pb-1 text-[12px] font-bold text-surface">AAC 홈페이지 바로가기</Text>
-            </Pressable>
+            <Text style={s.link} onPress={() => Linking.openURL('https://anti-agingclub.kr/')}>
+              AAC 홈페이지 바로가기
+            </Text>
           </View>
-          <View className="my-3 h-px bg-[#e7e3d8]/30" />
-          <Text className="text-[10px] font-medium text-[#e7e3d8]">포인트는 ACC 상품과 웰니스 혜택에만 사용돼요.</Text>
+          <View style={s.line} />
+          <Text style={s.note}>포인트는 ACC 상품과 웰니스 혜택에만 사용돼요.</Text>
+        </AnimatedEntrance>
+
+        <View style={s.categories}>
+          {categories.map((x) => (
+            <Pressable key={x} style={s.category} onPress={() => setCategory(x)}>
+              <Text style={[s.categoryText, category !== x && { color: '#6b7268' }]}>{x}</Text>
+            </Pressable>
+          ))}
         </View>
 
-        {/* 카테고리 */}
-        <View className="flex-row gap-2.5">
-          {categories.map((item) => {
-            const active = category === item;
-            return (
-              <Pressable
-                key={item}
-                onPress={() => setCategory(item)}
-                className="flex-1 items-center rounded-[10px] bg-surface py-2.5"
-              >
-                <Text className={`text-[13px] font-semibold ${active ? 'text-ink' : 'text-muted'}`}>{item}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {/* 정렬 */}
-        <View className="z-10 items-end">
-          <Pressable
-            onPress={() => setSortOpen((p) => !p)}
-            className="flex-row items-center gap-1.5 rounded-[6px] bg-line px-3.5 py-1.5"
-          >
-            <Text className="text-[13px] font-semibold text-[#696973]">{sort}</Text>
-            <Text className="text-[10px] text-[#696973]">{sortOpen ? '⌃' : '⌄'}</Text>
+        <View style={s.sortWrap}>
+          <Pressable style={s.sort} onPress={() => setOpen(!open)}>
+            <Text style={s.sortText}>{sort} ⌄</Text>
           </Pressable>
-          {sortOpen && (
-            <View className="absolute right-0 top-[36px] w-[140px] overflow-hidden rounded-[12px] bg-surface py-1 shadow">
-              {sortOptions.map((option) => (
+          {open ? (
+            <View style={s.menu}>
+              {sorts.map((x) => (
                 <Pressable
-                  key={option}
+                  key={x}
                   onPress={() => {
-                    setSort(option);
-                    setSortOpen(false);
+                    setSort(x);
+                    setOpen(false);
                   }}
-                  className="px-4 py-2.5"
+                  style={s.menuItem}
                 >
-                  <Text className={`text-[12px] font-semibold ${sort === option ? 'text-ink' : 'text-[#696973]'}`}>{option}</Text>
+                  <Text style={s.menuText}>{x}</Text>
                 </Pressable>
               ))}
             </View>
-          )}
+          ) : null}
         </View>
 
-        {/* 리워드 목록 */}
-        <View className="gap-3">
-          {sortedRewards.map((reward) => {
-            const canAfford = points >= reward.cost;
-            return (
-              <Pressable
-                key={reward.id}
-                onPress={() => router.push(`/reward/${reward.id}`)}
-                className="flex-row items-center gap-3 rounded-[13px] bg-surface p-4"
-              >
-                <View className="h-[54px] w-[54px] items-center justify-center rounded-[12px] bg-[#f3efe4]">
-                  <Icon name={reward.icon} size={26} />
+        {list.map((r, index) => {
+          const afford = points >= r.cost;
+          return (
+            <AnimatedEntrance key={r.id} delay={index * 80}>
+              <Pressable style={s.item} onPress={() => router.push(`/reward/${r.id}`)}>
+                <View style={s.iconBox}>
+                  <Icon name={r.icon} size={26} />
                 </View>
-                <View className="flex-1">
-                  <Text className="text-[15px] font-bold text-ink">{reward.title}</Text>
-                  <Text className="mt-1 text-[10px] font-medium text-muted">{reward.note}</Text>
-                  <View className="mt-1.5 flex-row items-center gap-1">
+                <View style={{ flex: 1 }}>
+                  <Text style={s.itemTitle}>{r.title}</Text>
+                  <Text style={s.itemNote}>{r.note}</Text>
+                  <View style={s.cost}>
                     <Icon name="coin" size={14} />
-                    <Text className="text-[15px] font-bold text-ink">{reward.cost}</Text>
+                    <Text style={s.costText}>{r.cost}</Text>
                   </View>
                 </View>
-                <View className={`rounded-full px-3.5 py-1.5 ${canAfford ? 'bg-primary' : 'bg-disabled'}`}>
-                  <Text className="text-[10px] font-bold text-white">{canAfford ? '교환하기' : '포인트 부족'}</Text>
+                <View style={[s.badge, !afford && { backgroundColor: '#bababa' }]}>
+                  <Text style={s.badgeText}>{afford ? '교환하기' : '포인트 부족'}</Text>
                 </View>
               </Pressable>
-            );
-          })}
-        </View>
+            </AnimatedEntrance>
+          );
+        })}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
+
+const s = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#f7f6f3' },
+  content: { paddingHorizontal: 30, paddingTop: 16, paddingBottom: 110, gap: 12 },
+  balance: { borderRadius: 13, backgroundColor: '#4a3a18', padding: 20, elevation: 8 },
+  balanceLabel: { fontSize: 15, fontWeight: '600', color: '#e7e3d8' },
+  between: { marginTop: 8, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
+  points: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  pointsText: { fontSize: 30, fontWeight: '700', color: '#e7e3d8' },
+  link: { fontSize: 12, fontWeight: '700', color: '#fefefe' },
+  line: { height: 1, backgroundColor: 'rgba(231,227,216,.3)', marginVertical: 12 },
+  note: { fontSize: 10, color: '#e7e3d8' },
+  categories: { flexDirection: 'row', gap: 10, marginTop: 8 },
+  category: {
+    flex: 1,
+    borderRadius: 10,
+    backgroundColor: '#fefefe',
+    paddingVertical: 10,
+    alignItems: 'center',
+    elevation: 1,
+  },
+  categoryText: { fontSize: 13, fontWeight: '600' },
+  sortWrap: { alignItems: 'flex-end', zIndex: 3 },
+  sort: { borderRadius: 6, backgroundColor: '#e7e3d8', paddingHorizontal: 14, paddingVertical: 6 },
+  sortText: { fontSize: 13, fontWeight: '600', color: '#696973' },
+  menu: {
+    position: 'absolute',
+    right: 0,
+    top: 36,
+    width: 132,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    paddingVertical: 4,
+    elevation: 8,
+  },
+  menuItem: { paddingHorizontal: 14, paddingVertical: 10 },
+  menuText: { fontSize: 12, fontWeight: '600' },
+  item: {
+    borderRadius: 13,
+    backgroundColor: '#fefefe',
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  iconBox: {
+    width: 54,
+    height: 54,
+    borderRadius: 12,
+    backgroundColor: '#f3efe4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemTitle: { fontSize: 15, fontWeight: '700' },
+  itemNote: { marginTop: 4, fontSize: 10, color: '#6b7268' },
+  cost: { marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  costText: { fontSize: 15, fontWeight: '700' },
+  badge: { borderRadius: 99, backgroundColor: '#000', paddingHorizontal: 12, paddingVertical: 6 },
+  badgeText: { fontSize: 10, fontWeight: '700', color: '#fff' },
+});

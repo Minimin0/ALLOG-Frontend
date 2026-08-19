@@ -1,19 +1,26 @@
 import { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Circle, Line } from 'react-native-svg';
-import Animated, { useSharedValue, useAnimatedStyle, withDelay, withTiming, Easing } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInUp, FadeInDown, useSharedValue, useAnimatedStyle, useAnimatedProps, withDelay, withTiming, Easing } from 'react-native-reanimated';
 
 import Mascot from '@/components/common/Mascot';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 // AI 코치 메시지 + 데이터 시각화 (웹 AiMessage 포팅). viz: pips/ring/columns/versus.
 // 애니메이션(막대 차오름 등)은 최종 상태로 렌더(등장 애니는 상위에서 Reanimated로).
 
+// 점: 마운트 시 하나씩 순서대로 페이드인 (막대 차오름과 같은 stagger 리듬).
 function VizPips({ filled, total, note }) {
   return (
     <View className="mt-3">
       <View className="flex-row flex-wrap gap-2">
         {Array.from({ length: total }).map((_, i) => (
-          <View key={i} className={`h-6 w-6 rounded-full ${i < filled ? 'bg-primary' : 'border-2 border-line'}`} />
+          <Animated.View
+            key={i}
+            entering={FadeIn.delay(i * 90).duration(280).easing(Easing.out(Easing.cubic))}
+            className={`h-6 w-6 rounded-full ${i < filled ? 'bg-primary' : 'border-2 border-line'}`}
+          />
         ))}
       </View>
       {note ? <Text className="mt-2 text-[11px] font-bold text-primary">{note}</Text> : null}
@@ -26,12 +33,19 @@ function VizRing({ value, goal, unit, note }) {
   const r = 34;
   const circ = 2 * Math.PI * r;
   const offset = circ * (1 - value / 100);
+  const progress = useSharedValue(0);
+  useEffect(() => {
+    progress.value = withTiming(1, { duration: 900, easing: Easing.out(Easing.cubic) });
+  }, []);
+  const ringProps = useAnimatedProps(() => ({
+    strokeDashoffset: circ - (circ - offset) * progress.value,
+  }));
   return (
     <View className="mt-3 flex-row items-center gap-4">
       <View style={{ width: size, height: size }}>
         <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
           <Circle cx={42} cy={42} r={r} stroke="#e7e3d8" strokeWidth={9} fill="none" />
-          <Circle
+          <AnimatedCircle
             cx={42}
             cy={42}
             r={r}
@@ -40,7 +54,7 @@ function VizRing({ value, goal, unit, note }) {
             fill="none"
             strokeLinecap="round"
             strokeDasharray={circ}
-            strokeDashoffset={offset}
+            animatedProps={ringProps}
           />
           <Line x1={42} y1={4} x2={42} y2={12} stroke="#c08a24" strokeWidth={3} strokeLinecap="round" transform={`rotate(${goal * 3.6} 42 42)`} />
         </Svg>
@@ -87,6 +101,9 @@ function VizColumns({ data, unit }) {
 }
 
 function VizVersus({ left, right, delta, metric, unit }) {
+  // 증가(+)는 아래→위로 떠오르며, 감소(−/-)는 위→아래로 내려가며 첫 등장 시 한 번만 애니메이션.
+  const isDecrease = /^[-−]/.test(delta ?? '');
+  const DeltaEntering = isDecrease ? FadeInDown : FadeInUp;
   const Card = ({ item, me }) => (
     <View className={`flex-1 items-center rounded-item px-2 py-2.5 ${me ? 'bg-primary-tint' : 'bg-surface-alt'}`} style={me ? { borderWidth: 1.5, borderColor: '#14453a' } : undefined}>
       <Text className={`text-[22px] font-bold ${me ? 'text-primary' : 'text-muted'}`}>{item.value}<Text className="text-[11px] font-bold">{unit}</Text></Text>
@@ -98,7 +115,12 @@ function VizVersus({ left, right, delta, metric, unit }) {
       {metric ? <Text className="mb-1.5 text-[11px] text-muted">기준 · {metric}</Text> : null}
       <View className="flex-row items-center gap-2.5">
         <Card item={left} me={false} />
-        <Text className="text-[11px] font-bold text-reward">{delta}</Text>
+        <Animated.Text
+          entering={DeltaEntering.duration(450).easing(Easing.out(Easing.cubic))}
+          className="text-[11px] font-bold text-reward"
+        >
+          {delta}
+        </Animated.Text>
         <Card item={right} me />
       </View>
     </View>

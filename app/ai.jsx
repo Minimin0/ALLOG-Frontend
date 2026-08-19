@@ -5,7 +5,6 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 
 import AiMessageRN from '@/components/ai/AiMessageRN';
-import BottomNavBar from '@/components/nav/BottomNavBar';
 import { ApiError } from '@/services/api';
 import { fetchAiCoach } from '@/services/aiApi';
 import { useGroupStore } from '@/stores/groupStore';
@@ -118,7 +117,7 @@ export default function AiCoachScreen() {
       <View className="border-t border-line p-3">
         <View className="flex-row gap-2">
           {coach?.actionLabel && actionRoute ? (
-            <Pressable onPress={() => router.push(actionRoute)} className="h-11 flex-1 items-center justify-center rounded-pill bg-primary">
+            <Pressable onPress={() => router.push(actionRoute)} className="h-11 flex-1 items-center justify-center rounded-pill bg-ink">
               <Text className="text-[15px] font-bold text-white" numberOfLines={1}>{coach.actionLabel}</Text>
             </Pressable>
           ) : null}
@@ -128,7 +127,6 @@ export default function AiCoachScreen() {
         </View>
       </View>
 
-      <BottomNavBar />
     </SafeAreaView>
   );
 }

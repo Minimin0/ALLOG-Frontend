@@ -13,7 +13,7 @@ export default function WaitingRoomScreen() {
         <Text className="text-3xl">⏳</Text>
       </View>
       <Text className="text-center text-[19px] font-bold text-ink" style={{ lineHeight: 28 }}>대기실{'\n'}멤버들을 기다리고 있어요.</Text>
-      <Pressable onPress={() => router.replace(groupId ? { pathname: '/group', params: { groupId } } : '/group')} className="w-full items-center justify-center rounded-[27.5px] bg-primary py-4">
+      <Pressable onPress={() => router.replace(groupId ? { pathname: '/group', params: { groupId } } : '/group')} className="w-full items-center justify-center rounded-[27.5px] bg-ink py-4">
         <Text className="text-[15px] font-bold text-white">그룹 홈으로 이동</Text>
       </Pressable>
     </SafeAreaView>

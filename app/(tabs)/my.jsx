@@ -1,14 +1,16 @@
 import { useCallback, useState } from 'react';
-import { View, Text, Pressable, ScrollView, Modal } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
+import AnimatedEntrance from '../../mobile/src/components/AnimatedEntrance';
 import { useAuthStore } from '@/stores/authStore';
 import { useUserStore } from '@/stores/userStore';
 
 // 마이 페이지. 하트/리워드/성공한 루틴은 GET /users/me/stats, 닉네임과 관심 루틴은
-// GET /users/me에서 온다. 루틴별 인증 횟수 API는 없으므로 관심 루틴을 대신 보여준다.
+// GET /users/me에서 온다. 루틴별 인증 횟수 API는 없으므로 도너의 "내 기록"(3회/5회…) 대신
+// 실제로 있는 값인 관심 루틴을 같은 카드 디자인으로 보여준다.
+// 화면 디자인은 팀원 최신본(mobile/src/screens/main/MyScreen.js) 이식.
 const INTEREST_META = {
   hydration: { label: '수분케어', icon: 'selfcare' },
   exercise: { label: '운동', icon: 'exercise' },
@@ -16,11 +18,11 @@ const INTEREST_META = {
   sleep: { label: '수면', icon: 'sleep' },
   skincare: { label: '피부관리', icon: 'selfcare' },
 };
-const menuItems = [
-  { label: '알림 설정', icon: 'bell', path: '/my/notifications' },
-  { label: '개인정보 보호', icon: 'privacy', path: '/my/privacy' },
-  { label: '이용약관', icon: 'terms', path: '/my/terms' },
-  { label: '고객센터', icon: 'support', path: '/my/support' },
+const menus = [
+  ['알림 설정', '/my/notifications', 'bell'],
+  ['개인정보 보호', '/my/privacy', 'privacy'],
+  ['이용약관', '/my/terms', 'terms'],
+  ['고객센터', '/my/support', 'support'],
 ];
 
 export default function MyScreen() {
@@ -47,102 +49,186 @@ export default function MyScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-bg">
-      <View className="px-[30px] pt-4">
-        <Text className="text-[28px] font-bold text-ink">마이 페이지</Text>
-      </View>
-
-      <ScrollView className="flex-1 px-[30px]" contentContainerClassName="gap-5 pb-8 pt-4">
-        {/* 프로필 카드 */}
-        <View className="rounded-[26px] border border-line bg-surface p-5">
-          <View className="flex-row items-center gap-4">
-            <View className="h-[56px] w-[56px] items-center justify-center rounded-full bg-primary">
-              <Text className="text-[20px] font-bold text-white">{profile?.nickname?.[0] ?? 'A'}</Text>
+    <View style={s.screen}>
+      <Text className="px-[30px] pt-4 text-[28px] font-black text-ink">마이 페이지</Text>
+      <ScrollView contentContainerStyle={s.content}>
+        <AnimatedEntrance style={s.profile}>
+          <View style={s.profileRow}>
+            <View style={s.avatar}>
+              <Text style={s.avatarText}>{profile?.nickname?.[0] ?? 'A'}</Text>
             </View>
-            <View className="flex-1">
-              <Text className="text-[18px] font-bold text-ink">{profile?.nickname ?? '–'}</Text>
-              <Text className="mt-0.5 text-[12px] font-medium text-muted">{firebaseUser?.email ?? ''}</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={s.name}>{profile?.nickname ?? '–'}</Text>
+              <Text style={s.email}>{firebaseUser?.email ?? ''}</Text>
             </View>
-            <Pressable
-              onPress={() => router.push('/my/edit-profile')}
-              className="rounded-full bg-[#e5f4e8] px-4 py-2"
-            >
-              <Text className="text-[12px] font-bold text-ink">편집</Text>
+            <Pressable style={s.edit} onPress={() => router.push('/my/edit-profile')}>
+              <Text style={s.editText}>편집</Text>
             </Pressable>
           </View>
-
-          <View className="my-4 h-px bg-line" />
-
-          <View className="flex-row">
-            <View className="flex-1 items-center">
-              <Text className="text-[10px] font-semibold text-[#d9573b]">하트</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="heart" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.hearts ?? '–'}</Text></View>
-            </View>
-            <View className="flex-1 items-center">
-              <Text className="text-[10px] font-semibold text-muted">리워드</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="coin" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.rewardPoints ?? '–'}</Text></View>
-            </View>
-            <View className="flex-1 items-center">
-              <Text className="text-[10px] font-semibold text-muted">성공한 루틴</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="check" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.successfulRoutines ?? 0}회</Text></View>
-            </View>
+          <View style={s.line} />
+          <View style={s.metrics}>
+            <Metric label="하트" value={String(stats?.hearts ?? '–')} icon="heart" red />
+            <Metric label="리워드" value={String(stats?.rewardPoints ?? '–')} icon="coin" />
+            <Metric label="성공한 루틴" value={`${stats?.successfulRoutines ?? 0}회`} icon="check" />
           </View>
-        </View>
+        </AnimatedEntrance>
 
-        {/* 관심 루틴 (온보딩에서 고른 값) */}
-        {interests.length > 0 && (
-          <View>
-            <Text className="mb-2.5 text-[13px] font-bold text-muted">관심 루틴</Text>
-            <View className="flex-row justify-between rounded-[26px] border border-line bg-surface p-4">
+        {interests.length > 0 ? (
+          <AnimatedEntrance delay={60} style={s.recordSection}>
+            <Text style={s.section}>관심 루틴</Text>
+            <View style={s.records}>
               {interests.map((item) => (
-                <View key={item.label} className="items-center">
-                  <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-[#f3efe4]">
+                <View key={item.label} style={s.record}>
+                  <View style={s.recordIcon}>
                     <Icon name={item.icon} size={24} />
                   </View>
-                  <Text className="mt-2 text-[11px] font-semibold text-ink">{item.label}</Text>
+                  <Text style={s.recordName}>{item.label}</Text>
                 </View>
               ))}
             </View>
-          </View>
-        )}
+          </AnimatedEntrance>
+        ) : null}
 
-        {/* 메뉴 */}
-        <View className="overflow-hidden rounded-[20px] border border-line bg-surface">
-          {menuItems.map((item, i) => (
-            <Pressable
-              key={item.label}
-              onPress={() => router.push(item.path)}
-              className={`flex-row items-center gap-3 px-5 py-4 ${i > 0 ? 'border-t border-line' : ''}`}
-            >
-              <Icon name={item.icon} size={18} />
-              <Text className="flex-1 text-[13px] font-medium text-ink">{item.label}</Text>
-              <Text className="text-[14px] text-disabled">›</Text>
+        <AnimatedEntrance delay={120} style={s.menus}>
+          {menus.map(([label, path, icon], i) => (
+            <Pressable key={label} style={[s.menu, i > 0 && s.menuLine]} onPress={() => router.push(path)}>
+              <Icon name={icon} size={18} />
+              <Text style={s.menuText}>{label}</Text>
+              <Text style={s.arrow}>›</Text>
             </Pressable>
           ))}
-        </View>
+        </AnimatedEntrance>
 
-        {/* 로그아웃 */}
-        <Pressable onPress={() => setLogoutOpen(true)} className="h-[50px] items-center justify-center rounded-[13px] border border-[#d9573b] bg-surface">
-          <Text className="text-[15px] font-bold text-[#d9573b]">로그아웃</Text>
+        <Pressable style={s.logout} onPress={() => setLogoutOpen(true)}>
+          <Text style={s.logoutText}>로그아웃</Text>
         </Pressable>
       </ScrollView>
 
       {/* 로그아웃 확인 바텀시트 — 반투명 배경 + 아래에서 위로 */}
       <Modal visible={logoutOpen} transparent animationType="slide" onRequestClose={() => setLogoutOpen(false)}>
-        <Pressable className="flex-1 justify-end bg-black/40" onPress={() => setLogoutOpen(false)}>
-          <Pressable className="rounded-t-[24px] bg-surface px-6 pb-8 pt-6" onPress={() => {}}>
-            <Text className="text-center text-[17px] font-bold text-ink">정말 로그아웃 하시겠어요?</Text>
-            <View className="mt-6 flex-row gap-3">
-              <Pressable onPress={() => setLogoutOpen(false)} className="flex-1 items-center justify-center rounded-[14px] border border-line bg-surface py-3.5">
-                <Text className="text-[14px] font-bold text-ink">아니오</Text>
+        <Pressable style={s.dim} onPress={() => setLogoutOpen(false)}>
+          <Pressable style={s.sheet} onPress={() => {}}>
+            <Text style={s.sheetTitle}>정말 로그아웃 하시겠어요?</Text>
+            <View style={s.sheetRow}>
+              <Pressable style={s.cancel} onPress={() => setLogoutOpen(false)}>
+                <Text style={s.cancelText}>아니오</Text>
               </Pressable>
-              <Pressable onPress={confirmLogout} className="flex-1 items-center justify-center rounded-[14px] bg-[#d9573b] py-3.5">
-                <Text className="text-[14px] font-bold text-white">네</Text>
+              <Pressable style={s.confirm} onPress={confirmLogout}>
+                <Text style={s.confirmText}>네</Text>
               </Pressable>
             </View>
           </Pressable>
         </Pressable>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
+
+function Metric({ label, value, icon, red }) {
+  return (
+    <View style={s.metric}>
+      <Text style={[s.metricLabel, red && { color: '#d9573b' }]}>{label}</Text>
+      <View style={s.metricValue}>
+        <Icon name={icon} size={13} />
+        <Text style={s.metricValueText}>{value}</Text>
+      </View>
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#f7f6f3' },
+  content: { paddingHorizontal: 30, paddingTop: 16, paddingBottom: 110, gap: 20 },
+  profile: {
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    padding: 20,
+  },
+  profileRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: { fontSize: 20, fontWeight: '700', color: '#fff' },
+  name: { fontSize: 18, fontWeight: '700' },
+  email: { marginTop: 2, fontSize: 12, color: '#6b7268' },
+  edit: { borderRadius: 99, backgroundColor: '#e5f4e8', paddingHorizontal: 16, paddingVertical: 8 },
+  editText: { fontSize: 12, fontWeight: '700' },
+  line: { height: 1, backgroundColor: '#e7e3d8', marginVertical: 16 },
+  metrics: { flexDirection: 'row' },
+  metric: { flex: 1, alignItems: 'center' },
+  metricLabel: { fontSize: 10, fontWeight: '600', color: '#6b7268' },
+  metricValue: { marginTop: 4, flexDirection: 'row', alignItems: 'center', gap: 4 },
+  metricValueText: { fontSize: 15, fontWeight: '700' },
+  recordSection: { gap: 10 },
+  section: { fontSize: 13, lineHeight: 16, fontWeight: '700', color: '#6b7268' },
+  records: {
+    borderRadius: 26,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    padding: 16,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  record: { flex: 1, alignItems: 'center' },
+  recordIcon: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: '#f3efe4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recordName: { marginTop: 8, fontSize: 11, lineHeight: 13, fontWeight: '600' },
+  menus: {
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    overflow: 'hidden',
+  },
+  menu: { height: 50, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  menuLine: { borderTopWidth: 1, borderTopColor: '#e7e3d8' },
+  menuText: { flex: 1, fontSize: 13, fontWeight: '500' },
+  arrow: { fontSize: 18, color: '#bababa' },
+  logout: {
+    height: 50,
+    borderRadius: 13,
+    borderWidth: 1,
+    borderColor: '#d9573b',
+    backgroundColor: '#fefefe',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoutText: { fontSize: 15, fontWeight: '700', color: '#d9573b' },
+  dim: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,.4)' },
+  sheet: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: '#fefefe',
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 32,
+  },
+  sheetTitle: { textAlign: 'center', fontSize: 17, fontWeight: '700' },
+  sheetRow: { marginTop: 24, flexDirection: 'row', gap: 12 },
+  cancel: {
+    flex: 1,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  cancelText: { fontSize: 14, fontWeight: '700' },
+  confirm: { flex: 1, borderRadius: 14, backgroundColor: '#d9573b', paddingVertical: 14, alignItems: 'center' },
+  confirmText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+});

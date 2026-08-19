@@ -1,45 +1,22 @@
 import { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
+import SleepTimeDial from '../../mobile/src/components/SleepTimeDial';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 
-const EXERCISE = ['주 1회', '주 2회', '주 3회', '주 4회', '주 5회', '거의 안함'];
-const MEAL = ['먹지 않음', '1회', '2회', '3회 이상'];
-const PERIOD = ['7일', '14일', '30일'];
-
-function Chip({ label, active, onPress, width }) {
-  return (
-    <Pressable onPress={onPress} style={{ width }} className={`items-center rounded-[15px] border py-3 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
-      <Text className={`text-[14px] font-semibold ${active ? 'text-primary' : 'text-ink'}`}>{label}</Text>
-    </Pressable>
-  );
-}
-
-function Stepper({ label, value, onDec, onInc }) {
-  return (
-    <View className="items-center">
-      <View className="flex-row items-center gap-3">
-        <Pressable onPress={onDec} className="h-8 w-8 items-center justify-center rounded-full bg-line"><Text className="text-lg text-ink">−</Text></Pressable>
-        <Text className="w-10 text-center text-[26px] font-bold text-ink">{value}</Text>
-        <Pressable onPress={onInc} className="h-8 w-8 items-center justify-center rounded-full bg-line"><Text className="text-lg text-ink">＋</Text></Pressable>
-      </View>
-      <Text className="mt-1 text-[12px] text-muted">{label}</Text>
-    </View>
-  );
-}
-
+// 생활 패턴 (STEP 4). 화면은 팀원 최신 디자인(mobile/src/screens/onboarding/LifestyleScreen.js) 이식.
+// 저장 형태는 기존대로 sleepH/sleepM을 유지한다 (store가 averageSleepHours로 변환해 전송).
 export default function LifestyleScreen() {
   const router = useRouter();
   const patch = useOnboardingStore((s) => s.patch);
   const saved = useOnboardingStore.getState();
   const [form, setForm] = useState({
-    sleepH: saved.sleepH, sleepM: saved.sleepM,
+    sleep: saved.sleepH + (saved.sleepM === 30 ? 0.5 : 0),
     exercise: saved.exercise, meal: saved.meal, period: saved.period,
   });
-  const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
-  const isValid = form.exercise && form.meal && form.period;
+  const set = (k, v) => setForm((x) => ({ ...x, [k]: v }));
 
   return (
     <OnboardingShellRN
@@ -49,45 +26,104 @@ export default function LifestyleScreen() {
       subtitle="AI가 최적의 그룹과 루틴 시간을 추천해 드려요."
       onBack={() => router.back()}
       onNext={() => {
-        patch(form);
+        patch({
+          sleepH: Math.floor(form.sleep),
+          sleepM: form.sleep % 1 ? 30 : 0,
+          exercise: form.exercise,
+          meal: form.meal,
+          period: form.period,
+        });
         router.push('/onboarding/complete');
       }}
-      canNext={!!isValid}
+      canNext={!!(form.exercise && form.meal && form.period)}
     >
-      <View className="gap-6">
-        {/* 수면 시간 */}
-        <View className="gap-3">
-          <Text className="text-center text-[15px] font-bold text-ink">수면 시간</Text>
-          <View className="flex-row justify-center gap-10 rounded-[15px] border border-line bg-surface px-4 py-6">
-            <Stepper label="시간" value={form.sleepH} onDec={() => set('sleepH', Math.max(0, form.sleepH - 1))} onInc={() => set('sleepH', Math.min(12, form.sleepH + 1))} />
-            <Stepper label="분" value={form.sleepM} onDec={() => set('sleepM', form.sleepM === 30 ? 0 : 30)} onInc={() => set('sleepM', form.sleepM === 0 ? 30 : 0)} />
+      <View style={s.lifestyleForm}>
+        <View style={s.section}>
+          <Text style={s.heading}>수면 시간</Text>
+          <View style={s.sleep}>
+            <Text style={s.big}>{Math.floor(form.sleep)}</Text>
+            <Text style={s.unit}>시간</Text>
+            <Text style={s.big}>{form.sleep % 1 ? '30' : '00'}</Text>
+            <Text style={s.unit}>분</Text>
+            <View style={s.dial}>
+              <SleepTimeDial value={form.sleep} onChange={(sleep) => set('sleep', sleep)} min={0} max={24} />
+            </View>
           </View>
         </View>
-
-        {/* 운동 빈도 */}
-        <View className="gap-3">
-          <Text className="text-center text-[15px] font-bold text-ink">운동 빈도</Text>
-          <View className="flex-row flex-wrap justify-between gap-y-3">
-            {EXERCISE.map((x) => <Chip key={x} label={x} active={form.exercise === x} onPress={() => set('exercise', x)} width="31%" />)}
-          </View>
-        </View>
-
-        {/* 식사 빈도 */}
-        <View className="gap-3">
-          <Text className="text-center text-[15px] font-bold text-ink">식사 빈도</Text>
-          <View className="flex-row flex-wrap justify-between gap-y-3">
-            {MEAL.map((x) => <Chip key={x} label={x} active={form.meal === x} onPress={() => set('meal', x)} width="47%" />)}
-          </View>
-        </View>
-
-        {/* 선호 기간 */}
-        <View className="gap-3">
-          <Text className="text-center text-[15px] font-bold text-ink">선호 기간</Text>
-          <View className="flex-row justify-between">
-            {PERIOD.map((x) => <Chip key={x} label={x} active={form.period === x} onPress={() => set('period', x)} width="31%" />)}
-          </View>
-        </View>
+        <Option
+          title="운동 빈도"
+          values={['주 1회', '주 2회', '주 3회', '주 4회', '주 5회', '거의 안함']}
+          value={form.exercise}
+          set={(v) => set('exercise', v)}
+          cols={3}
+        />
+        <Option
+          title="식사 빈도"
+          values={['먹지 않음', '1회', '2회', '3회 이상']}
+          value={form.meal}
+          set={(v) => set('meal', v)}
+          cols={2}
+        />
+        <Option
+          title="선호 기간"
+          values={['7일', '14일', '30일']}
+          value={form.period}
+          set={(v) => set('period', v)}
+          cols={3}
+        />
       </View>
     </OnboardingShellRN>
   );
 }
+
+function Option({ title, values, value, set, cols }) {
+  return (
+    <View style={s.section}>
+      <Text style={s.heading}>{title}</Text>
+      <View style={s.options}>
+        {values.map((x) => (
+          <Pressable
+            key={x}
+            onPress={() => set(x)}
+            style={[s.choice, { width: cols === 3 ? '30.8%' : '48%' }, value === x && s.active]}
+          >
+            <Text style={s.choiceText}>{x}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  lifestyleForm: { gap: 24 },
+  heading: { textAlign: 'center', fontSize: 15, fontWeight: '700', marginBottom: 0 },
+  sleep: {
+    height: 191,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    borderRadius: 15,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingTop: 24,
+    gap: 6,
+  },
+  big: { fontSize: 33, fontWeight: '700' },
+  unit: { fontSize: 13, color: '#696973', marginTop: 18, marginRight: 10 },
+  dial: { position: 'absolute', bottom: 18, left: 1, right: 1, height: 92 },
+  section: { gap: 12 },
+  options: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  choice: {
+    height: 54,
+    borderWidth: 2,
+    borderColor: '#e7e3d8',
+    borderRadius: 15,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  active: { borderColor: '#14453a', backgroundColor: '#eaf4ec' },
+  choiceText: { fontSize: 13, fontWeight: '700' },
+});

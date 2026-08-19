@@ -82,14 +82,14 @@ export default function ResultScreen() {
             </Text>
 
             {personal && (
-              <View className="w-full max-w-[280px] flex-row gap-2">
-                <View className="flex-1 rounded-card bg-primary-tint px-3 py-2.5">
-                  <Text className="text-[11px] text-muted">연속 성공</Text>
-                  <Text className="text-[22px] font-bold text-primary">{personal.currentStreak}<Text className="text-[11px] font-bold">일 🔥</Text></Text>
+              <View className="w-full max-w-[280px] flex-row gap-3">
+                <View className="flex-1 items-center gap-1.5 rounded-card border border-line bg-primary-tint py-4">
+                  <Text className="text-[11px] font-semibold text-muted">🔥 연속 성공</Text>
+                  <Text className="text-[20px] font-bold text-primary">{personal.currentStreak}일</Text>
                 </View>
-                <View className="flex-1 rounded-card bg-primary-tint px-3 py-2.5">
-                  <Text className="text-[11px] text-muted">누적 완료</Text>
-                  <Text className="pt-1 text-[15px] font-bold text-primary">{personal.completedCount}/{personal.requiredCompletionCount}회</Text>
+                <View className="flex-1 items-center gap-1.5 rounded-card border border-line bg-primary-tint py-4">
+                  <Text className="text-[11px] font-semibold text-muted">⏰ 누적 완료</Text>
+                  <Text className="text-[20px] font-bold text-primary">{personal.completedCount}/{personal.requiredCompletionCount}회</Text>
                 </View>
               </View>
             )}
@@ -123,7 +123,7 @@ export default function ResultScreen() {
       <View className="w-full gap-2">
         {state === 'failed' ? (
           <>
-            <Pressable onPress={() => router.replace('/verify/camera')} className="h-[52px] items-center justify-center rounded-pill bg-primary">
+            <Pressable onPress={() => router.replace('/verify/camera')} className="h-[52px] items-center justify-center rounded-pill bg-ink">
               <Text className="text-[15px] font-bold text-white">다시 촬영하기</Text>
             </Pressable>
             <Pressable onPress={goToGroup} className="items-center py-2">
@@ -131,7 +131,7 @@ export default function ResultScreen() {
             </Pressable>
           </>
         ) : (
-          <Pressable onPress={goToGroup} className="h-[52px] items-center justify-center rounded-pill bg-primary">
+          <Pressable onPress={goToGroup} className="h-[52px] items-center justify-center rounded-pill bg-ink">
             <Text className="text-[15px] font-bold text-white">내 그룹으로</Text>
           </Pressable>
         )}

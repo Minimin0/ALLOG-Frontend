@@ -97,8 +97,8 @@ export default function CreateGroupScreen() {
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
       <View className="flex-row items-center gap-3 px-5 py-3">
-        <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-full border border-line bg-surface">
-          <Text className="text-xl text-ink">‹</Text>
+        <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-ink">
+          <Text className="text-[28px] leading-[32px] text-white">‹</Text>
         </Pressable>
         <Text className="text-[19px] font-bold text-ink">그룹 만들기</Text>
       </View>
@@ -170,7 +170,7 @@ export default function CreateGroupScreen() {
         <Pressable
           onPress={submit}
           disabled={!canSubmit}
-          className={`items-center justify-center rounded-[27.5px] py-4 ${canSubmit ? 'bg-primary' : 'bg-primary opacity-40'}`}
+          className={`items-center justify-center rounded-[27.5px] py-4 ${canSubmit ? 'bg-ink' : 'bg-ink opacity-40'}`}
         >
           {busy ? <ActivityIndicator color="#fff" /> : <Text className="text-[15px] font-bold text-white">그룹 만들기 (♥ 1개 사용)</Text>}
         </Pressable>

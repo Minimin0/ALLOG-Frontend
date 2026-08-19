@@ -1,23 +1,25 @@
-import { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import Icon from '@/components/common/Icon';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 
-const habits = [
-  { label: '수분케어', subtitle: '충분한 수분 섭취', icon: 'selfcare' },
-  { label: '운동', subtitle: '꾸준한 신체 운동', icon: 'exercise' },
-  { label: '식사', subtitle: '균형 잡힌 식단 유지', icon: 'meal' },
-  { label: '수면', subtitle: '규칙적인 수면 패턴', icon: 'sleep' },
+// 관심 루틴 (STEP 2). 화면은 팀원 최신 디자인(mobile/src/screens/onboarding/HabitScreen.js) 이식.
+// 선택값은 계속 onboardingStore가 들고 있다가 마지막 단계에서 백엔드로 전송된다.
+const items = [
+  ['수분케어', '충분한 수분 섭취', 'selfcare'],
+  ['운동', '꾸준한 신체 운동', 'exercise'],
+  ['식사', '균형 잡힌 식단 유지', 'meal'],
+  ['수면', '규칙적인 수면 패턴', 'sleep'],
 ];
 
 export default function HabitsScreen() {
   const router = useRouter();
   const patch = useOnboardingStore((s) => s.patch);
   const [selected, setSelected] = useState(useOnboardingStore.getState().interests);
-  const toggle = (l) => setSelected((p) => (p.includes(l) ? p.filter((x) => x !== l) : [...p, l]));
+  const toggle = (x) => setSelected((v) => (v.includes(x) ? v.filter((i) => i !== x) : [...v, x]));
 
   return (
     <OnboardingShellRN
@@ -32,23 +34,88 @@ export default function HabitsScreen() {
       }}
       canNext={selected.length > 0}
     >
-      <View className="flex-row flex-wrap gap-3">
-        {habits.map((h) => {
-          const active = selected.includes(h.label);
-          return (
-            <Pressable
-              key={h.label}
-              onPress={() => toggle(h.label)}
-              style={{ width: '47%' }}
-              className={`items-center gap-1 rounded-[15px] border px-3 py-4 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}
-            >
-              <View className="mb-1"><Icon name={h.icon} size={24} /></View>
-              <Text className="text-[15px] font-bold text-ink">{h.label}</Text>
-              <Text className="text-[10px] font-medium text-subtle">{h.subtitle}</Text>
-            </Pressable>
-          );
-        })}
+      <View style={s.grid}>
+        {items.map(([name, sub, icon]) => (
+          <HabitCard
+            key={name}
+            name={name}
+            sub={sub}
+            icon={icon}
+            active={selected.includes(name)}
+            onPress={() => toggle(name)}
+          />
+        ))}
       </View>
     </OnboardingShellRN>
   );
 }
+
+function HabitCard({ name, sub, icon, active, onPress }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const iconScale = useRef(new Animated.Value(1)).current;
+  const animate = (toValue) => {
+    Animated.spring(scale, {
+      toValue,
+      speed: 32,
+      bounciness: toValue === 1 ? 5 : 0,
+      useNativeDriver: true,
+    }).start();
+  };
+  // 선택되는 순간에만 아이콘이 한 번 살짝 커졌다 돌아옴.
+  useEffect(() => {
+    if (active) {
+      Animated.sequence([
+        Animated.timing(iconScale, {
+          toValue: 1.22,
+          duration: 120,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(iconScale, {
+          toValue: 1,
+          duration: 160,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [active, iconScale]);
+
+  const iconSize = name === '운동' ? 34 : 24;
+  return (
+    <Animated.View style={[s.cardWrap, { transform: [{ scale }] }]}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={() => animate(0.92)}
+        onPressOut={() => animate(1)}
+        style={[s.card, active && s.active]}
+      >
+        <Animated.View style={{ transform: [{ scale: iconScale }] }}>
+          <Icon name={icon} size={iconSize} />
+        </Animated.View>
+        <Text style={s.name}>{name}</Text>
+        <Text style={s.sub}>{sub}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+const s = StyleSheet.create({
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  cardWrap: { width: '48%' },
+  card: {
+    width: '100%',
+    minHeight: 98,
+    borderWidth: 2,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    gap: 4,
+  },
+  active: { borderColor: '#14453a', backgroundColor: '#eaf4ec' },
+  name: { fontSize: 15, fontWeight: '700' },
+  sub: { fontSize: 10, fontWeight: '500', color: '#4a4a4a' },
+});

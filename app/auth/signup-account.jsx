@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, TextInput, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import DesignScreen from '../../mobile/src/components/DesignScreen';
 import { authErrorMessage, signUp } from '@/services/authApi';
 import { AuthStatus, useAuthStore } from '@/stores/authStore';
 
 // 계정 만들기. Firebase 이메일/비밀번호 계정을 실제로 생성한다.
 // 백엔드에는 회원가입 API가 없다 — 첫 인증 요청에서 내부 사용자가 만들어지고,
 // 프로필은 온보딩 마지막 단계의 POST /api/v1/users가 만든다.
+// 화면은 팀원 최신 디자인(mobile/src/screens/auth/SignUpAccountScreen.js) 이식.
+// 다만 Firebase 계정 식별자가 이메일이라 첫 필드는 아이디가 아니라 이메일을 받는다.
 export default function SignUpAccountScreen() {
   const router = useRouter();
   const status = useAuthStore((s) => s.status);
@@ -17,7 +19,13 @@ export default function SignUpAccountScreen() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const match = confirm.length > 0 && password === confirm;
+
+  const match = password === confirm;
+  const emailError = email.length > 0 && !/^\S+@\S+\.\S+$/.test(email.trim());
+  const pwError = password.length > 0 && (password.length < 10 || password.length > 12);
+  const mismatch = confirm.length > 0 && !match;
+  const showCheck = confirm.length > 0 && match;
+  const valid = email.trim() && password.trim() && confirm.trim() && match && !emailError && !pwError;
 
   // 계정이 생기면 프로필이 없으므로 GET /users/me는 404 → 온보딩으로 간다.
   useEffect(() => {
@@ -26,7 +34,7 @@ export default function SignUpAccountScreen() {
   }, [status, router]);
 
   const submit = async () => {
-    if (busy || !match) return;
+    if (busy || !valid) return;
     setError('');
     setBusy(true);
     try {
@@ -40,15 +48,11 @@ export default function SignUpAccountScreen() {
   const waiting = busy || status === AuthStatus.LOADING;
 
   return (
-    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
-      <View className="flex-1 px-6 pt-16">
-        <Pressable onPress={() => router.back()} className="mb-4 h-8 w-8 items-center justify-center">
-          <Text className="text-2xl text-ink">‹</Text>
-        </Pressable>
+    <DesignScreen>
+      <View style={s.body}>
+        <Text style={s.title}>이메일과 비밀번호를{`\n`}입력해 주세요.</Text>
 
-        <Text className="text-[25px] font-black text-ink" style={{ lineHeight: 35 }}>이메일과 비밀번호를{'\n'}입력해 주세요.</Text>
-
-        <Text className="mt-8 text-[15px] font-bold text-subtle">이메일</Text>
+        <Text style={s.label}>이메일</Text>
         <TextInput
           value={email}
           onChangeText={setEmail}
@@ -57,43 +61,105 @@ export default function SignUpAccountScreen() {
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="email-address"
-          className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
+          style={[s.input, emailError && s.inputError]}
         />
+        {emailError ? <Text style={s.error}>이메일 형식으로 입력해주세요</Text> : null}
 
-        <Text className="mt-6 text-[15px] font-bold text-subtle">비밀번호</Text>
+        <Text style={[s.label, { marginTop: 18 }]}>비밀번호</Text>
         <TextInput
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="비밀번호 (6자리 이상)"
+          placeholder="비밀번호 (10~12자리 이내의 영어 대소문자, 숫자 포함)"
           placeholderTextColor="#bababa"
-          className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
+          style={[s.input, (pwError || mismatch) && s.inputError]}
         />
+        {pwError ? <Text style={s.error}>비밀번호는 10~12자로 입력해주세요</Text> : null}
 
-        <View className="mt-3 h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
-          <TextInput
-            value={confirm}
-            onChangeText={setConfirm}
-            secureTextEntry
-            placeholder="비밀번호 확인"
-            placeholderTextColor="#bababa"
-            className="flex-1 text-[16px] text-ink"
-          />
-          {match && <Text className="text-primary">✓</Text>}
+        <View style={{ marginTop: 10 }}>
+          <View style={[s.confirmRow, mismatch && s.inputError]}>
+            <TextInput
+              value={confirm}
+              onChangeText={setConfirm}
+              secureTextEntry
+              placeholder="비밀번호 확인"
+              placeholderTextColor="#bababa"
+              style={s.confirmInput}
+            />
+            {showCheck ? <Text style={s.check}>✓</Text> : null}
+          </View>
+          {mismatch ? <Text style={s.error}>비밀번호가 일치하지 않아요.</Text> : null}
         </View>
 
-        {error ? <Text className="mt-3 text-[12px] font-semibold text-danger">{error}</Text> : null}
-
-        <View className="flex-1" />
-
-        <Pressable
-          onPress={submit}
-          disabled={waiting || !match || !email}
-          className={`mb-4 h-[50px] items-center justify-center rounded-[20px] bg-ink ${waiting || !match || !email ? 'opacity-50' : ''}`}
-        >
-          {waiting ? <ActivityIndicator color="#fff" /> : <Text className="text-[18px] font-bold text-[#f2f2f6]">완료</Text>}
-        </Pressable>
+        {error ? <Text style={[s.error, { marginTop: 12 }]}>{error}</Text> : null}
       </View>
-    </SafeAreaView>
+
+      <Pressable
+        disabled={waiting || !valid}
+        onPress={submit}
+        style={[s.next, (waiting || !valid) && { backgroundColor: '#bababa' }]}
+      >
+        {waiting ? <ActivityIndicator color="#fff" /> : <Text style={s.nextText}>완료</Text>}
+      </Pressable>
+    </DesignScreen>
   );
 }
+
+const s = StyleSheet.create({
+  body: { position: 'absolute', left: 26, right: 24, top: 118 },
+  title: { fontSize: 25, lineHeight: 32.5, fontWeight: '700' },
+  label: {
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 35,
+    color: '#4a4a4a',
+    marginTop: 24,
+  },
+  input: {
+    height: 44,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    borderRadius: 15,
+    backgroundColor: '#fefefe',
+    paddingHorizontal: 16,
+    paddingVertical: 0,
+    textAlignVertical: 'center',
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4a4a4a',
+  },
+  inputError: { borderColor: '#d9573b' },
+  confirmRow: {
+    height: 44,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    borderRadius: 15,
+    backgroundColor: '#fefefe',
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  confirmInput: {
+    flex: 1,
+    height: '100%',
+    paddingVertical: 0,
+    textAlignVertical: 'center',
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#4a4a4a',
+  },
+  check: { color: '#14453a', fontSize: 18, fontWeight: '700' },
+  error: { marginTop: 6, fontSize: 11, fontWeight: '600', color: '#d9573b' },
+  next: {
+    position: 'absolute',
+    left: 31,
+    bottom: 52,
+    width: 338,
+    height: 50,
+    borderRadius: 20,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nextText: { color: '#f2f2f6', fontSize: 18, fontWeight: '700' },
+});

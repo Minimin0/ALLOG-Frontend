@@ -13,7 +13,7 @@ export default function GroupCreatedScreen() {
         <Text className="text-[28px] text-white">✓</Text>
       </View>
       <Text className="text-center text-[19px] font-bold text-ink" style={{ lineHeight: 28 }}>그룹이 생성되었어요!{'\n'}멤버들이 모이면 시작돼요.</Text>
-      <Pressable onPress={() => router.replace(groupId ? { pathname: '/group/waiting-room', params: { groupId } } : '/group/waiting-room')} className="w-full items-center justify-center rounded-[27.5px] bg-primary py-4">
+      <Pressable onPress={() => router.replace(groupId ? { pathname: '/group/waiting-room', params: { groupId } } : '/group/waiting-room')} className="w-full items-center justify-center rounded-[27.5px] bg-ink py-4">
         <Text className="text-[15px] font-bold text-white">대기실로 이동</Text>
       </Pressable>
     </SafeAreaView>

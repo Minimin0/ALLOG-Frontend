@@ -1,16 +1,51 @@
-import { useEffect, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-import Icon from '@/components/common/Icon';
 import { ApiError } from '@/services/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useUserStore } from '@/stores/userStore';
 
 // 온보딩 완료. 4단계에서 모은 값을 POST /api/v1/users 한 번으로 보낸다.
-// 하트 3개는 백엔드가 같은 트랜잭션에서 지급한다 — 프론트가 지급하지 않고, 결과만 읽어서 보여준다.
+// 하트는 백엔드가 같은 트랜잭션에서 지급한다 — 프론트가 지급하지 않고, 결과만 읽어서 보여준다.
+// 완료 화면 디자인은 팀원 최신본(mobile/src/screens/onboarding/CompleteScreen.js) 이식.
+// 단, 도너가 "하트 3개"로 박아둔 값은 쓰지 않고 실제 stats.hearts를 그대로 보여준다.
+
+// 하트 하나: 통통 튀며 나타난 뒤 계속 살짝 위아래로 움직임.
+function AnimatedHeart({ delay }) {
+  const scale = useRef(new Animated.Value(0)).current;
+  const y = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(scale, {
+      toValue: 1,
+      duration: 340,
+      delay,
+      easing: Easing.out(Easing.back(1.8)),
+      useNativeDriver: true,
+    }).start();
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(y, {
+          toValue: -6,
+          duration: 520,
+          delay,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(y, {
+          toValue: 0,
+          duration: 520,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, [delay, scale, y]);
+  return <Animated.Text style={[s.heart, { transform: [{ scale }, { translateY: y }] }]}>♥</Animated.Text>;
+}
+
 export default function OnboardingCompleteScreen() {
   const router = useRouter();
   const [state, setState] = useState('submitting'); // submitting | done | error
@@ -53,20 +88,20 @@ export default function OnboardingCompleteScreen() {
 
   if (state === 'submitting') {
     return (
-      <SafeAreaView edges={['top', 'bottom']} className="flex-1 items-center justify-center gap-4 bg-bg px-5">
-        <ActivityIndicator size="large" color="#4b7f63" />
-        <Text className="text-[15px] font-semibold text-subtle">프로필을 저장하고 있어요…</Text>
+      <SafeAreaView edges={['top', 'bottom']} style={s.center}>
+        <ActivityIndicator size="large" color="#14453a" />
+        <Text style={s.centerText}>프로필을 저장하고 있어요…</Text>
       </SafeAreaView>
     );
   }
 
   if (state === 'error') {
     return (
-      <SafeAreaView edges={['top', 'bottom']} className="flex-1 items-center justify-center gap-5 bg-bg px-8">
-        <Text className="text-center text-[17px] font-bold text-ink">프로필 저장에 실패했어요</Text>
-        <Text className="text-center text-[13px] font-medium text-muted">{message}</Text>
-        <Pressable onPress={() => router.replace('/onboarding/basic-info')} className="w-full items-center justify-center rounded-[27.5px] bg-primary py-4">
-          <Text className="text-[15px] font-bold text-white">다시 입력하기</Text>
+      <SafeAreaView edges={['top', 'bottom']} style={s.center}>
+        <Text style={s.errorTitle}>프로필 저장에 실패했어요</Text>
+        <Text style={s.errorMessage}>{message}</Text>
+        <Pressable onPress={() => router.replace('/onboarding/basic-info')} style={s.retry}>
+          <Text style={s.buttonText}>다시 입력하기</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -75,42 +110,123 @@ export default function OnboardingCompleteScreen() {
   const hearts = stats?.hearts ?? 0;
 
   return (
-    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg px-5">
-      <View className="flex-1 items-center pt-16">
-        <View className="h-16 w-16 items-center justify-center rounded-full bg-primary">
-          <Text className="text-[28px] text-white">✓</Text>
+    <View style={s.screen}>
+      <View style={s.body}>
+        <View style={s.check}>
+          <Text style={s.checkText}>✓</Text>
         </View>
-
-        <Text className="mt-6 text-center text-[25px] font-bold text-ink" style={{ lineHeight: 32 }}>환영합니다!{'\n'}하트 {hearts}개를 받았어요.</Text>
-
-        <View className="mt-6 flex-row gap-3">
+        <Text style={s.title}>환영합니다!{`\n`}하트 {hearts}개를 받았어요.</Text>
+        <View style={s.heartsRow}>
           {Array.from({ length: hearts }).map((_, i) => (
-            <Icon key={i} name="heart" size={34} />
+            <AnimatedHeart key={i} delay={i * 120} />
           ))}
         </View>
-
-        <Text className="mt-6 text-center text-[18px] font-semibold text-subtle">
-          <Text className="font-bold text-[#d9573b]">하트</Text>는 <Text className="font-bold text-ink">그룹 참가</Text>에만 사용돼요.
+        <Text style={s.copy}>
+          <Text style={s.red}>하트</Text>는 <Text style={s.bold}>그룹 참가</Text>에만 사용돼요.
         </Text>
-
-        <View className="mt-6 w-full gap-4 rounded-[23px] border border-line bg-surface p-5">
-          <Text className="text-center text-[13px] font-semibold text-subtle">
-            그룹에 참가할 때 <Text className="font-bold text-[#d9573b]">하트 1개</Text>를 사용해요.
+        <View style={s.card}>
+          <Text style={s.cardHead}>
+            그룹에 참가할 때 <Text style={s.red}>하트 1개</Text>를 사용해요
           </Text>
-          <View className="h-px w-full bg-line" />
-          <View className="flex-row items-center justify-between gap-2">
-            <Text className="flex-1 text-center text-[13px] font-semibold text-subtle" style={{ lineHeight: 20 }}>그룹 공동 성공률 80% 이상{'\n'}+{'\n'}개인 달성율 70% 이상</Text>
-            <Text className="text-[16px] text-subtle">→</Text>
-            <Text className="flex-1 text-center text-[13px] font-semibold text-[#d9573b]" style={{ lineHeight: 20 }}>하트 1개를{'\n'}다시 받아요.</Text>
+          <View style={s.line} />
+          <View style={s.flowRow}>
+            <View style={s.condBox}>
+              <Text style={s.condText}>
+                그룹 공동 성공률 80% 이상{`\n`}+{`\n`}개인 달성률 70% 이상
+              </Text>
+            </View>
+            <Text style={s.arrow}>→</Text>
+            <View style={s.rewardBox}>
+              <Text style={s.rewardText}>하트 1개를{`\n`}다시 받아요</Text>
+            </View>
           </View>
         </View>
       </View>
-
-      <View className="pb-7">
-        <Pressable onPress={() => router.replace('/home')} className="w-full items-center justify-center rounded-[27.5px] bg-primary py-[18px]">
-          <Text className="text-[15px] font-bold text-white">홈으로 가기</Text>
-        </Pressable>
-      </View>
-    </SafeAreaView>
+      <Pressable style={s.button} onPress={() => router.replace('/home')}>
+        <Text style={s.buttonText}>홈으로 가기</Text>
+      </Pressable>
+    </View>
   );
 }
+
+const s = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#f7f6f3', paddingHorizontal: 20 },
+  center: {
+    flex: 1,
+    backgroundColor: '#f7f6f3',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 28,
+    gap: 16,
+  },
+  centerText: { fontSize: 15, fontWeight: '600', color: '#4a4a4a' },
+  errorTitle: { fontSize: 17, fontWeight: '700', textAlign: 'center' },
+  errorMessage: { fontSize: 13, fontWeight: '500', color: '#6b7268', textAlign: 'center' },
+  retry: {
+    width: '100%',
+    height: 55,
+    borderRadius: 27.5,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  body: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 36 },
+  check: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkText: { fontSize: 28, color: '#fff' },
+  title: { marginTop: 24, textAlign: 'center', fontSize: 25, lineHeight: 32, fontWeight: '700' },
+  heartsRow: { marginTop: 24, flexDirection: 'row', gap: 12, height: 40, alignItems: 'center' },
+  heart: { fontSize: 34, color: '#d9573b' },
+  copy: { marginTop: 24, fontSize: 18, fontWeight: '600', color: '#4a4a4a' },
+  red: { color: '#d9573b', fontWeight: '700' },
+  bold: { color: '#000', fontWeight: '700' },
+  card: {
+    marginTop: 24,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    borderRadius: 23,
+    backgroundColor: '#fefefe',
+    padding: 22,
+    gap: 16,
+  },
+  cardHead: { textAlign: 'center', fontSize: 15, lineHeight: 21, fontWeight: '700', color: '#000' },
+  line: { height: 1, backgroundColor: '#e7e3d8' },
+  flowRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  condBox: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#dfe6e1',
+    backgroundColor: '#eef3ef',
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 10,
+  },
+  condText: { textAlign: 'center', fontSize: 13, fontWeight: '700', lineHeight: 20, color: '#14453a' },
+  arrow: { fontSize: 20, fontWeight: '700', color: '#9aa39c' },
+  rewardBox: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#f6d4c8',
+    backgroundColor: '#fdece5',
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 10,
+  },
+  rewardText: { textAlign: 'center', fontSize: 13, fontWeight: '700', lineHeight: 20, color: '#d9573b' },
+  button: {
+    height: 55,
+    borderRadius: 27.5,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 52,
+  },
+  buttonText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+});

@@ -46,7 +46,7 @@ export default function InviteGroupScreen() {
       </View>
       <Pressable
         onPress={() => router.replace(groupId ? { pathname: '/group', params: { groupId } } : '/group')}
-        className="w-full items-center justify-center rounded-[27.5px] bg-primary py-4"
+        className="w-full items-center justify-center rounded-[27.5px] bg-ink py-4"
       >
         <Text className="text-[15px] font-bold text-white">그룹으로 이동</Text>
       </Pressable>

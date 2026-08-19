@@ -1,16 +1,18 @@
 import { useCallback, useState } from 'react';
-import { View, Text, Pressable, ScrollView, RefreshControl } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
+import AnimatedEntrance from '../../mobile/src/components/AnimatedEntrance';
 import { useGroupStore } from '@/stores/groupStore';
 import { useUserStore } from '@/stores/userStore';
 
 // 홈 화면. 하트/포인트는 GET /users/me/stats, 오늘의 루틴과 성공률은
 // GET /me/groups + GET /me/groups/{id}/progress에서 온다. 프론트는 계산하지 않고 표시만 한다.
+// 화면 디자인은 팀원 최신본(mobile/src/screens/main/HomeNative.js) 이식 —
+// 도너가 박아둔 값("하루 운동 30분", "2위 / 5명", "60%")은 쓰지 않고 실제 백엔드 값을 그대로 쓴다.
 const SUCCESS_GOAL = 70;
 
 function formatDeadline(iso) {
@@ -66,108 +68,206 @@ export default function HomeScreen() {
   const deadline = formatDeadline(personal?.certificationDeadline);
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-bg">
-      {/* 헤더 */}
-      <View className="flex-row items-center justify-between px-[30px] pt-4">
-        <Text className="text-[28px] font-bold text-ink">홈</Text>
-        <CoachMascotButton to="/ai" circle={54} size={44} />
+    <View style={s.screen}>
+      <View style={s.header}>
+        <Text className="text-[28px] font-black text-ink">홈</Text>
+        <CoachMascotButton to="/ai" />
       </View>
 
       <ScrollView
-        className="flex-1 px-[30px]"
-        contentContainerClassName="gap-4 pb-8 pt-5"
+        contentContainerStyle={s.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       >
         {/* 하트 / 포인트 */}
-        <View className="flex-row gap-3">
-          <Pressable
+        <AnimatedEntrance style={s.row}>
+          <Card
+            icon={<Icon name="heart" size={19} />}
+            value={String(stats?.hearts ?? '–')}
+            label="보유 하트"
+            note="하트 얻으러 가기 >"
             onPress={() => router.push('/heart-event')}
-            className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3"
-          >
-            <View className="flex-row items-center gap-2">
-              <Icon name="heart" size={18} />
-              <Text className="text-[18px] font-bold text-ink">{stats?.hearts ?? '–'}</Text>
-            </View>
-            <Text className="mt-2 text-[12px] font-semibold text-[#d9573b]">보유 하트</Text>
-            <Text className="mt-1 text-[12px] font-semibold text-muted">하트 얻으러 가기 ›</Text>
-          </Pressable>
-
-          <Pressable
+          />
+          <Card
+            icon={<Icon name="coin" size={18} />}
+            value={String(stats?.rewardPoints ?? '–')}
+            label="포인트"
+            labelColor="#c08a24"
+            note="포인트 혜택 보러가기 >"
             onPress={() => router.push('/reward')}
-            className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3"
-          >
-            <View className="flex-row items-center gap-2">
-              <Icon name="coin" size={18} />
-              <Text className="text-[18px] font-bold text-ink">{stats?.rewardPoints ?? '–'}</Text>
-            </View>
-            <Text className="mt-2 text-[12px] font-semibold text-reward">포인트</Text>
-            <Text className="mt-1 text-[12px] font-semibold text-muted">포인트 혜택 보러가기 ›</Text>
-          </Pressable>
-        </View>
+          />
+        </AnimatedEntrance>
 
         {/* 오늘의 루틴 */}
-        <View className="overflow-hidden rounded-[20px] border border-line">
-          <View className="items-center bg-primary-tint px-5 pb-5 pt-4">
-            <Text className="text-[13px] font-semibold text-primary">오늘의 루틴</Text>
-            <Text className="mt-2 text-[20px] font-bold text-ink">{current?.groupName ?? '아직 참여 중인 그룹이 없어요'}</Text>
+        <AnimatedEntrance delay={60} style={s.routine}>
+          <View style={s.routineTop}>
+            <Text style={s.smallGreen}>오늘의 루틴</Text>
+            <Text style={s.routineTitle}>{current?.groupName ?? '아직 참여 중인 그룹이 없어요'}</Text>
             <Pressable
-              onPress={() => router.push(current ? { pathname: '/verify', params: { groupId: String(current.groupId) } } : '/explore')}
-              className="mt-4 h-[35px] w-full items-center justify-center rounded-[15px] bg-primary"
+              style={s.verify}
+              onPress={() =>
+                router.push(current ? { pathname: '/verify', params: { groupId: String(current.groupId) } } : '/explore')
+              }
             >
-              <Text className="text-[12px] font-bold text-[#e5f4e8]">{current ? '인증하러 하기' : '그룹 찾아보기'}</Text>
+              <Text style={s.verifyText}>{current ? '인증하러 가기' : '그룹 찾아보기'}</Text>
             </Pressable>
           </View>
-          {deadline && (
-            <View className="flex-row items-center justify-center gap-4 bg-surface py-3">
-              <Text className="text-[13px] font-bold text-ink">{deadline}</Text>
-              <View className="h-[16px] w-px bg-line" />
-              <Text className="text-[13px] font-semibold text-ink">{remainingText(personal.certificationDeadline)}</Text>
+          {deadline ? (
+            <View style={s.routineBottom}>
+              <Text style={s.deadline}>{deadline}</Text>
+              <View style={s.vline} />
+              <Text style={s.deadline}>{remainingText(personal.certificationDeadline)}</Text>
             </View>
-          )}
-        </View>
+          ) : null}
+        </AnimatedEntrance>
 
         {/* 완료 루틴 / 연속 성공 — 순위 API는 아직 없으므로 실제 값만 보여준다 */}
-        <View className="h-[81px] flex-row items-center rounded-[15px] border border-line bg-surface">
-          <Pressable onPress={() => router.push('/my')} className="flex-1 items-center gap-1">
-            <View className="flex-row items-center gap-1.5">
-              <Icon name="chart" size={16} />
-              <Text className="text-[12px] font-bold text-ink">완료 루틴</Text>
-            </View>
-            <Text>
-              <Text className="text-[25px] font-bold text-primary">{stats?.successfulRoutines ?? 0}</Text>
-              <Text className="text-[12px] font-bold text-ink"> 개</Text>
-            </Text>
-          </Pressable>
-
-          <View className="h-[47px] w-px bg-line" />
-
-          <Pressable onPress={() => router.push('/my')} className="flex-1 items-center gap-1">
-            <View className="flex-row items-center gap-1.5">
-              <Icon name="fire" size={16} />
-              <Text className="text-[12px] font-bold text-ink">연속 성공</Text>
-            </View>
-            <Text>
-              <Text className="text-[25px] font-bold text-primary">{personal?.currentStreak ?? 0}</Text>
-              <Text className="text-[18px] font-bold text-ink">일째</Text>
-            </Text>
-          </Pressable>
-        </View>
+        <AnimatedEntrance delay={120}>
+          <View style={s.stats}>
+            <Pressable style={s.stat} onPress={() => router.push('/my')}>
+              <View style={s.inline}>
+                <Icon name="chart" size={16} />
+                <Text style={s.statLabel}>완료 루틴</Text>
+              </View>
+              <View style={s.statValueRow}>
+                <Text style={s.statBig}>{stats?.successfulRoutines ?? 0}</Text>
+                <Text style={s.daySuffix}> 개</Text>
+              </View>
+            </Pressable>
+            <View style={s.vlineTall} />
+            <Pressable style={s.stat} onPress={() => router.push('/my')}>
+              <View style={s.inline}>
+                <Icon name="fire" size={16} />
+                <Text style={s.statLabel}>연속 성공</Text>
+              </View>
+              <View style={s.statValueRow}>
+                <Text style={s.statBig}>{personal?.currentStreak ?? 0}</Text>
+                <Text style={s.daySuffix}> 일째</Text>
+              </View>
+            </Pressable>
+          </View>
+        </AnimatedEntrance>
 
         {/* 개인 성공률 게이지 */}
-        <View className="rounded-[14px] border border-line bg-surface p-4">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-[13px] font-semibold text-ink">개인 성공률</Text>
-            <Text className="text-[20px] font-bold text-[#669884]">{successRate}%</Text>
+        <AnimatedEntrance delay={180} style={s.gaugeCard}>
+          <View style={s.between}>
+            <Text style={s.gaugeLabel}>개인 성공률</Text>
+            <Text style={s.rate}>{successRate}%</Text>
           </View>
-          <View className="mt-3 h-[9px] w-full rounded-full bg-[#efefef]">
+          <View style={s.track}>
             <AnimatedGauge percent={successRate} color="#669884" height={9} />
-            <View className="absolute top-[13px] -translate-x-1/2 items-center" style={{ left: `${SUCCESS_GOAL}%` }}>
-              <Text className="text-[10px] leading-none text-reward">▲</Text>
+            <View style={s.goalMarker}>
+              <Text style={s.goalMarkerText}>▲</Text>
             </View>
           </View>
-          <Text className="mt-2 text-right text-[11px] font-bold text-reward">개인 목표 {SUCCESS_GOAL}%</Text>
-        </View>
+          <Text style={s.goal}>개인 목표 {SUCCESS_GOAL}%</Text>
+        </AnimatedEntrance>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
+
+function Card({ icon, value, label, labelColor, note, onPress }) {
+  return (
+    <Pressable style={s.card} onPress={onPress}>
+      <View style={s.inline}>
+        {icon}
+        <Text style={s.value}>{value}</Text>
+      </View>
+      <Text style={[s.cardLabel, labelColor && { color: labelColor }]}>{label}</Text>
+      <Text style={s.note}>{note}</Text>
+    </Pressable>
+  );
+}
+
+const s = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#f7f6f3' },
+  header: {
+    paddingHorizontal: 30,
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  content: { paddingHorizontal: 30, paddingTop: 20, paddingBottom: 110, gap: 16 },
+  row: { flexDirection: 'row', gap: 12 },
+  card: {
+    flex: 1,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  inline: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  value: { fontSize: 18, fontWeight: '700' },
+  cardLabel: { marginTop: 8, fontSize: 12, fontWeight: '600', color: '#d9573b' },
+  note: { marginTop: 4, fontSize: 12, fontWeight: '600', color: '#6b7268' },
+  routine: { borderRadius: 20, borderWidth: 1, borderColor: '#e7e3d8', overflow: 'hidden' },
+  routineTop: {
+    backgroundColor: '#edf2ec',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 20,
+    alignItems: 'center',
+  },
+  smallGreen: { fontSize: 13, fontWeight: '600', color: '#14453a' },
+  routineTitle: { marginTop: 8, fontSize: 20, fontWeight: '700' },
+  verify: {
+    marginTop: 16,
+    width: '100%',
+    height: 35,
+    borderRadius: 15,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  verifyText: { fontSize: 12, fontWeight: '700', color: '#e5f4e8' },
+  routineBottom: {
+    height: 42,
+    backgroundColor: '#fefefe',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  deadline: { fontSize: 13, fontWeight: '700' },
+  vline: { width: 1, height: 16, backgroundColor: '#e7e3d8' },
+  stats: {
+    height: 81,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  stat: { flex: 1, alignItems: 'center', gap: 4 },
+  statValueRow: { flexDirection: 'row', alignItems: 'baseline' },
+  statLabel: { fontSize: 12, fontWeight: '700' },
+  statBig: {
+    fontFamily: Platform.OS === 'android' ? 'sans-serif-black' : undefined,
+    fontSize: 25,
+    fontWeight: '900',
+    color: '#14453a',
+    textShadowColor: '#14453a',
+    textShadowOffset: { width: 0.7, height: 0 },
+    textShadowRadius: 0,
+  },
+  daySuffix: { fontSize: 12, fontWeight: '700' },
+  vlineTall: { width: 1, height: 47, backgroundColor: '#e7e3d8' },
+  gaugeCard: {
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fefefe',
+    padding: 16,
+  },
+  between: { flexDirection: 'row', justifyContent: 'space-between' },
+  gaugeLabel: { fontSize: 13, fontWeight: '600' },
+  rate: { fontSize: 20, fontWeight: '900', color: '#669884' },
+  track: { position: 'relative', marginTop: 12, height: 9, borderRadius: 5, backgroundColor: '#efefef' },
+  goalMarker: { position: 'absolute', top: 13, left: `${SUCCESS_GOAL}%`, transform: [{ translateX: -5 }] },
+  goalMarkerText: { fontSize: 10, lineHeight: 10, color: '#c08a24' },
+  goal: { marginTop: 8, textAlign: 'right', fontSize: 11, fontWeight: '700', color: '#c08a24' },
+});

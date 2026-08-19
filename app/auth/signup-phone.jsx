@@ -1,110 +1,312 @@
 import { useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  InputAccessoryView,
+  Keyboard,
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 
-import TermsAgreementModal from '@/components/auth/TermsAgreementModal';
+import DesignScreen from '../../mobile/src/components/DesignScreen';
+import CheckIcon from '../../assets/icons/check.svg';
 
-// 본인 인증 (웹 SignUpPhonePage 포팅). 약관 동의는 바텀시트 모달로.
-const carriers = ['SKT', 'KT', 'LG U+'];
-
+// 본인 인증. 백엔드 연동이 없는 화면이라(실제 SMS 발송 API 없음)
+// 팀원 최신 디자인(mobile/src/screens/auth/SignUpPhoneScreen.js)을 그대로 이식하고
+// 이동만 Expo Router로 바꿨다.
 export default function SignUpPhoneScreen() {
   const router = useRouter();
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
+  const [open, setOpen] = useState(false);
+  const [terms, setTerms] = useState(false);
+  const [privacy, setPrivacy] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [carrier, setCarrier] = useState('SKT');
   const [carrierOpen, setCarrierOpen] = useState(false);
-  const [termsOpen, setTermsOpen] = useState(false);
-  const [agreements, setAgreements] = useState({ terms: false, privacy: false, marketing: false });
-  const agreed = agreements.terms && agreements.privacy; // 필수 2개
-
-  const toggle = (key) => setAgreements((a) => ({ ...a, [key]: !a[key] }));
-  const toggleAll = () =>
-    setAgreements((a) => {
-      const next = !(a.terms && a.privacy && a.marketing);
-      return { terms: next, privacy: next, marketing: next };
-    });
+  const agreed = terms && privacy;
+  const valid = phone.trim() && code.trim() && agreed;
+  const all = terms && privacy && marketing;
+  const toggleAll = () => {
+    const n = !all;
+    setTerms(n);
+    setPrivacy(n);
+    setMarketing(n);
+  };
 
   return (
-    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
-      <View className="flex-1 px-6 pt-16">
-        <Pressable onPress={() => router.back()} className="mb-4 h-8 w-8 items-center justify-center">
-          <Text className="text-2xl text-ink">‹</Text>
-        </Pressable>
-
-        <Text className="text-[25px] font-black text-ink" style={{ lineHeight: 35 }}>본인 확인을 위해{'\n'}인증을 진행해 주세요.</Text>
-
-        {/* 통신사 */}
-        <Text className="mt-8 text-[15px] font-bold text-subtle">통신사</Text>
-        <View className="mt-2 w-[148px]">
-          <Pressable onPress={() => setCarrierOpen((o) => !o)} className="h-11 flex-row items-center justify-between rounded-[15px] border border-line bg-surface px-3">
-            <Text className="text-[12px] text-[#9c9c9c]">{carrier}</Text>
-            <Text className="text-[#555]">⌄</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={s.keyboardDismiss}>
+        <DesignScreen>
+          <Text style={s.title}>본인 확인을 위해{`\n`}인증을 진행해 주세요.</Text>
+          <Text style={[s.label, { top: 209 }]}>통신사</Text>
+          <Pressable
+            style={[s.carrier, carrierOpen && s.carrierOpen]}
+            onPress={() => setCarrierOpen((value) => !value)}
+          >
+            <Text style={s.carrierText}>{carrier}</Text>
+            <Text>{carrierOpen ? '⌃' : '⌄'}</Text>
           </Pressable>
-          {carrierOpen && (
-            <View className="mt-1 overflow-hidden rounded-[15px] border border-line bg-surface">
-              {carriers.map((c) => (
-                <Pressable key={c} onPress={() => { setCarrier(c); setCarrierOpen(false); }} className="px-3 py-2.5">
-                  <Text className="text-[12px] text-ink">{c}</Text>
+          {carrierOpen ? (
+            <View style={s.carrierMenu}>
+              {['SKT', 'KT', 'LG U+'].map((option) => (
+                <Pressable
+                  key={option}
+                  style={[s.carrierOption, option === carrier && s.carrierOptionOn]}
+                  onPress={() => {
+                    setCarrier(option);
+                    setCarrierOpen(false);
+                  }}
+                >
+                  <Text style={s.carrierText}>{option}</Text>
                 </Pressable>
               ))}
             </View>
-          )}
-        </View>
-
-        {/* 전화번호 */}
-        <Text className="mt-6 text-[15px] font-bold text-subtle">전화번호</Text>
-        <TextInput
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          placeholder="010-0000-0000"
-          placeholderTextColor="#bababa"
-          className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] font-semibold text-ink"
-        />
-
-        {/* 인증번호 */}
-        <View className="mt-3 h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
+          ) : null}
+          <Text style={[s.label, { top: 303, left: 24 }]}>전화번호</Text>
           <TextInput
-            value={code}
-            onChangeText={setCode}
-            keyboardType="number-pad"
-            maxLength={6}
-            placeholder="인증번호 6자리"
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+            returnKeyType="next"
+            onSubmitEditing={Keyboard.dismiss}
+            placeholder="010-0000-0000"
             placeholderTextColor="#bababa"
-            className="flex-1 text-[12px] font-semibold text-ink"
+            style={[s.input, { top: 334 }]}
           />
-          <Text className="text-[12px] text-[#bababa]">00:00</Text>
-        </View>
-
-        {/* 약관 동의 (모달 열기) */}
-        <Pressable onPress={() => setTermsOpen(true)} className="mt-4 flex-row items-center gap-2">
-          <View className={`h-5 w-5 items-center justify-center rounded-full ${agreed ? 'bg-primary' : 'border border-disabled'}`}>
-            {agreed && <Text className="text-[11px] text-white">✓</Text>}
+          <View style={s.codeWrap}>
+            <View style={s.codeInputBox}>
+              <TextInput
+                value={code}
+                onChangeText={(value) => {
+                  setCode(value);
+                  if (value.length === 6) Keyboard.dismiss();
+                }}
+                maxLength={6}
+                keyboardType="number-pad"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+                inputAccessoryViewID={Platform.OS === 'ios' ? 'verificationDone' : undefined}
+                placeholder="인증번호 6자리"
+                placeholderTextColor="#bababa"
+                style={[s.input, { position: 'relative', left: 0, top: 0, width: 251, paddingRight: 60 }]}
+              />
+              <Text style={s.timer}>00:00</Text>
+            </View>
+            <Pressable
+              disabled={code.trim().length !== 6}
+              style={[s.codeConfirm, code.trim().length !== 6 && s.codeConfirmDisabled]}
+              onPress={Keyboard.dismiss}
+            >
+              <Text style={s.codeConfirmText}>확인</Text>
+            </Pressable>
           </View>
-          <Text className="flex-1 text-[13px] text-ink">약관에 동의해주세요 (필수)</Text>
-          <Text className="text-[12px] text-muted">보기 ›</Text>
-        </Pressable>
-
-        <View className="flex-1" />
-
-        <Pressable
-          onPress={() => agreed && router.push('/auth/signup-account')}
-          disabled={!agreed}
-          className={`mb-4 h-[50px] items-center justify-center rounded-[20px] ${agreed ? 'bg-ink' : 'bg-disabled'}`}
-        >
-          <Text className="text-[18px] font-bold text-[#f2f2f6]">다음</Text>
-        </Pressable>
+          <Pressable style={s.agree} onPress={() => setOpen(true)}>
+            <CheckIcon width={19} height={19} opacity={agreed ? 1 : 0.35} />
+            <Text style={s.agreeText}>본인 인증 서비스 약관 전체동의</Text>
+          </Pressable>
+          <Pressable
+            disabled={!valid}
+            style={[s.next, !valid && s.disabled]}
+            onPress={() => router.push('/auth/signup-account')}
+          >
+            <Text style={s.nextText}>다음</Text>
+          </Pressable>
+          <Modal visible={open} transparent animationType="slide">
+            <Pressable style={s.dim} onPress={() => setOpen(false)} />
+            <View style={s.sheet}>
+              <View style={s.handle} />
+              <Text style={s.sheetTitle}>약관 동의</Text>
+              <Row text="전체 동의" value={all} onPress={toggleAll} />
+              <View style={s.divider} />
+              <Row text="[필수] 이용약관 동의" value={terms} onPress={() => setTerms(!terms)} />
+              <Row text="[필수] 개인정보 처리방침 동의" value={privacy} onPress={() => setPrivacy(!privacy)} />
+              <Row text="[선택] 마케팅 정보 수신 동의" value={marketing} onPress={() => setMarketing(!marketing)} />
+              <Pressable style={s.confirm} onPress={() => setOpen(false)}>
+                <Text style={s.nextText}>확인</Text>
+              </Pressable>
+            </View>
+          </Modal>
+        </DesignScreen>
+        {Platform.OS === 'ios' ? (
+          <InputAccessoryView nativeID="verificationDone">
+            <View style={s.keyboardAccessory}>
+              <Pressable onPress={Keyboard.dismiss} style={s.keyboardDone}>
+                <Text style={s.keyboardDoneText}>완료</Text>
+              </Pressable>
+            </View>
+          </InputAccessoryView>
+        ) : null}
       </View>
-
-      <TermsAgreementModal
-        open={termsOpen}
-        agreements={agreements}
-        onToggle={toggle}
-        onToggleAll={toggleAll}
-        onClose={() => setTermsOpen(false)}
-        onConfirm={() => setTermsOpen(false)}
-      />
-    </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
+
+function Row({ text, value, onPress }) {
+  return (
+    <Pressable style={s.row} onPress={onPress}>
+      <CheckIcon width={19} height={19} opacity={value ? 1 : 0.35} />
+      <Text style={s.rowText}>{text}</Text>
+    </Pressable>
+  );
+}
+
+const s = StyleSheet.create({
+  keyboardDismiss: { flex: 1 },
+  keyboardAccessory: {
+    alignItems: 'flex-end',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#d7d7d7',
+    backgroundColor: '#f7f7f7',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  keyboardDone: { paddingHorizontal: 8, paddingVertical: 4 },
+  keyboardDoneText: { color: '#14453a', fontSize: 16, fontWeight: '700' },
+  title: {
+    position: 'absolute',
+    left: 26,
+    top: 118,
+    width: 310,
+    fontSize: 25,
+    lineHeight: 32.5,
+    fontWeight: '700',
+  },
+  label: {
+    position: 'absolute',
+    left: 30,
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 35,
+    color: '#4a4a4a',
+  },
+  carrier: {
+    position: 'absolute',
+    left: 26,
+    top: 238,
+    width: 148,
+    height: 44,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    borderRadius: 15,
+    backgroundColor: '#fefefe',
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  carrierOpen: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
+  carrierText: { fontSize: 12, color: '#9c9c9c' },
+  carrierMenu: {
+    position: 'absolute',
+    left: 26,
+    top: 282,
+    width: 148,
+    zIndex: 20,
+    borderTopWidth: 0,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+    elevation: 5,
+  },
+  carrierOption: { height: 40, paddingHorizontal: 12, justifyContent: 'center' },
+  carrierOptionOn: { backgroundColor: '#eaf4ec' },
+  input: {
+    position: 'absolute',
+    left: 26,
+    width: 343,
+    height: 44,
+    borderWidth: 1,
+    borderColor: '#e7e3d8',
+    borderRadius: 15,
+    backgroundColor: '#fefefe',
+    paddingHorizontal: 16,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  codeWrap: {
+    position: 'absolute',
+    left: 26,
+    top: 382,
+    width: 343,
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  codeInputBox: { width: 251, height: 44 },
+  codeConfirm: {
+    width: 84,
+    height: 44,
+    borderRadius: 15,
+    backgroundColor: '#14453a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  codeConfirmDisabled: { backgroundColor: '#bababa' },
+  codeConfirmText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+  timer: { position: 'absolute', right: 16, top: 13, fontSize: 12, color: '#bababa' },
+  agree: {
+    position: 'absolute',
+    left: 28,
+    top: 429,
+    height: 26,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  agreeText: { fontSize: 13, fontWeight: '500' },
+  next: {
+    position: 'absolute',
+    left: 31,
+    bottom: 52,
+    width: 338,
+    height: 50,
+    borderRadius: 20,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  disabled: { backgroundColor: '#bababa' },
+  nextText: { color: '#f2f2f6', fontSize: 18, fontWeight: '700' },
+  dim: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,.4)' },
+  sheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 34,
+  },
+  handle: {
+    alignSelf: 'center',
+    width: 42,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#d9d9d9',
+    marginBottom: 20,
+  },
+  sheetTitle: { fontSize: 22, fontWeight: '700', marginBottom: 18 },
+  row: { height: 46, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  rowText: { fontSize: 14, fontWeight: '600' },
+  divider: { height: 1, backgroundColor: '#e7e3d8', marginVertical: 4 },
+  confirm: {
+    height: 50,
+    borderRadius: 20,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 18,
+  },
+});
