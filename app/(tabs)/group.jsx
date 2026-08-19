@@ -24,6 +24,15 @@ const TABS = [
 ];
 
 const GROUP_GOAL_RATE = 80; // 온보딩 안내와 같은 기준
+const GROUP_STATUS_LABELS = {
+  DRAFT: '작성 중',
+  RECRUITING: '모집 중',
+  FULL: '정원 달성',
+  ACTIVE: '진행 중',
+  COMPLETED: '완료됨',
+  CANCELLED: '취소됨',
+  EXPIRED: '만료됨',
+};
 
 function InfoRow({ label, value }) {
   return (
@@ -128,6 +137,7 @@ export default function GroupScreen() {
   const day = schedule?.startDate ? (daysBetween(schedule.startDate, new Date().toISOString().slice(0, 10)) ?? 0) + 1 : null;
   const dday = schedule?.endDate ? daysBetween(new Date().toISOString().slice(0, 10), schedule.endDate) : null;
   const successRate = groupProgress ? Math.round((groupProgress.groupCompletionRate ?? 0) * 100) : 0;
+  const statusLabel = group.status === 'ACTIVE' && day ? `DAY ${day}` : (GROUP_STATUS_LABELS[group.status] ?? group.status);
 
   const showInvite = async () => {
     const response = await issueInviteCode(group.groupId);
@@ -157,14 +167,13 @@ export default function GroupScreen() {
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-bg">
       {/* 헤더 */}
-      <View className="flex-row items-center justify-between px-5 pt-2">
+      <View className="flex-row items-center justify-between px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">내 그룹</Text>
         {tab !== 'info' ? (
           <CoachMascotButton
             to={`/ai?groupId=${group.groupId}&from=${tab === 'feed' ? 'feed' : 'ranking'}`}
             circle={54}
             size={44}
-            style={{ marginTop: 8, marginRight: 10 }}
           />
         ) : (
           <View className="h-14 w-14" />
@@ -175,7 +184,7 @@ export default function GroupScreen() {
       <View className="px-5 pt-3">
         <View className="rounded-card border border-line bg-primary-tint p-4">
           <Text className="text-[12px] font-bold text-ink">
-            {started && day ? `DAY ${day}` : group.status === 'RECRUITING' ? '모집중' : group.status}
+            {statusLabel}
           </Text>
           <Text className="text-[22px] font-bold text-ink">{group.name}</Text>
           <Text className="mt-1 text-[11px] text-muted">
@@ -229,7 +238,7 @@ export default function GroupScreen() {
               <Text className="mt-2 text-[12px] text-muted">
                 {personal ? `${personal.completedCount}/${personal.requiredCompletionCount}회 완료 · 연속 ${personal.currentStreak}일` : ''}
               </Text>
-              {personal?.todayScheduled && !personal.todayCompleted && (
+              {personal?.todayScheduled && !personal.todayCompleted && !personal.todayVerificationPending && (
                 <Pressable
                   onPress={() => router.push({ pathname: '/verify', params: { groupId: String(group.groupId) } })}
                   className="mt-4 items-center rounded-pill bg-ink py-3"
