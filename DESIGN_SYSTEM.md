@@ -9,6 +9,10 @@ Figma 디자인에서 추출한 색·타이포·모양 토큰과 재사용 컴�
    여기 값만 바꾸면 `tailwind.config.js`를 통해 전 화면 색이 한 번에 바뀐다.
 2. **Tailwind 유틸 클래스로 적용.** 예: `bg-primary`, `text-ink`, `rounded-card`, `text-display`.
    임의값(`bg-[#14453a]`)을 쓰지 말 것 — 토큰 클래스를 쓴다.
+2-1. **className을 못 쓰는 자리는 `src/theme.js`.** `ActivityIndicator color`,
+   `placeholderTextColor`, `react-native-svg`의 `stroke`/`fill`, `StyleSheet` 값에는
+   `import { colors } from '@/theme'` 후 `colors.primary`처럼 쓴다. hex를 직접 쓰지 않는다.
+   (`mobile/` 화면은 상대경로 `../../theme`으로 같은 파일을 본다.)
 3. **숫자/점수/랭킹 같은 데이터는 `src/utils`의 함수로.** 화면에 계산을 하드코딩하지 않는다.
 
 ---
@@ -32,6 +36,13 @@ Figma 디자인에서 추출한 색·타이포·모양 토큰과 재사용 컴�
 | 라벨 | `subtle` | `--color-subtle` | `#4a4a4a` | 작은 라벨 |
 | 비활성 | `disabled` | `--color-disabled` | `#bababa` | 비활성 버튼·구분선 |
 | 테두리 | `line` | `--color-line` | `#e7e3d8` | 카드 border·divider |
+| 어두운 배경 위 텍스트 | `on-dark` | `--color-on-dark` | `#e7e3d8` | 딥브라운 리워드 카드 안의 글자. `line`과 값만 같고 역할이 다르다 |
+| 하트 | `heart` | `--color-heart` | `#d9573b` | 하트 잔량·소모 안내 |
+| 브랜드(연함) | `primary-light` | `--color-primary-light` | `#669884` | 진행률 강조 숫자·게이지 |
+| 민트 배지 | `mint-badge` | `--color-mint-badge` | `#e5f4e8` | 배지 배경·어두운 버튼 위 글자 |
+| 베이지 아이콘 | `beige-icon` | `--color-beige-icon` | `#f3efe4` | 아이콘 원형 배경 |
+| 보조 버튼 | `gray-btn` | `--color-gray-btn` | `#f0eee8` | 수량 +/- 등 보조 버튼 배경 |
+| 회색 테두리 | `gray-border` | `--color-gray-border` | `#d9d9d9` | 입력 테두리·스위치 off 트랙 |
 
 ### 상태색 (인증 흐름)
 

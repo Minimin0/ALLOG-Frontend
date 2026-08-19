@@ -65,7 +65,7 @@ export default function MyScreen() {
             </View>
             <Pressable
               onPress={() => router.push('/my/edit-profile')}
-              className="rounded-full bg-[#e5f4e8] px-4 py-2"
+              className="rounded-full bg-mint-badge px-4 py-2"
             >
               <Text className="text-[12px] font-bold text-ink">편집</Text>
             </Pressable>
@@ -96,7 +96,7 @@ export default function MyScreen() {
             <View className="flex-row justify-between rounded-[26px] border border-line bg-surface p-4">
               {interests.map((item) => (
                 <View key={item.label} className="items-center">
-                  <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-[#f3efe4]">
+                  <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-beige-icon">
                     <Icon name={item.icon} size={24} />
                   </View>
                   <Text className="mt-2 text-[11px] font-semibold text-ink">{item.label}</Text>

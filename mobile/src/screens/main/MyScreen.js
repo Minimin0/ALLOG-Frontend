@@ -133,7 +133,7 @@ const s = StyleSheet.create({
   email: { marginTop: 2, fontSize: 12, color: colors.muted },
   edit: {
     borderRadius: 99,
-    backgroundColor: "#e5f4e8",
+    backgroundColor: colors.mintBadge,
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
@@ -170,7 +170,7 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#f3efe4",
+    backgroundColor: colors.beigeIcon,
     alignItems: "center",
     justifyContent: "center",
   },

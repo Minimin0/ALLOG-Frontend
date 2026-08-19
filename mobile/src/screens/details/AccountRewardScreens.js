@@ -390,7 +390,7 @@ export function NotificationsScreen({ navigation }) {
             <Switch
               value={values[key]}
               onValueChange={(v) => setValues((x) => ({ ...x, [key]: v }))}
-              trackColor={{ false: "#d9d9d9", true: colors.primary }}
+              trackColor={{ false: colors.grayBorder, true: colors.primary }}
             />
           </View>
         ))}
@@ -454,7 +454,7 @@ function ToggleRow({ title, desc, value, set, line }) {
       <Switch
         value={value}
         onValueChange={set}
-        trackColor={{ false: "#d9d9d9", true: colors.primary }}
+        trackColor={{ false: colors.grayBorder, true: colors.primary }}
       />
     </View>
   );
@@ -658,7 +658,7 @@ const s = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 20,
-    backgroundColor: "#f3efe4",
+    backgroundColor: colors.beigeIcon,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -712,7 +712,7 @@ const s = StyleSheet.create({
     width: 82,
     height: 82,
     borderRadius: 41,
-    backgroundColor: "#e5f4e8",
+    backgroundColor: colors.mintBadge,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -758,7 +758,7 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 16,
-    backgroundColor: "#f3efe4",
+    backgroundColor: colors.beigeIcon,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -870,7 +870,7 @@ const s = StyleSheet.create({
   birthField: {
     height: 48,
     borderWidth: 1,
-    borderColor: "#d9d9d9",
+    borderColor: colors.grayBorder,
     backgroundColor: colors.white,
     borderRadius: 15,
     flexDirection: "row",

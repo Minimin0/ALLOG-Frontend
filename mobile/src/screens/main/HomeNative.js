@@ -196,7 +196,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  verifyText: { fontSize: 12, fontWeight: "700", color: "#e5f4e8" },
+  verifyText: { fontSize: 12, fontWeight: "700", color: colors.mintBadge },
   routineBottom: {
     height: 42,
     backgroundColor: colors.surface,
@@ -229,7 +229,7 @@ const s = StyleSheet.create({
   },
   between: { flexDirection: "row", justifyContent: "space-between" },
   gaugeLabel: { fontSize: 13, fontWeight: "600" },
-  rate: { fontSize: 20, fontWeight: "900", color: "#669884" },
+  rate: { fontSize: 20, fontWeight: "900", color: colors.primaryLight },
   track: {
     marginTop: 12,
     height: 9,
@@ -239,7 +239,7 @@ const s = StyleSheet.create({
   fill: {
     height: 9,
     borderRadius: 5,
-    backgroundColor: "#669884",
+    backgroundColor: colors.primaryLight,
   },
   goal: {
     marginTop: 8,

@@ -150,9 +150,9 @@ export default function CreateGroupScreen() {
         <View>
           <Text className="mb-2 text-[15px] font-bold text-ink">참여 인원</Text>
           <View className="flex-row items-center justify-between rounded-[15px] border border-line bg-surface px-4 py-4">
-            <Pressable onPress={() => setCapacity((p) => Math.max(2, p - 1))} className="h-8 w-8 items-center justify-center rounded-full bg-[#f0eee8]"><Text className="text-lg font-bold text-ink">−</Text></Pressable>
+            <Pressable onPress={() => setCapacity((p) => Math.max(2, p - 1))} className="h-8 w-8 items-center justify-center rounded-full bg-gray-btn"><Text className="text-lg font-bold text-ink">−</Text></Pressable>
             <Text className="text-[16px] font-bold text-ink">{capacity}명</Text>
-            <Pressable onPress={() => setCapacity((p) => Math.min(10, p + 1))} className="h-8 w-8 items-center justify-center rounded-full bg-[#f0eee8]"><Text className="text-lg font-bold text-ink">＋</Text></Pressable>
+            <Pressable onPress={() => setCapacity((p) => Math.min(10, p + 1))} className="h-8 w-8 items-center justify-center rounded-full bg-gray-btn"><Text className="text-lg font-bold text-ink">＋</Text></Pressable>
           </View>
         </View>
 

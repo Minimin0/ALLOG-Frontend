@@ -99,7 +99,7 @@ export default function LoginScreen() {
           </Pressable>
         </View>
 
-        <View className="my-6 h-px bg-[#d9d9d9]" />
+        <View className="my-6 h-px bg-gray-border" />
         <Text className="mb-4 text-center text-[15px] font-semibold text-ink">간편 로그인</Text>
 
         <View className="flex-row justify-center gap-5">

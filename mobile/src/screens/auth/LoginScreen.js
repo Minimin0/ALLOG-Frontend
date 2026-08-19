@@ -148,7 +148,7 @@ const s = StyleSheet.create({
     top: 511,
     width: 298,
     height: 1,
-    backgroundColor: "#d9d9d9",
+    backgroundColor: colors.grayBorder,
   },
   easy: {
     position: "absolute",

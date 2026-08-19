@@ -185,7 +185,7 @@ const s = StyleSheet.create({
   input: {
     height: 44,
     borderWidth: 1,
-    borderColor: "#d9d9d9",
+    borderColor: colors.grayBorder,
     backgroundColor: colors.white,
     borderRadius: 15,
     paddingHorizontal: 14,
@@ -196,7 +196,7 @@ const s = StyleSheet.create({
   dateField: {
     height: 48,
     borderWidth: 1,
-    borderColor: "#d9d9d9",
+    borderColor: colors.grayBorder,
     backgroundColor: colors.white,
     borderRadius: 15,
     flexDirection: "row",
@@ -219,7 +219,7 @@ const s = StyleSheet.create({
   measureInput: {
     height: 44,
     borderWidth: 1,
-    borderColor: "#d9d9d9",
+    borderColor: colors.grayBorder,
     backgroundColor: colors.white,
     borderRadius: 15,
     flexDirection: "row",

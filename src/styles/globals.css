@@ -19,8 +19,8 @@ html {
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
-  color: var(--text-primary);
-  background-color: var(--bg-primary);
+  color: var(--color-ink);
+  background-color: var(--color-surface);
 }
 
 * {
@@ -38,8 +38,8 @@ body,
 
 body {
   min-height: 100vh;
-  background: var(--bg-app);
-  color: var(--text-primary);
+  background: var(--color-bg);
+  color: var(--color-ink);
 }
 
 button,

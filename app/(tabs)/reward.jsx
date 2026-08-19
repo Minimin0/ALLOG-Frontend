@@ -22,18 +22,18 @@ export default function RewardScreen() {
 
       <ScrollView className="flex-1 px-[30px]" contentContainerClassName="gap-5 pb-8 pt-4">
         <View className="rounded-[13px] bg-[#4a3a18] p-5">
-          <Text className="text-[15px] font-semibold text-line">보유 리워드 포인트</Text>
+          <Text className="text-[15px] font-semibold text-on-dark">보유 리워드 포인트</Text>
           <View className="mt-2 flex-row items-end justify-between">
             <View className="flex-row items-center gap-2">
               <Icon name="coin" size={24} />
-              <Text className="text-[30px] font-bold text-line">{points}</Text>
+              <Text className="text-[30px] font-bold text-on-dark">{points}</Text>
             </View>
             <Pressable onPress={() => Linking.openURL('https://anti-agingclub.kr/')}>
               <Text className="pb-1 text-[12px] font-bold text-surface">AAC 홈페이지 바로가기</Text>
             </Pressable>
           </View>
           <View className="my-3 h-px bg-line/30" />
-          <Text className="text-[10px] font-medium text-line">포인트 사용 혜택은 준비 중이에요.</Text>
+          <Text className="text-[10px] font-medium text-on-dark">포인트 사용 혜택은 준비 중이에요.</Text>
         </View>
 
         <View className="rounded-[13px] border border-line bg-surface p-4">
@@ -47,7 +47,7 @@ export default function RewardScreen() {
               key={reward.id}
               className="flex-row items-center gap-3 rounded-[13px] bg-surface p-4 opacity-70"
             >
-              <View className="h-[54px] w-[54px] items-center justify-center rounded-[12px] bg-[#f3efe4]">
+              <View className="h-[54px] w-[54px] items-center justify-center rounded-[12px] bg-beige-icon">
                 <Icon name={reward.icon} size={26} />
               </View>
               <View className="flex-1">

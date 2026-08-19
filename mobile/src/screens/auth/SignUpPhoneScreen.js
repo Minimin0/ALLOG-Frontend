@@ -309,7 +309,7 @@ const s = StyleSheet.create({
     width: 42,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#d9d9d9",
+    backgroundColor: colors.grayBorder,
     marginBottom: 20,
   },
   sheetTitle: { fontSize: 22, fontWeight: "700", marginBottom: 18 },
