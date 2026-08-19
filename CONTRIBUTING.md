@@ -1,50 +1,35 @@
 # Contributing
 
-ALLOG 프론트엔드 저장소는 `develop` 브랜치를 기준으로 기능 브랜치를 만들어 작업합니다.
+ALLOG Frontend의 작업 기준은 **scoped branch → Pull Request → main**이다. `main`에는 직접 push하거나 자동 merge하지 않는다.
 
 ## 브랜치 전략
 
 ```text
 main
-└── develop
-    ├── feature/*
-    ├── fix/*
-    ├── refactor/*
-    ├── test/*
-    └── docs/*
+  ↑ Pull Request
+  ├── feature/*
+  ├── fix/*
+  ├── refactor/*
+  ├── integration/*
+  ├── test/*
+  └── docs/*
 ```
 
-브랜치 이름 예시:
+새 작업은 최신 `origin/main`에서 만든다. `develop`은 main보다 뒤처져 있고 main에 없는 커밋이 없는 legacy branch이므로 새 작업의 base나 PR target으로 사용하지 않는다. branch 삭제 또는 repository protection 변경은 팀 승인 없이는 수행하지 않는다.
 
-- `feature/login`
-- `feature/challenge-list`
-- `fix/navigation-error`
-- `docs/api-spec`
+## 커밋 규칙
 
-저장소가 이미 프론트엔드 전용이므로 `feature/frontend-login`처럼 영역 이름을 반복하지 않습니다.
-
-## 커밋 컨벤션
-
-- `feat`: 새로운 기능
-- `fix`: 버그 수정
-- `docs`: 문서 수정
-- `style`: 코드 포맷 변경
-- `refactor`: 리팩터링
-- `test`: 테스트 추가 또는 수정
-- `chore`: 설정 및 기타 작업
+`feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore` prefix를 사용한다. 한 commit에는 하나의 reviewable concern만 넣는다. runtime code fix, docs/process fix, backend change를 한 commit 또는 PR에 섞지 않는다.
 
 ## Pull Request 규칙
 
-1. 기능별 브랜치에서 작업합니다.
-2. `develop` 브랜치로 Pull Request를 생성합니다.
-3. 자기 자신이 작성한 PR도 변경 내용을 직접 검토합니다.
-4. 가능한 경우 최소 1명의 리뷰를 받은 후 병합합니다.
-5. API 변경 사항은 PR 본문에 반드시 작성합니다.
-6. 테스트하지 않은 기능을 테스트 완료로 표시하지 않습니다.
-7. `main`에는 직접 푸시하지 않습니다.
-8. 배포 가능한 버전만 `develop`에서 `main`으로 병합합니다.
+1. PR base는 `main`이다. scope가 큰 변경은 먼저 분리한다.
+2. PR body에 goal, why, files changed, runtime effect, UI effect, API effect, backend-authority impact, tests, Android evidence, screenshots/visual diff summary, known deferred를 기록한다.
+3. UI-affecting change는 실제 Android runtime에서 launch, navigation, safe area, font, interaction을 확인하고 screenshot을 첨부한다. 환경상 실행하지 못했으면 pass로 표시하지 말고 blocker와 필요한 검증을 기록한다.
+4. API contract 또는 backend authority에 영향이 있으면 backend owner와 함께 검토한다. client는 Heart, Reward, group lifecycle, deadline, final verification outcome을 계산하거나 결정하지 않는다.
+5. 최소 `npm ci`, `node src/services/api.check.mjs`, `node src/stores/onboardingStore.check.mjs`, `npx expo export --platform android`, `git diff --check`를 해당 변경 범위에 맞게 실행한다.
+6. 작성자도 diff를 self-review하고, 가능한 경우 최소 한 명의 reviewer를 확보한다. reviewer와 required checks가 끝나기 전 merge하지 않는다.
 
 ## 보안 규칙
 
-- `.env`, API Key, 비밀번호 등 비밀정보를 커밋하지 않습니다.
-- 로컬 설정은 `.env`에 두고, 공유 가능한 키 이름만 `.env.example`에 작성합니다.
+`.env`, API key, password, Firebase Admin credential, media signing secret, filesystem path를 commit하지 않는다. `.env.example`에는 key name과 안전한 설명만 둔다. `EXPO_PUBLIC_*` 값은 client bundle에 노출되므로 server secret으로 사용하지 않는다.

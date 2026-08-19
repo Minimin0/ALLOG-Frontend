@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-// NativeWind(RN) 설정. 웹 variables.css의 ALLOG 토큰을 그대로 값으로 박아넣는다
-// (RN엔 CSS 변수 개념이 없어 hex로 직접 정의).
+// NativeWind(RN) runtime 토큰. src/theme.js와 같은 semantic value를 유지한다.
+// variables.css는 runtime에 import되지 않는 참고 팔레트다.
 module.exports = {
   content: [
     './app/**/*.{js,jsx,ts,tsx}',

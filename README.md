@@ -5,6 +5,12 @@ ALLOG is an Android-first React Native and Expo Router wellness group client.
 - 공통 문서: https://github.com/Minimin0/ALLOG
 - 백엔드: https://github.com/Minimin0/ALLOG-Backend
 
+## Canonical runtime
+
+`package.json`의 `main`은 `expo-router/entry`다. `app/_layout.jsx`가 실제 root이고 `app/**`는 file-based route다. `mobile/App.js`는 별도 React Navigation entry라 canonical runtime에서는 실행되지 않는다.
+
+`mobile/src/**`는 legacy로 분류하지 않는다. `src/components/MobileScreenRoute.jsx`가 이를 Expo Router routes로 import하므로 현재 live screen source다. Pretendard Variable은 `app/_layout.jsx`가 `mobile/assets/fonts/PretendardVariable.ttf`에서 로드하며, 로드 전에는 splash를 유지한다.
+
 ## Directory Structure
 
 ```text
@@ -57,6 +63,8 @@ main
 - `fix/navigation-error`
 - `docs/api-spec`
 
+`develop`은 현재 main보다 뒤처져 있고 독자 커밋이 없는 legacy branch다. 새 작업의 base나 PR target으로 사용하지 않으며, 삭제·보호 정책 변경은 별도 팀 승인으로 결정한다.
+
 ## Commit Convention
 
 - `feat`: 새로운 기능
@@ -69,10 +77,9 @@ main
 
 ## Pull Request
 
-1. Work on a scoped branch.
-2. Pull Request base is main.
-3. Self-review every change before requesting review.
-4. Obtain at least one reviewer where possible.
-5. Document API contract changes in the pull request.
-6. Never mark untested work as tested.
-7. Never push directly to main; merge only after review and required checks.
+1. Work on a scoped branch and set `main` as the Pull Request base.
+2. Self-review every change before requesting review; never push directly to `main`.
+3. State scope, UI effect, API contract effect, backend-authority impact, test evidence, and known deferred work in the PR body.
+4. For UI-affecting work, attach Android runtime evidence and screenshots or explain why the evidence is unavailable.
+5. Run `npm ci`, `node src/services/api.check.mjs`, `node src/stores/onboardingStore.check.mjs`, and `npx expo export --platform android` when applicable.
+6. Obtain at least one reviewer where possible. Merge only after review and required checks; never mark untested work as tested.
