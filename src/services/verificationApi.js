@@ -1,6 +1,6 @@
 // verificationApi service — 인증(사진) 제출
-// 흐름: POST current → POST upload-intent → S3에 직접 PUT → POST submit
-// S3 미구성 상태에서는 upload-intent / submit이 503을 준다. 이는 예상된 운영 상태이지 버그가 아니다.
+// 흐름: POST current → POST upload-intent → 서명된 업로드 URL로 PUT → POST submit
+// Gabia 로컬 미디어 저장소가 비활성 또는 미구성인 경우 upload-intent / submit은 503을 준다. 이는 예상된 운영 상태이지 버그가 아니다.
 import { apiRequest, ApiError } from "./api";
 
 // MVP에서 서버가 정제할 수 있는 타입은 사진 2종뿐. VIDEO / HEIC는 지원하지 않는다.
@@ -10,7 +10,7 @@ function base(groupId) {
   return `/api/v1/me/groups/${groupId}/verifications/current`;
 }
 
-// GET이 아니라 POST다 — 오늘 슬롯이 없으면 만들어준다. S3 없이도 동작한다.
+// GET이 아니라 POST다 — 오늘 슬롯이 없으면 만들어준다. 미디어 저장소가 비활성이어도 이 단계는 동작한다.
 export function openTodayVerification(groupId, options) {
   return apiRequest(base(groupId), { ...options, method: "POST" });
 }
@@ -28,8 +28,8 @@ export function submitVerification(groupId, options) {
 }
 
 /**
- * presigned URL로 바이트를 직접 올린다. 백엔드가 돌려준 method/headers를 그대로 써야 한다.
- * ALLOG 백엔드가 아니라 S3로 가는 요청이므로 Authorization 헤더를 붙이지 않는다.
+ * 서명된 업로드 URL로 바이트를 직접 올린다. 백엔드가 돌려준 method/headers를 그대로 써야 한다.
+ * 별도 업로드 endpoint로 가는 요청이므로 Firebase Authorization 헤더를 붙이지 않는다.
  */
 export async function uploadToPresignedUrl(intent, blob) {
   const headers = {};

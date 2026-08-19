@@ -2,7 +2,7 @@
 // className으로 색을 쓸 땐 tailwind.config.js의 토큰 클래스(bg-primary 등)를 쓰고,
 // className을 못 쓰는 자리(ActivityIndicator color, placeholderTextColor, react-native-svg
 // stroke/fill, StyleSheet)에서만 여기 값을 import 한다.
-// 값을 바꾸면 tailwind.config.js와 src/styles/variables.css도 같이 고쳐야 한다.
+// 값을 바꾸면 tailwind.config.js와 같이 고친다. variables.css는 runtime에 import되지 않는 참고 팔레트다.
 export const colors = {
   bg: "#f7f6f3",
   surface: "#fefefe",
@@ -36,7 +36,7 @@ export const colors = {
   black: "#000000",
 };
 
-export const radius = { card: 24, item: 15, pill: 999 };
+export const radius = { card: 24, item: 15, pill: 9999 };
 export const font = {
   display: 28,
   h2: 22,
