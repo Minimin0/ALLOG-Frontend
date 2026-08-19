@@ -42,6 +42,9 @@ logs/
 # Secrets
 *.pem
 *.key
+# Firebase 네이티브 클라이언트 설정 (로컬 전용, 커밋 금지)
+google-services.json
+GoogleService-Info.plist
 
 # Misc
 *.orig
