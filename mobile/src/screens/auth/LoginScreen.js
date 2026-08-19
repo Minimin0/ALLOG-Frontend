@@ -12,6 +12,7 @@ import Naver from "../../../assets/images/Naver.svg";
 import Apple from "../../../assets/images/Apple.svg";
 import Google from "../../../assets/images/Google.svg";
 import Kakao from "../../../assets/images/Kakao.svg";
+import { colors } from "../../theme";
 
 const socials = [
   ["네이버 로그인", Naver],
@@ -35,7 +36,7 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setUserId}
         style={[s.input, { top: 201 }]}
         placeholder="아이디"
-        placeholderTextColor="#000"
+        placeholderTextColor={colors.black}
         autoCapitalize="none"
         returnKeyType="next"
       />
@@ -44,7 +45,7 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setPassword}
         style={[s.input, { top: 267, height: 49 }]}
         placeholder="비밀번호"
-        placeholderTextColor="#000"
+        placeholderTextColor={colors.black}
         secureTextEntry
         returnKeyType="done"
         onSubmitEditing={enterHome}
@@ -110,9 +111,9 @@ const s = StyleSheet.create({
     width: 296,
     height: 50,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 30,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     paddingHorizontal: 18,
     fontSize: 15,
     fontWeight: "500",
@@ -124,11 +125,11 @@ const s = StyleSheet.create({
     width: 296,
     height: 50,
     borderRadius: 20,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  loginText: { color: "#fff", fontSize: 18, fontWeight: "700" },
+  loginText: { color: colors.white, fontSize: 18, fontWeight: "700" },
   find: { position: "absolute", top: 401, height: 30 },
   findText: { fontSize: 12.643, fontWeight: "500", lineHeight: 29.5 },
   signup: {
@@ -147,7 +148,7 @@ const s = StyleSheet.create({
     top: 511,
     width: 298,
     height: 1,
-    backgroundColor: "#d9d9d9",
+    backgroundColor: colors.grayBorder,
   },
   easy: {
     position: "absolute",

@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { colors } from "../theme";
 export default function OnboardingShell({
   step,
   total = 4,
@@ -67,7 +68,7 @@ export default function OnboardingShell({
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f7f6f3" },
+  screen: { flex: 1, backgroundColor: colors.bg },
   scroll: { flex: 1 },
   content: {
     width: "100%",
@@ -96,9 +97,9 @@ const s = StyleSheet.create({
     height: 3,
     flex: 1,
     borderRadius: 999,
-    backgroundColor: "#bababa",
+    backgroundColor: colors.disabled,
   },
-  filled: { backgroundColor: "#000" },
+  filled: { backgroundColor: colors.black },
   title: { fontSize: 25, lineHeight: 32.5, fontWeight: "700", marginBottom: 8 },
   subtitle: { fontSize: 12, lineHeight: 19.2, color: "#666", marginBottom: 18 },
   form: { gap: 16 },
@@ -111,7 +112,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 28,
-    backgroundColor: "#f7f6f3",
+    backgroundColor: colors.bg,
   },
   secondary: {
     height: 55,
@@ -121,16 +122,16 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  secondaryText: { fontSize: 15, fontWeight: "700", color: "#4a4a4a" },
+  secondaryText: { fontSize: 15, fontWeight: "700", color: colors.subtle },
   primary: {
     height: 55,
     flex: 1,
     borderRadius: 27.5,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  primaryText: { fontSize: 15, fontWeight: "700", color: "#fff" },
+  primaryText: { fontSize: 15, fontWeight: "700", color: colors.white },
   disabled: { backgroundColor: "#dfe3e8" },
   disabledText: { color: "#8b919b" },
 });

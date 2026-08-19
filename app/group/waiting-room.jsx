@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import useGroupStore from '@/stores/groupStore';
+import { colors } from '@/theme';
 
 function valueOf(param) {
   return Array.isArray(param) ? param[0] : param;
@@ -39,7 +40,7 @@ export default function WaitingRoomScreen() {
   if (loading && !detail) {
     return (
       <SafeAreaView edges={['top', 'bottom']} className="flex-1 items-center justify-center bg-bg">
-        <ActivityIndicator color="#669884" />
+        <ActivityIndicator color={colors.primaryLight} />
       </SafeAreaView>
     );
   }

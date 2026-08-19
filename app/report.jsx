@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, Pressable, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { colors } from '@/theme';
 
 // 재인증 요청 · 신고 (웹 ReportPage 포팅). 사유(필수)+상세 → 접수.
 const REASONS = [
@@ -58,7 +59,7 @@ export default function ReportScreen() {
           value={detail}
           onChangeText={setDetail}
           placeholder="구체적인 내용을 적어주세요 (선택)"
-          placeholderTextColor="#bababa"
+          placeholderTextColor={colors.disabled}
           multiline
           numberOfLines={4}
           textAlignVertical="top"

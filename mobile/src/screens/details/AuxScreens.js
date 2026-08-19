@@ -17,6 +17,7 @@ import { getCoachContent } from "../../../../src/data/mockChat.js";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import { useAppState } from "../../state/AppState";
 import { getCoachImage } from "../../utils/coach";
+import { colors } from "../../theme";
 function Header({ navigation, title }) {
   return (
     <View style={s.header}>
@@ -69,7 +70,7 @@ export function AiCoachScreen({ navigation, route }) {
               />
             )}
             <Text
-              style={[s.messageText, m.role === "user" && { color: "#fff" }]}
+              style={[s.messageText, m.role === "user" && { color: colors.white }]}
             >
               {m.text}
             </Text>
@@ -125,7 +126,7 @@ function CoachViz({ viz }) {
               cy="42"
               r={radius}
               fill="none"
-              stroke="#e7e3d8"
+              stroke={colors.line}
               strokeWidth="9"
             />
             <Circle
@@ -133,7 +134,7 @@ function CoachViz({ viz }) {
               cy="42"
               r={radius}
               fill="none"
-              stroke="#14453a"
+              stroke={colors.primary}
               strokeWidth="9"
               strokeLinecap="round"
               strokeDasharray={`${circumference} ${circumference}`}
@@ -144,7 +145,7 @@ function CoachViz({ viz }) {
               y1="4"
               x2="42"
               y2="12"
-              stroke="#c08a24"
+              stroke={colors.reward}
               strokeWidth="3"
               strokeLinecap="round"
               transform={`rotate(${viz.goal * 3.6} 42 42)`}
@@ -331,7 +332,7 @@ export function ReportScreen({ navigation }) {
             onPress={() => setReason(id)}
           >
             <View
-              style={[s.radio, reason === id && { borderColor: "#14453a" }]}
+              style={[s.radio, reason === id && { borderColor: colors.primary }]}
             >
               {reason === id && <View style={s.radioDot} />}
             </View>
@@ -340,7 +341,7 @@ export function ReportScreen({ navigation }) {
         ))}
         <Text style={s.detailLabel}>
           상세 내용{" "}
-          {reason === "etc" && <Text style={{ color: "#c0492f" }}>*</Text>}
+          {reason === "etc" && <Text style={{ color: colors.danger }}>*</Text>}
         </Text>
         <TextInput
           multiline
@@ -362,11 +363,11 @@ export function ReportScreen({ navigation }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f7f6f3" },
+  screen: { flex: 1, backgroundColor: colors.bg },
   header: {
     height: 56,
     borderBottomWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
@@ -376,11 +377,11 @@ const s = StyleSheet.create({
     width: 43,
     height: 43,
     borderRadius: 13,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  backText: { fontSize: 30, lineHeight: 32, color: "#fff" },
+  backText: { fontSize: 30, lineHeight: 32, color: colors.white },
   headerTitle: { fontSize: 17, fontWeight: "700" },
   chat: { padding: 16, gap: 12 },
   message: {
@@ -393,23 +394,23 @@ const s = StyleSheet.create({
   },
   ai: {
     alignSelf: "flex-start",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
   },
-  user: { alignSelf: "flex-end", backgroundColor: "#14453a" },
+  user: { alignSelf: "flex-end", backgroundColor: colors.primary },
   messageText: { flexShrink: 1, fontSize: 14, lineHeight: 21 },
   suggestions: {
     borderTopWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     padding: 12,
     gap: 8,
   },
   suggestion: {
     borderRadius: 99,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
@@ -421,10 +422,10 @@ const s = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
   },
-  pipOn: { borderColor: "#14453a", backgroundColor: "#14453a" },
-  vizNote: { marginTop: 8, fontSize: 11, fontWeight: "700", color: "#14453a" },
+  pipOn: { borderColor: colors.primary, backgroundColor: colors.primary },
+  vizNote: { marginTop: 8, fontSize: 11, fontWeight: "700", color: colors.primary },
   ringRow: { flexDirection: "row", alignItems: "center", gap: 16 },
   ringWrap: {
     width: 84,
@@ -436,9 +437,9 @@ const s = StyleSheet.create({
     position: "absolute",
     fontSize: 17,
     fontWeight: "700",
-    color: "#14453a",
+    color: colors.primary,
   },
-  ringCopy: { fontSize: 11, lineHeight: 18, color: "#6b7268" },
+  ringCopy: { fontSize: 11, lineHeight: 18, color: colors.muted },
   columns: {
     height: 108,
     flexDirection: "row",
@@ -451,7 +452,7 @@ const s = StyleSheet.create({
     marginBottom: 5,
     fontSize: 10,
     fontWeight: "700",
-    color: "#6b7268",
+    color: colors.muted,
   },
   column: {
     width: 28,
@@ -460,10 +461,10 @@ const s = StyleSheet.create({
     borderTopRightRadius: 5,
     backgroundColor: "#dfe3e8",
   },
-  columnOn: { backgroundColor: "#14453a" },
-  columnLabel: { marginTop: 5, fontSize: 10, color: "#6b7268" },
-  highlight: { color: "#14453a", fontWeight: "700" },
-  metric: { marginBottom: 6, fontSize: 10, color: "#6b7268" },
+  columnOn: { backgroundColor: colors.primary },
+  columnLabel: { marginTop: 5, fontSize: 10, color: colors.muted },
+  highlight: { color: colors.primary, fontWeight: "700" },
+  metric: { marginBottom: 6, fontSize: 10, color: colors.muted },
   versus: { flexDirection: "row", alignItems: "center", gap: 10 },
   versusCard: {
     flex: 1,
@@ -474,35 +475,35 @@ const s = StyleSheet.create({
   },
   versusActive: {
     borderWidth: 1.5,
-    borderColor: "#14453a",
-    backgroundColor: "#eaf4ec",
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPale,
   },
-  versusValue: { fontSize: 20, fontWeight: "700", color: "#6b7268" },
+  versusValue: { fontSize: 20, fontWeight: "700", color: colors.muted },
   versusUnit: { fontSize: 10 },
-  delta: { fontSize: 11, fontWeight: "700", color: "#c08a24" },
+  delta: { fontSize: 11, fontWeight: "700", color: colors.reward },
   heartContent: { paddingHorizontal: 29, paddingTop: 28, paddingBottom: 35 },
   hero: { flexDirection: "row", justifyContent: "space-between" },
   heroTitle: { fontSize: 25, lineHeight: 32, fontWeight: "700" },
-  heroSub: { marginTop: 12, width: 220, fontSize: 10, color: "#4a4a4a" },
+  heroSub: { marginTop: 12, width: 220, fontSize: 10, color: colors.subtle },
   heartBalance: {
     width: 114,
     borderRadius: 7,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     paddingVertical: 12,
     alignItems: "center",
   },
   heartRow: { flexDirection: "row", gap: 6, alignItems: "center" },
   heartCount: { fontSize: 18, fontWeight: "700" },
-  heartLabel: { fontSize: 12, fontWeight: "600", color: "#d9573b" },
+  heartLabel: { fontSize: 12, fontWeight: "600", color: colors.heart },
   events: { marginTop: 36, gap: 16 },
   event: {
     height: 50,
     borderRadius: 13,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
@@ -513,12 +514,12 @@ const s = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#bababa",
+    borderColor: colors.disabled,
     alignItems: "center",
     justifyContent: "center",
   },
-  eventDone: { backgroundColor: "#14453a", borderColor: "#14453a" },
-  checkMark: { fontSize: 12, color: "#fff" },
+  eventDone: { backgroundColor: colors.primary, borderColor: colors.primary },
+  checkMark: { fontSize: 12, color: colors.white },
   eventTitle: { flex: 1, fontSize: 13, fontWeight: "600" },
   plus: { fontSize: 12, fontWeight: "600" },
   dim: {
@@ -530,7 +531,7 @@ const s = StyleSheet.create({
   rewardModal: {
     width: 280,
     borderRadius: 20,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     paddingHorizontal: 24,
     paddingVertical: 32,
     alignItems: "center",
@@ -540,34 +541,34 @@ const s = StyleSheet.create({
   button: {
     height: 48,
     borderRadius: 16,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
     marginTop: 20,
   },
-  buttonText: { fontSize: 14, fontWeight: "700", color: "#fff" },
+  buttonText: { fontSize: 14, fontWeight: "700", color: colors.white },
   report: { padding: 20, paddingBottom: 35 },
-  reportIntro: { fontSize: 15, color: "#6b7268", marginBottom: 16 },
+  reportIntro: { fontSize: 15, color: colors.muted, marginBottom: 16 },
   reason: {
     minHeight: 50,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     marginBottom: 8,
   },
-  reasonOn: { borderColor: "#14453a", backgroundColor: "#edf2ec" },
+  reasonOn: { borderColor: colors.primary, backgroundColor: colors.primaryTint },
   radio: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: "#bababa",
+    borderColor: colors.disabled,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -575,9 +576,9 @@ const s = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#14453a",
+    backgroundColor: colors.primary,
   },
-  reasonText: { fontSize: 14, color: "#4a4a4a" },
+  reasonText: { fontSize: 14, color: colors.subtle },
   detailLabel: {
     marginTop: 12,
     marginBottom: 8,
@@ -588,14 +589,14 @@ const s = StyleSheet.create({
     height: 110,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     padding: 12,
     textAlignVertical: "top",
   },
   complete: {
     flex: 1,
-    backgroundColor: "#f7f6f3",
+    backgroundColor: colors.bg,
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
@@ -605,11 +606,11 @@ const s = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#14453a",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  completeCheckText: { fontSize: 30, color: "#fff" },
+  completeCheckText: { fontSize: 30, color: colors.white },
   completeTitle: { fontSize: 22, fontWeight: "700" },
-  completeSub: { fontSize: 15, color: "#6b7268" },
+  completeSub: { fontSize: 15, color: colors.muted },
 });

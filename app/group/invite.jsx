@@ -5,6 +5,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 
 import { ApiError } from '@/services/api';
 import { issueInviteCode } from '@/services/inviteApi';
+import { colors } from '@/theme';
 
 // 비공개 그룹 초대 코드. 코드는 백엔드가 발급한다(POST /me/groups/{id}/invite).
 export default function InviteGroupScreen() {
@@ -41,7 +42,7 @@ export default function InviteGroupScreen() {
         ) : code ? (
           <Text className="mt-1 text-[24px] font-bold tracking-widest text-primary">{code}</Text>
         ) : (
-          <ActivityIndicator className="mt-2" color="#4b7f63" />
+          <ActivityIndicator className="mt-2" color={colors.spinner} />
         )}
       </View>
       <Pressable

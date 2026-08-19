@@ -65,7 +65,7 @@ export default function MyScreen() {
             </View>
             <Pressable
               onPress={() => router.push('/my/edit-profile')}
-              className="rounded-full bg-[#e5f4e8] px-4 py-2"
+              className="rounded-full bg-mint-badge px-4 py-2"
             >
               <Text className="text-[12px] font-bold text-ink">편집</Text>
             </Pressable>
@@ -75,7 +75,7 @@ export default function MyScreen() {
 
           <View className="flex-row">
             <View className="flex-1 items-center">
-              <Text className="text-[10px] font-semibold text-[#d9573b]">하트</Text>
+              <Text className="text-[10px] font-semibold text-heart">하트</Text>
               <View className="mt-1 flex-row items-center gap-1"><Icon name="heart" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.hearts ?? '–'}</Text></View>
             </View>
             <View className="flex-1 items-center">
@@ -96,7 +96,7 @@ export default function MyScreen() {
             <View className="flex-row justify-between rounded-[26px] border border-line bg-surface p-4">
               {interests.map((item) => (
                 <View key={item.label} className="items-center">
-                  <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-[#f3efe4]">
+                  <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-beige-icon">
                     <Icon name={item.icon} size={24} />
                   </View>
                   <Text className="mt-2 text-[11px] font-semibold text-ink">{item.label}</Text>
@@ -122,8 +122,8 @@ export default function MyScreen() {
         </View>
 
         {/* 로그아웃 */}
-        <Pressable onPress={() => setLogoutOpen(true)} className="h-[50px] items-center justify-center rounded-[13px] border border-[#d9573b] bg-surface">
-          <Text className="text-[15px] font-bold text-[#d9573b]">로그아웃</Text>
+        <Pressable onPress={() => setLogoutOpen(true)} className="h-[50px] items-center justify-center rounded-[13px] border border-heart bg-surface">
+          <Text className="text-[15px] font-bold text-heart">로그아웃</Text>
         </Pressable>
       </ScrollView>
 
@@ -136,7 +136,7 @@ export default function MyScreen() {
               <Pressable onPress={() => setLogoutOpen(false)} className="flex-1 items-center justify-center rounded-[14px] border border-line bg-surface py-3.5">
                 <Text className="text-[14px] font-bold text-ink">아니오</Text>
               </Pressable>
-              <Pressable onPress={confirmLogout} className="flex-1 items-center justify-center rounded-[14px] bg-[#d9573b] py-3.5">
+              <Pressable onPress={confirmLogout} className="flex-1 items-center justify-center rounded-[14px] bg-heart py-3.5">
                 <Text className="text-[14px] font-bold text-white">네</Text>
               </Pressable>
             </View>

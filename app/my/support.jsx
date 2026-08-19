@@ -43,7 +43,7 @@ export default function Support() {
         </View>
 
         <View>
-          <Text className="mb-2 text-[13px] font-bold text-[#4a4a4a]">자주 묻는 질문</Text>
+          <Text className="mb-2 text-[13px] font-bold text-subtle">자주 묻는 질문</Text>
           <View className="overflow-hidden rounded-[20px] border border-line bg-surface">
             {faqs.map((item, index) => {
               const open = openIndex === index;

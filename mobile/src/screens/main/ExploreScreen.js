@@ -15,6 +15,7 @@ import AnimatedEntrance from "../../components/AnimatedEntrance";
 import CoachMascotButton from "../../components/CoachMascotButton";
 import { useAppState } from "../../state/AppState";
 import { getCoachImage } from "../../utils/coach";
+import { colors } from "../../theme";
 const categories = ["전체", "수분케어", "식사", "운동", "수면"];
 const groups = [
   {
@@ -120,7 +121,7 @@ export default function ExploreScreen({ navigation }) {
         <AnimatedEntrance style={s.ai}>
           <View style={{ flex: 1 }}>
             <Text style={s.aiHint}>
-              <Text style={{ fontWeight: "700", color: "#000" }}>AI 추천 </Text>
+              <Text style={{ fontWeight: "700", color: colors.black }}>AI 추천 </Text>
               곧 마감돼요, 자리 1개 남았어요
             </Text>
             <Text style={s.aiTitle}>매일 물 1.5L 마시기</Text>
@@ -156,7 +157,7 @@ export default function ExploreScreen({ navigation }) {
                 onPress={() => setJoin(g)}
               >
                 <Text
-                  style={[s.groupButtonText, g.full && { color: "#d9573b" }]}
+                  style={[s.groupButtonText, g.full && { color: colors.heart }]}
                 >
                   {g.full ? "마감" : "참가"}
                 </Text>
@@ -287,7 +288,7 @@ export default function ExploreScreen({ navigation }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f7f6f3" },
+  screen: { flex: 1, backgroundColor: colors.bg },
   header: {
     paddingHorizontal: 30,
     paddingTop: 16,
@@ -308,19 +309,19 @@ const s = StyleSheet.create({
     flex: 1,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
-  searchInput: { flex: 1, fontSize: 14, color: "#6b7268" },
+  searchInput: { flex: 1, fontSize: 14, color: colors.muted },
   filter: {
     width: 45,
     height: 45,
     borderRadius: 14,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -331,56 +332,56 @@ const s = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#d9573b",
+    backgroundColor: colors.heart,
   },
   categories: { gap: 6 },
   chip: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
-  chipOn: { borderColor: "#000", backgroundColor: "#000" },
-  chipText: { fontSize: 13, fontWeight: "600", color: "#6b7268" },
-  chipTextOn: { color: "#fff" },
+  chipOn: { borderColor: colors.black, backgroundColor: colors.black },
+  chipText: { fontSize: 13, fontWeight: "600", color: colors.muted },
+  chipTextOn: { color: colors.white },
   ai: {
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#edf2ec",
+    borderColor: colors.line,
+    backgroundColor: colors.primaryTint,
     padding: 16,
     flexDirection: "row",
     alignItems: "flex-start",
   },
-  aiHint: { fontSize: 11, color: "#14453a" },
+  aiHint: { fontSize: 11, color: colors.primary },
   aiTitle: { marginTop: 8, fontSize: 16, fontWeight: "700" },
   meta: { marginTop: 8, fontSize: 12, fontWeight: "600" },
-  heart: { color: "#d9573b" },
+  heart: { color: colors.heart },
   join: {
     borderRadius: 12,
-    backgroundColor: "#14453a",
+    backgroundColor: colors.primary,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
-  joinText: { fontSize: 12, fontWeight: "700", color: "#fff" },
+  joinText: { fontSize: 12, fontWeight: "700", color: colors.white },
   section: { fontSize: 13, fontWeight: "700", marginTop: 4 },
   group: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
   },
   groupTitle: { fontSize: 15, fontWeight: "700", color: "#1f2a24" },
-  groupMeta: { marginTop: 6, fontSize: 12, color: "#6b7268" },
-  muted: { color: "#bababa" },
+  groupMeta: { marginTop: 6, fontSize: 12, color: colors.muted },
+  muted: { color: colors.disabled },
   groupButton: {
     borderRadius: 12,
-    backgroundColor: "#edf2ec",
+    backgroundColor: colors.primaryTint,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
@@ -389,32 +390,32 @@ const s = StyleSheet.create({
   empty: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     padding: 16,
     textAlign: "center",
     fontSize: 13,
-    color: "#6b7268",
+    color: colors.muted,
   },
   question: {
     marginTop: 8,
     textAlign: "center",
     fontSize: 13,
-    color: "#6b7268",
+    color: colors.muted,
   },
   create: {
     height: 50,
     borderRadius: 27.5,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  createText: { fontSize: 15, fontWeight: "700", color: "#fff" },
+  createText: { fontSize: 15, fontWeight: "700", color: colors.white },
   code: {
     textAlign: "center",
     fontSize: 12,
     fontWeight: "600",
-    color: "#6b7268",
+    color: colors.muted,
     textDecorationLine: "underline",
   },
   dim: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,.4)" },
@@ -430,7 +431,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 22,
     paddingTop: 20,
     paddingBottom: 18,
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.18,
     shadowRadius: 24,
@@ -446,7 +447,7 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 19,
-    backgroundColor: "#edf2ec",
+    backgroundColor: colors.primaryTint,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -459,7 +460,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  closeText: { marginTop: -2, fontSize: 24, color: "#6b7268" },
+  closeText: { marginTop: -2, fontSize: 24, color: colors.muted },
   dialogEyebrow: {
     marginTop: 16,
     marginBottom: 7,
@@ -472,7 +473,7 @@ const s = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     lineHeight: 21,
-    color: "#6b7268",
+    color: colors.muted,
   },
   joinSummary: {
     marginTop: 18,
@@ -487,7 +488,7 @@ const s = StyleSheet.create({
   summaryLabel: { fontSize: 11, color: "#7c8178" },
   summaryValue: { fontSize: 15, fontWeight: "800", color: "#202420" },
   summaryLine: { width: 1, height: 32, backgroundColor: "#dfddd5" },
-  heartCost: { color: "#d9573b" },
+  heartCost: { color: colors.heart },
   joinNotice: {
     marginTop: 12,
     fontSize: 11,
@@ -513,7 +514,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  confirmText: { fontSize: 15, fontWeight: "800", color: "#fff" },
+  confirmText: { fontSize: 15, fontWeight: "800", color: colors.white },
   sheet: {
     position: "absolute",
     left: 0,
@@ -521,7 +522,7 @@ const s = StyleSheet.create({
     bottom: 0,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     padding: 24,
     paddingBottom: 35,
   },
@@ -529,7 +530,7 @@ const s = StyleSheet.create({
     flex: 1,
     height: 42,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",

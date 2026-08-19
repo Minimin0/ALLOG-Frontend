@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import DesignScreen from "../../components/DesignScreen";
 import CheckIcon from "../../../assets/images/Check.svg";
+import { colors } from "../../theme";
 
 export default function SignUpPhoneScreen({ navigation }) {
   const [phone, setPhone] = useState("");
@@ -74,7 +75,7 @@ export default function SignUpPhoneScreen({ navigation }) {
             returnKeyType="next"
             onSubmitEditing={Keyboard.dismiss}
             placeholder="010-0000-0000"
-            placeholderTextColor="#bababa"
+            placeholderTextColor={colors.disabled}
             style={[s.input, { top: 334 }]}
           />
           <View style={s.codeWrap}>
@@ -92,7 +93,7 @@ export default function SignUpPhoneScreen({ navigation }) {
                 Platform.OS === "ios" ? "verificationDone" : undefined
               }
               placeholder="인증번호 6자리"
-              placeholderTextColor="#bababa"
+              placeholderTextColor={colors.disabled}
               style={[
                 s.input,
                 {
@@ -177,7 +178,7 @@ const s = StyleSheet.create({
     paddingVertical: 10,
   },
   keyboardDone: { paddingHorizontal: 8, paddingVertical: 4 },
-  keyboardDoneText: { color: "#14453a", fontSize: 16, fontWeight: "700" },
+  keyboardDoneText: { color: colors.primary, fontSize: 16, fontWeight: "700" },
   title: {
     position: "absolute",
     left: 26,
@@ -193,7 +194,7 @@ const s = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     lineHeight: 35,
-    color: "#4a4a4a",
+    color: colors.subtle,
   },
   carrier: {
     position: "absolute",
@@ -202,9 +203,9 @@ const s = StyleSheet.create({
     width: 148,
     height: 44,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 15,
-    backgroundColor: "#fefefe",
+    backgroundColor: colors.surface,
     paddingHorizontal: 12,
     flexDirection: "row",
     alignItems: "center",
@@ -219,8 +220,8 @@ const s = StyleSheet.create({
     zIndex: 20,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     overflow: "hidden",
     elevation: 5,
   },
@@ -229,16 +230,16 @@ const s = StyleSheet.create({
     paddingHorizontal: 12,
     justifyContent: "center",
   },
-  carrierOptionOn: { backgroundColor: "#eaf4ec" },
+  carrierOptionOn: { backgroundColor: colors.primaryPale },
   input: {
     position: "absolute",
     left: 26,
     width: 343,
     height: 44,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 15,
-    backgroundColor: "#fefefe",
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     fontSize: 15,
     fontWeight: "600",
@@ -255,7 +256,7 @@ const s = StyleSheet.create({
     right: 16,
     top: 13,
     fontSize: 12,
-    color: "#bababa",
+    color: colors.disabled,
   },
   agree: {
     position: "absolute",
@@ -271,12 +272,12 @@ const s = StyleSheet.create({
     height: 19,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#bababa",
+    borderColor: colors.disabled,
     alignItems: "center",
     justifyContent: "center",
   },
-  checked: { backgroundColor: "#14453a", borderColor: "#14453a" },
-  tick: { fontSize: 12, color: "#fff", fontWeight: "700" },
+  checked: { backgroundColor: colors.primary, borderColor: colors.primary },
+  tick: { fontSize: 12, color: colors.white, fontWeight: "700" },
   agreeText: { fontSize: 13, fontWeight: "500" },
   next: {
     position: "absolute",
@@ -285,11 +286,11 @@ const s = StyleSheet.create({
     width: 338,
     height: 50,
     borderRadius: 20,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  disabled: { backgroundColor: "#bababa" },
+  disabled: { backgroundColor: colors.disabled },
   nextText: { color: "#f2f2f6", fontSize: 18, fontWeight: "700" },
   dim: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,.4)" },
   sheet: {
@@ -297,7 +298,7 @@ const s = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -308,17 +309,17 @@ const s = StyleSheet.create({
     width: 42,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#d9d9d9",
+    backgroundColor: colors.grayBorder,
     marginBottom: 20,
   },
   sheetTitle: { fontSize: 22, fontWeight: "700", marginBottom: 18 },
   row: { height: 46, flexDirection: "row", alignItems: "center", gap: 10 },
   rowText: { fontSize: 14, fontWeight: "600" },
-  divider: { height: 1, backgroundColor: "#e7e3d8", marginVertical: 4 },
+  divider: { height: 1, backgroundColor: colors.line, marginVertical: 4 },
   confirm: {
     height: 50,
     borderRadius: 20,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 18,

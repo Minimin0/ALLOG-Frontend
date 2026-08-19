@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput } from "react-native";
 import DesignScreen from "../../components/DesignScreen";
+import { colors } from "../../theme";
 export default function SignUpAccountScreen({ navigation }) {
   const [user, setUser] = useState(""),
     [pw, setPw] = useState(""),
@@ -15,7 +16,7 @@ export default function SignUpAccountScreen({ navigation }) {
         value={user}
         onChangeText={setUser}
         placeholder="아이디 (4~13자리 이내)"
-        placeholderTextColor="#bababa"
+        placeholderTextColor={colors.disabled}
         style={[s.input, { top: 238 }]}
       />
       <Text style={[s.label, { top: 303 }]}>비밀번호</Text>
@@ -24,7 +25,7 @@ export default function SignUpAccountScreen({ navigation }) {
         onChangeText={setPw}
         secureTextEntry
         placeholder="비밀번호 (10~12자리 이내)"
-        placeholderTextColor="#bababa"
+        placeholderTextColor={colors.disabled}
         style={[s.input, { top: 334 }]}
       />
       <TextInput
@@ -32,7 +33,7 @@ export default function SignUpAccountScreen({ navigation }) {
         onChangeText={setConfirm}
         secureTextEntry
         placeholder="비밀번호 확인"
-        placeholderTextColor="#bababa"
+        placeholderTextColor={colors.disabled}
         style={[s.input, { top: 382 }]}
       />
       {confirm && match ? <Text style={s.check}>✓</Text> : null}
@@ -42,7 +43,7 @@ export default function SignUpAccountScreen({ navigation }) {
       <Pressable
         disabled={!valid}
         onPress={() => navigation.navigate("BasicInfo")}
-        style={[s.next, !valid && { backgroundColor: "#bababa" }]}
+        style={[s.next, !valid && { backgroundColor: colors.disabled }]}
       >
         <Text style={s.nextText}>완료</Text>
       </Pressable>
@@ -65,7 +66,7 @@ const s = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     lineHeight: 35,
-    color: "#4a4a4a",
+    color: colors.subtle,
   },
   input: {
     position: "absolute",
@@ -73,9 +74,9 @@ const s = StyleSheet.create({
     width: 343,
     height: 44,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 15,
-    backgroundColor: "#fefefe",
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     fontSize: 16,
   },
@@ -83,7 +84,7 @@ const s = StyleSheet.create({
     position: "absolute",
     right: 42,
     top: 394,
-    color: "#14453a",
+    color: colors.primary,
     fontSize: 18,
     fontWeight: "700",
   },
@@ -93,7 +94,7 @@ const s = StyleSheet.create({
     top: 429,
     fontSize: 11,
     fontWeight: "600",
-    color: "#d9573b",
+    color: colors.heart,
   },
   next: {
     position: "absolute",
@@ -102,7 +103,7 @@ const s = StyleSheet.create({
     width: 338,
     height: 50,
     borderRadius: 20,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -3,6 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
 import { useAppState } from "../../state/AppState";
 import { COACH_IMAGES } from "../../utils/coach";
+import { colors } from "../../theme";
 const items = [
   ["응원형", "따뜻하게 격려해드려요", COACH_IMAGES["응원형"]],
   ["압박형", "긴장감 있게 자극할게요", COACH_IMAGES["압박형"]],
@@ -45,8 +46,8 @@ const s = StyleSheet.create({
     width: "48%",
     height: 160,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
@@ -54,10 +55,10 @@ const s = StyleSheet.create({
   },
   active: {
     borderWidth: 2,
-    borderColor: "#14453a",
-    backgroundColor: "#eaf4ec",
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPale,
   },
   name: { fontSize: 15, fontWeight: "700", marginTop: 8 },
-  tone: { fontSize: 10, fontWeight: "500", color: "#4a4a4a", marginTop: 4 },
+  tone: { fontSize: 10, fontWeight: "500", color: colors.subtle, marginTop: 4 },
   coachImage: { width: 80, height: 80 },
 });

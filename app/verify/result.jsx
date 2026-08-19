@@ -8,6 +8,7 @@ import Mascot from '@/components/common/Mascot';
 import { ApiError } from '@/services/api';
 import { useGroupStore } from '@/stores/groupStore';
 import { useVerificationStore } from '@/stores/verificationStore.js';
+import { colors } from '@/theme';
 
 // 인증 결과. 제출이 끝났다는 것과 승인됐다는 것은 다르다 —
 // AI 판정은 백엔드에서 비동기로 일어나므로 여기서 "성공"이라고 단정하지 않는다.
@@ -69,7 +70,7 @@ export default function ResultScreen() {
       <View className="flex-1 items-center justify-center gap-4">
         {state === 'submitted' && (
           <>
-            <View className="rounded-2xl bg-surface px-4 py-2.5 shadow" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
+            <View className="rounded-2xl bg-surface px-4 py-2.5 shadow" style={{ borderWidth: 1, borderColor: colors.line }}>
               <Text className="text-[15px] font-semibold text-ink">{praise}</Text>
             </View>
 

@@ -6,6 +6,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ApiError } from '@/services/api';
 import { fetchMyGroupDetail, fetchPublicGroups, joinGroup } from '@/services/groupApi';
 import { useUserStore } from '@/stores/userStore';
+import { colors } from '@/theme';
 
 // 공개 그룹 상세. 공개 그룹만 조회하는 단건 API는 없으므로 GET /api/v1/groups 목록에서 찾는다.
 // 이미 멤버라면 GET /me/groups/{id}가 200을 주므로 그것으로 참가 여부를 판정한다.
@@ -81,7 +82,7 @@ export default function GroupDetailScreen() {
   if (loading) {
     return (
       <SafeAreaView edges={['top']} className="flex-1 items-center justify-center bg-bg">
-        <ActivityIndicator size="large" color="#4b7f63" />
+        <ActivityIndicator size="large" color={colors.spinner} />
       </SafeAreaView>
     );
   }
@@ -168,7 +169,7 @@ export default function GroupDetailScreen() {
             className={`items-center justify-center rounded-[27.5px] bg-primary py-4 ${joining || full ? 'opacity-50' : ''}`}
           >
             {joining
-              ? <ActivityIndicator color="#fff" />
+              ? <ActivityIndicator color={colors.white} />
               : <Text className="text-[15px] font-bold text-white">{full ? '정원이 찼어요' : '그룹 참가하기 (♥ 1개 사용)'}</Text>}
           </Pressable>
         )}

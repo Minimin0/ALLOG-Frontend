@@ -12,6 +12,7 @@ import { issueInviteCode } from '@/services/inviteApi';
 import { leaveGroup, cancelGroup } from '@/services/groupApi';
 import { useGroupStore } from '@/stores/groupStore';
 import { useUserStore } from '@/stores/userStore';
+import { colors } from '@/theme';
 
 // 내 그룹. GET /me/groups/{id} + GET /me/groups/{id}/progress가 authority다.
 // 멤버 목록·개인 랭킹·멤버별 인증 피드 API는 아직 없어서, 없는 것을 지어내지 않고
@@ -95,7 +96,7 @@ export default function GroupScreen() {
   if ((loading || listLoading) && !detail) {
     return (
       <SafeAreaView edges={['top']} className="flex-1 items-center justify-center bg-bg">
-        <ActivityIndicator size="large" color="#4b7f63" />
+        <ActivityIndicator size="large" color={colors.spinner} />
       </SafeAreaView>
     );
   }
@@ -284,7 +285,7 @@ export default function GroupScreen() {
                 <Text className="text-[25px] font-bold text-primary">{successRate}%</Text>
               </View>
               <View className="mt-2 h-2 w-full rounded-pill bg-disabled">
-                <AnimatedGauge percent={successRate} color="#14453a" height={8} />
+                <AnimatedGauge percent={successRate} color={colors.primary} height={8} />
                 <View className="absolute -top-1 h-4 w-0.5 bg-reward" style={{ left: `${GROUP_GOAL_RATE}%` }} />
               </View>
               <View className="mt-1 flex-row justify-between">
@@ -326,7 +327,7 @@ export default function GroupScreen() {
             entering={FadeIn.duration(220)}
             exiting={FadeOut.duration(320)}
             className="rounded-pill bg-surface px-6 py-3 shadow"
-            style={{ borderWidth: 1, borderColor: '#e7e3d8' }}
+            style={{ borderWidth: 1, borderColor: colors.line }}
           >
             <Text className="text-[15px] font-semibold text-primary">{toastMsg}</Text>
           </Animated.View>

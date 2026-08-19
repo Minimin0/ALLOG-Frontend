@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 
 import { authErrorMessage, signUp } from '@/services/authApi';
 import { AuthStatus, useAuthStore } from '@/stores/authStore';
+import { colors } from '@/theme';
 
 // 계정 만들기. Firebase 이메일/비밀번호 계정을 실제로 생성한다.
 // 백엔드에는 회원가입 API가 없다 — 첫 인증 요청에서 내부 사용자가 만들어지고,
@@ -53,7 +54,7 @@ export default function SignUpAccountScreen() {
           value={email}
           onChangeText={setEmail}
           placeholder="allog@example.com"
-          placeholderTextColor="#bababa"
+          placeholderTextColor={colors.disabled}
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="email-address"
@@ -66,7 +67,7 @@ export default function SignUpAccountScreen() {
           onChangeText={setPassword}
           secureTextEntry
           placeholder="비밀번호 (6자리 이상)"
-          placeholderTextColor="#bababa"
+          placeholderTextColor={colors.disabled}
           className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
         />
 
@@ -76,7 +77,7 @@ export default function SignUpAccountScreen() {
             onChangeText={setConfirm}
             secureTextEntry
             placeholder="비밀번호 확인"
-            placeholderTextColor="#bababa"
+            placeholderTextColor={colors.disabled}
             className="flex-1 text-[16px] text-ink"
           />
           {match && <Text className="text-primary">✓</Text>}
@@ -91,7 +92,7 @@ export default function SignUpAccountScreen() {
           disabled={waiting || !match || !email}
           className={`mb-4 h-[50px] items-center justify-center rounded-[20px] bg-ink ${waiting || !match || !email ? 'opacity-50' : ''}`}
         >
-          {waiting ? <ActivityIndicator color="#fff" /> : <Text className="text-[18px] font-bold text-[#f2f2f6]">완료</Text>}
+          {waiting ? <ActivityIndicator color={colors.white} /> : <Text className="text-[18px] font-bold text-[#f2f2f6]">완료</Text>}
         </Pressable>
       </View>
     </SafeAreaView>

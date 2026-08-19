@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { ApiError } from '@/services/api';
 import { createGroup, fetchRoutineCatalog } from '@/services/groupApi';
 import { useUserStore } from '@/stores/userStore';
+import { colors } from '@/theme';
 
 // 그룹 만들기. 생성자는 OWNER로 참가하며 하트 1개를 쓴다 — 차감은 전부 백엔드가 한다.
 // 그룹 도메인 enum은 UPPERCASE다 (PUBLIC/PRIVATE, DAILY).
@@ -120,7 +121,7 @@ export default function CreateGroupScreen() {
 
         <View>
           <Text className="mb-2 text-[15px] font-bold text-ink">그룹명</Text>
-          <TextInput value={name} onChangeText={setName} placeholder="매일 물 2L 마시기" placeholderTextColor="#bababa"
+          <TextInput value={name} onChangeText={setName} placeholder="매일 물 2L 마시기" placeholderTextColor={colors.disabled}
             className="rounded-[15px] border border-line bg-surface px-4 py-4 text-[14px] text-ink" />
         </View>
 
@@ -149,9 +150,9 @@ export default function CreateGroupScreen() {
         <View>
           <Text className="mb-2 text-[15px] font-bold text-ink">참여 인원</Text>
           <View className="flex-row items-center justify-between rounded-[15px] border border-line bg-surface px-4 py-4">
-            <Pressable onPress={() => setCapacity((p) => Math.max(2, p - 1))} className="h-8 w-8 items-center justify-center rounded-full bg-[#f0eee8]"><Text className="text-lg font-bold text-ink">−</Text></Pressable>
+            <Pressable onPress={() => setCapacity((p) => Math.max(2, p - 1))} className="h-8 w-8 items-center justify-center rounded-full bg-gray-btn"><Text className="text-lg font-bold text-ink">−</Text></Pressable>
             <Text className="text-[16px] font-bold text-ink">{capacity}명</Text>
-            <Pressable onPress={() => setCapacity((p) => Math.min(10, p + 1))} className="h-8 w-8 items-center justify-center rounded-full bg-[#f0eee8]"><Text className="text-lg font-bold text-ink">＋</Text></Pressable>
+            <Pressable onPress={() => setCapacity((p) => Math.min(10, p + 1))} className="h-8 w-8 items-center justify-center rounded-full bg-gray-btn"><Text className="text-lg font-bold text-ink">＋</Text></Pressable>
           </View>
         </View>
 
@@ -180,7 +181,7 @@ export default function CreateGroupScreen() {
           disabled={!canSubmit}
           className={`items-center justify-center rounded-[27.5px] py-4 ${canSubmit ? 'bg-primary' : 'bg-primary opacity-40'}`}
         >
-          {busy ? <ActivityIndicator color="#fff" /> : <Text className="text-[15px] font-bold text-white">그룹 만들기 (♥ 1개 사용)</Text>}
+          {busy ? <ActivityIndicator color={colors.white} /> : <Text className="text-[15px] font-bold text-white">그룹 만들기 (♥ 1개 사용)</Text>}
         </Pressable>
       </ScrollView>
     </SafeAreaView>

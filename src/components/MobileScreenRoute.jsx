@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { colors } from '@/theme';
+
 import StartScreen from '../../mobile/src/screens/auth/StartScreen';
 import LoginScreen from '../../mobile/src/screens/auth/LoginScreen';
 import SignUpPhoneScreen from '../../mobile/src/screens/auth/SignUpPhoneScreen';
@@ -126,7 +128,7 @@ export default function MobileScreenRoute({ screen }) {
   if (!TOP_SAFE_AREA_SCREENS.has(screen)) return content;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f7f6f3' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
       {content}
     </SafeAreaView>
   );

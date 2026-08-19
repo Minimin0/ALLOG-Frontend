@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { ApiError } from '@/services/api';
 import { joinByInviteCode } from '@/services/inviteApi';
 import { useUserStore } from '@/stores/userStore';
+import { colors } from '@/theme';
 
 // 코드로 참여하기. 비공개 그룹은 공개 join으로 우회하지 않고 반드시 이 경로를 쓴다.
 // 공개 참가와 동일하게 하트 1개를 쓰며, 차감은 백엔드가 한다.
@@ -58,7 +59,7 @@ export default function JoinByCodeScreen() {
           value={code}
           onChangeText={onChange}
           placeholder="ABC123"
-          placeholderTextColor="#bababa"
+          placeholderTextColor={colors.disabled}
           autoCapitalize="characters"
           autoCorrect={false}
           autoFocus
@@ -68,7 +69,7 @@ export default function JoinByCodeScreen() {
           style={{ letterSpacing: 6 }}
         />
 
-        {error ? <Text className="mt-2 text-center text-[12px] font-semibold text-[#d9573b]">{error}</Text> : null}
+        {error ? <Text className="mt-2 text-center text-[12px] font-semibold text-heart">{error}</Text> : null}
       </View>
 
       <View className="px-5 pb-8">
@@ -77,7 +78,7 @@ export default function JoinByCodeScreen() {
           disabled={!code.trim() || busy}
           className={`items-center justify-center rounded-[27.5px] py-4 ${!code.trim() || busy ? 'bg-ink opacity-40' : 'bg-ink'}`}
         >
-          {busy ? <ActivityIndicator color="#fff" /> : <Text className="text-[15px] font-bold text-white">참여하기</Text>}
+          {busy ? <ActivityIndicator color={colors.white} /> : <Text className="text-[15px] font-bold text-white">참여하기</Text>}
         </Pressable>
       </View>
     </SafeAreaView>

@@ -8,6 +8,7 @@ import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
 import { useGroupStore } from '@/stores/groupStore';
 import { useUserStore } from '@/stores/userStore';
+import { colors } from '@/theme';
 
 // 홈 화면. 하트/포인트는 GET /users/me/stats, 오늘의 루틴과 진행 정보는
 // GET /me/groups + GET /me/groups/{id}/progress에서 온다. 프론트는 서버가 정한 완주 목표 대비 진행률만 표시한다.
@@ -102,7 +103,7 @@ export default function HomeScreen() {
               onPress={() => router.push(current ? { pathname: '/verify', params: { groupId: String(current.groupId) } } : '/explore')}
               className="mt-4 h-[35px] w-full items-center justify-center rounded-[15px] bg-primary"
             >
-              <Text className="text-[12px] font-bold text-[#e5f4e8]">{current ? '인증하러 하기' : '그룹 찾아보기'}</Text>
+              <Text className="text-[12px] font-bold text-mint-badge">{current ? '인증하러 하기' : '그룹 찾아보기'}</Text>
             </Pressable>
           </View>
           {deadline && (
@@ -145,10 +146,10 @@ export default function HomeScreen() {
         <View className="rounded-[14px] border border-line bg-surface p-4">
           <View className="flex-row items-center justify-between">
             <Text className="text-[13px] font-semibold text-ink">완주 목표 진행률</Text>
-            <Text className="text-[20px] font-bold text-[#669884]">{completionProgress}%</Text>
+            <Text className="text-[20px] font-bold text-primary-light">{completionProgress}%</Text>
           </View>
           <View className="mt-3 h-[9px] w-full rounded-full bg-[#efefef]">
-            <AnimatedGauge percent={completionProgress} color="#669884" height={9} />
+            <AnimatedGauge percent={completionProgress} color={colors.primaryLight} height={9} />
           </View>
           <Text className="mt-2 text-right text-[11px] font-bold text-reward">완주 목표 {completedTowardGoal} / {required}회</Text>
         </View>

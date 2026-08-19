@@ -7,6 +7,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/stores/authStore';
+import { colors } from '@/theme';
 
 // 앱 루트 레이아웃 (웹의 App.jsx + BrowserRouter 역할).
 // Expo Router가 app/ 폴더의 파일을 경로로 매핑한다 (파일기반 라우팅).
@@ -23,7 +24,7 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: '#f7f6f3' },
+            contentStyle: { backgroundColor: colors.bg },
             animation: 'slide_from_right',
           }}
         />

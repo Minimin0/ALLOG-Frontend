@@ -15,6 +15,7 @@ import {
 } from '@/services/verificationApi';
 import { useGroupStore } from '@/stores/groupStore';
 import { useVerificationStore } from '@/stores/verificationStore.js';
+import { colors } from '@/theme';
 
 const RING = 176;
 const R = 83;
@@ -30,8 +31,8 @@ function MascotRing() {
     <View style={{ width: RING, height: RING }} className="items-center justify-center">
       <Animated.View style={[{ position: 'absolute' }, style]}>
         <Svg width={RING} height={RING}>
-          <Circle cx={88} cy={88} r={R} stroke="#e7e3d8" strokeWidth={6} fill="none" />
-          <Circle cx={88} cy={88} r={R} stroke="#14453a" strokeWidth={6} fill="none" strokeLinecap="round" strokeDasharray={`${CIRC * 0.82} ${CIRC}`} />
+          <Circle cx={88} cy={88} r={R} stroke={colors.line} strokeWidth={6} fill="none" />
+          <Circle cx={88} cy={88} r={R} stroke={colors.primary} strokeWidth={6} fill="none" strokeLinecap="round" strokeDasharray={`${CIRC * 0.82} ${CIRC}`} />
         </Svg>
       </Animated.View>
       <View className="h-[128px] w-[128px] items-center justify-center overflow-hidden rounded-full bg-primary-tint">
@@ -42,7 +43,7 @@ function MascotRing() {
 }
 
 const IconSvg = ({ children }) => (
-  <Svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="#111111" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+  <Svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke={colors.ink} strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
     {children}
   </Svg>
 );
@@ -170,7 +171,7 @@ export default function LoadingScreen() {
                   <Text className="text-xs text-white">✓</Text>
                 </View>
               ) : loading ? (
-                <ActivityIndicator size="small" color="#14453a" />
+                <ActivityIndicator size="small" color={colors.primary} />
               ) : (
                 <View className="h-6 w-6 rounded-full border-2 border-line" />
               )}

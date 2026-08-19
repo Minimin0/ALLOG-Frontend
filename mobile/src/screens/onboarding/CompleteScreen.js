@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { colors } from "../../theme";
 export default function CompleteScreen({ navigation }) {
   return (
     <View style={s.screen}>
@@ -31,17 +32,17 @@ export default function CompleteScreen({ navigation }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f7f6f3", paddingHorizontal: 20 },
+  screen: { flex: 1, backgroundColor: colors.bg, paddingHorizontal: 20 },
   body: { flex: 1, alignItems: "center", paddingTop: 80 },
   check: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  checkText: { fontSize: 28, color: "#fff" },
+  checkText: { fontSize: 28, color: colors.white },
   title: {
     marginTop: 24,
     textAlign: "center",
@@ -49,17 +50,17 @@ const s = StyleSheet.create({
     lineHeight: 32,
     fontWeight: "700",
   },
-  hearts: { marginTop: 24, fontSize: 34, color: "#d9573b" },
-  copy: { marginTop: 24, fontSize: 18, fontWeight: "600", color: "#4a4a4a" },
-  red: { color: "#d9573b", fontWeight: "700" },
-  bold: { color: "#000", fontWeight: "700" },
+  hearts: { marginTop: 24, fontSize: 34, color: colors.heart },
+  copy: { marginTop: 24, fontSize: 18, fontWeight: "600", color: colors.subtle },
+  red: { color: colors.heart, fontWeight: "700" },
+  bold: { color: colors.black, fontWeight: "700" },
   card: {
     marginTop: 24,
     width: "100%",
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 23,
-    backgroundColor: "#fefefe",
+    backgroundColor: colors.surface,
     padding: 20,
     gap: 10,
   },
@@ -68,17 +69,17 @@ const s = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     lineHeight: 24,
-    color: "#4a4a4a",
+    color: colors.subtle,
   },
-  line: { height: 1, backgroundColor: "#e7e3d8" },
-  down: { textAlign: "center", color: "#bababa" },
+  line: { height: 1, backgroundColor: colors.line },
+  down: { textAlign: "center", color: colors.disabled },
   button: {
     height: 55,
     borderRadius: 27.5,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 28,
   },
-  buttonText: { fontSize: 15, fontWeight: "700", color: "#fff" },
+  buttonText: { fontSize: 15, fontWeight: "700", color: colors.white },
 });

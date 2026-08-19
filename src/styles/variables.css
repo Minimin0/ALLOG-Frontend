@@ -1,15 +1,4 @@
-﻿:root {
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F5F5F5;
-  --text-primary: #1A1A1A;
-  --text-secondary: #666666;
-  --accent-primary: #4CAF50;
-  --accent-secondary: #FF9800;
-  --error: #F44336;
-  --success: #4CAF50;
-}
-
-/*
+﻿/*
  * ALLOG 디자인 토큰 (Figma 추출값 기준, bananayeon 브랜치에서 병합)
  * 출처: Figma "제목 없음" 파일 - 랭킹(1:1675) / 합산(1:494) / 인증촬영(1:733)
  * 전체 무드: 따뜻한 흙빛(earthy) 톤 + 딥그린 브랜드색 + 골드 리워드 강조.
@@ -44,6 +33,13 @@
   --color-success: #14453a;      /* 인증 성공(= 브랜드 그린) */
   --color-warning: #c08a24;      /* AI 검토중·목표 안내(골드) */
   --color-danger: #c0492f;       /* 재인증 요청·인증 실패(테라코타) */
+  --color-heart: #d9573b;        /* 하트 잔량·소모 안내 */
+  --color-primary-light: #669884; /* 연한 브랜드 그린(진행률 강조) */
+  --color-mint-badge: #e5f4e8;   /* 밝은 민트(배지 배경·어두운 버튼 위 텍스트) */
+  --color-beige-icon: #f3efe4;   /* 베이지(아이콘 원형 배경) */
+  --color-gray-btn: #f0eee8;     /* 연회색(보조 버튼 배경) */
+  --color-gray-border: #d9d9d9;  /* 회색(입력 테두리·스위치 off 트랙) */
+  --color-on-dark: #e7e3d8;      /* 어두운 배경 위 텍스트 전용 (line과 값만 같음) */
 
   /* ── Ranking medals ────────────────────── */
   --color-rank-gold: #f6b424;    /* 1위 테두리 */

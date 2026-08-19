@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GroupIcon, SearchIcon, HomeIcon, GiftIcon, PersonIcon } from '@/components/nav/NavIcons';
+import { colors } from '@/theme';
 
 // 탭 밖 화면(인증 시작·AI 코칭 등)에서도 쓰는 독립 하단 네비바.
 // (tabs) 레이아웃의 탭바와 동일 디자인, 누르면 해당 탭으로 이동.
@@ -31,13 +32,13 @@ export default function BottomNavBar({ active }) {
           return (
             <Pressable key={to} onPress={onPress} className="-mt-8" accessibilityLabel="홈">
               <View className="h-14 w-14 items-center justify-center rounded-full bg-[#c7c3bb]">
-                <Icon color="#ffffff" size={24} />
+                <Icon color={colors.white} size={24} />
               </View>
             </Pressable>
           );
         }
 
-        const color = isActive ? '#111111' : '#bababa';
+        const color = isActive ? colors.ink : colors.disabled;
         return (
           <Pressable key={to} onPress={onPress} className="flex-1 items-center gap-1 py-1">
             <Icon color={color} size={24} />

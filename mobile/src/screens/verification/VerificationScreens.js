@@ -12,12 +12,13 @@ import {
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useVideoPlayer, VideoView } from "expo-video";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
+import { colors } from "../../theme";
 const mascot = require("../../../assets/images/mascot.png");
 function Header({ navigation, title = "오늘의 인증", green = false }) {
   return (
     <View style={s.header}>
       <Pressable
-        style={[s.back, green && { backgroundColor: "#14453a" }]}
+        style={[s.back, green && { backgroundColor: colors.primary }]}
         onPress={() => navigation.goBack()}
       >
         <Text style={s.backText}>‹</Text>
@@ -30,7 +31,7 @@ function Header({ navigation, title = "오늘의 인증", green = false }) {
 function Button({ children, onPress, secondary = false }) {
   return (
     <Pressable style={[s.button, secondary && s.secondary]} onPress={onPress}>
-      <Text style={[s.buttonText, secondary && { color: "#4a4a4a" }]}>
+      <Text style={[s.buttonText, secondary && { color: colors.subtle }]}>
         {children}
       </Text>
     </Pressable>
@@ -84,7 +85,7 @@ function Guide() {
       <View style={s.recordInfo}>
         <Text style={s.caption}>
           ▰ 기록은{" "}
-          <Text style={{ fontWeight: "700", color: "#14453a" }}>
+          <Text style={{ fontWeight: "700", color: colors.primary }}>
             3초 내외 짧은 동영상
           </Text>
           으로 저장돼요.
@@ -107,7 +108,7 @@ export function CameraScreen({ navigation }) {
   if (!permission)
     return (
       <View style={s.cameraFallback}>
-        <ActivityIndicator color="#fff" />
+        <ActivityIndicator color={colors.white} />
       </View>
     );
   if (!permission.granted)
@@ -260,7 +261,7 @@ export function VerificationLoadingScreen({ navigation }) {
                 <Text style={s.white}>✓</Text>
               </View>
             ) : i === step ? (
-              <ActivityIndicator color="#14453a" />
+              <ActivityIndicator color={colors.primary} />
             ) : (
               <View style={s.checkPending} />
             )}
@@ -320,8 +321,8 @@ export function VerificationResultScreen({ navigation, route }) {
                 (3초 미만)
               </Text>
             </View>
-            <View style={[s.retryBox, { backgroundColor: "#edf2ec" }]}>
-              <Text style={[s.retryTitle, { color: "#14453a" }]}>
+            <View style={[s.retryBox, { backgroundColor: colors.primaryTint }]}>
+              <Text style={[s.retryTitle, { color: colors.primary }]}>
                 이렇게 다시 찍어보세요
               </Text>
               <Text>
@@ -348,7 +349,7 @@ export function VerificationResultScreen({ navigation, route }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f7f6f3" },
+  screen: { flex: 1, backgroundColor: colors.bg },
   content: { padding: 20, gap: 16, paddingBottom: 35 },
   header: {
     height: 43,
@@ -360,42 +361,42 @@ const s = StyleSheet.create({
     width: 43,
     height: 43,
     borderRadius: 9,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  backText: { fontSize: 32, color: "#fff", lineHeight: 34 },
+  backText: { fontSize: 32, color: colors.white, lineHeight: 34 },
   headerTitle: { fontSize: 22, fontWeight: "600" },
   button: {
     height: 52,
     borderRadius: 18,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  secondary: { backgroundColor: "#e7e3d8" },
-  buttonText: { fontSize: 15, fontWeight: "700", color: "#fff" },
+  secondary: { backgroundColor: colors.line },
+  buttonText: { fontSize: 15, fontWeight: "700", color: colors.white },
   dayCard: {
     alignSelf: "center",
     width: "86%",
     borderRadius: 24,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     padding: 20,
     alignItems: "center",
     elevation: 2,
   },
-  day: { fontSize: 12, color: "#14453a" },
+  day: { fontSize: 12, color: colors.primary },
   dayTitle: { fontSize: 22, fontWeight: "700" },
-  caption: { marginTop: 4, fontSize: 11, color: "#6b7268" },
+  caption: { marginTop: 4, fontSize: 11, color: colors.muted },
   dots: { marginTop: 12, flexDirection: "row", gap: 8 },
-  dot: { width: 21, height: 21, borderRadius: 11, backgroundColor: "#eae9e7" },
-  done: { backgroundColor: "#14453a" },
+  dot: { width: 21, height: 21, borderRadius: 11, backgroundColor: colors.surfaceAlt },
+  done: { backgroundColor: colors.primary },
   captureArea: {
     alignSelf: "center",
     width: 297,
     height: 396,
     borderRadius: 51,
-    backgroundColor: "#e7e3d8",
+    backgroundColor: colors.line,
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
@@ -404,21 +405,21 @@ const s = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
-  body: { fontSize: 15, color: "#111" },
-  guide: { borderRadius: 24, backgroundColor: "#edf2ec", padding: 20 },
+  body: { fontSize: 15, color: colors.ink },
+  guide: { borderRadius: 24, backgroundColor: colors.primaryTint, padding: 20 },
   guideTitle: { fontSize: 17, fontWeight: "700", marginBottom: 10 },
-  guideText: { fontSize: 15, lineHeight: 28, color: "#6b7268" },
+  guideText: { fontSize: 15, lineHeight: 28, color: colors.muted },
   recordInfo: {
     marginTop: 12,
     borderRadius: 15,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     padding: 10,
   },
-  cameraScreen: { flex: 1, backgroundColor: "#000", paddingVertical: 24 },
+  cameraScreen: { flex: 1, backgroundColor: colors.black, paddingVertical: 24 },
   progress: {
     height: 30,
     flexDirection: "row",
@@ -443,24 +444,24 @@ const s = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderWidth: 4,
     borderColor: "rgba(255,255,255,.4)",
   },
   cameraFallback: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
     gap: 20,
     padding: 30,
   },
-  white: { color: "#fff" },
+  white: { color: colors.white },
   preview: {
     height: 440,
     borderRadius: 24,
     overflow: "hidden",
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
   },
   empty: {
     flex: 1,
@@ -469,7 +470,7 @@ const s = StyleSheet.create({
     gap: 16,
     padding: 24,
   },
-  loading: { padding: 20, backgroundColor: "#edf2ec" },
+  loading: { padding: 20, backgroundColor: colors.primaryTint },
   mascotRingWrap: {
     marginTop: 38,
     alignSelf: "center",
@@ -483,7 +484,7 @@ const s = StyleSheet.create({
   mascotRing: {
     ...StyleSheet.absoluteFillObject,
     borderWidth: 6,
-    borderColor: "#14453a",
+    borderColor: colors.primary,
     borderTopColor: "rgba(20,69,58,0.12)",
     borderRadius: 82,
   },
@@ -494,13 +495,13 @@ const s = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
   },
-  wait: { marginTop: 8, textAlign: "center", fontSize: 20, color: "#6b7268" },
+  wait: { marginTop: 8, textAlign: "center", fontSize: 20, color: colors.muted },
   checkCard: {
     marginTop: 32,
     borderRadius: 35,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     paddingHorizontal: 8,
   },
   checkRow: {
@@ -510,15 +511,15 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  checkLine: { borderBottomWidth: 1, borderColor: "#e7e3d8" },
+  checkLine: { borderBottomWidth: 1, borderColor: colors.line },
   checkIcon: { fontSize: 26 },
   checkTitle: { fontSize: 15, fontWeight: "600" },
-  checkSub: { fontSize: 10, color: "#6b7268" },
+  checkSub: { fontSize: 10, color: colors.muted },
   checkDone: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "#14453a",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -527,9 +528,9 @@ const s = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
   },
-  result: { flex: 1, backgroundColor: "#f7f6f3", padding: 24 },
+  result: { flex: 1, backgroundColor: colors.bg, padding: 24 },
   resultBody: {
     flex: 1,
     alignItems: "center",
@@ -538,7 +539,7 @@ const s = StyleSheet.create({
   },
   bubble: {
     borderRadius: 16,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     paddingHorizontal: 16,
     paddingVertical: 10,
     elevation: 4,
@@ -548,7 +549,7 @@ const s = StyleSheet.create({
     width: 160,
     height: 160,
     borderRadius: 80,
-    backgroundColor: "#edf2ec",
+    backgroundColor: colors.primaryTint,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
@@ -558,37 +559,37 @@ const s = StyleSheet.create({
   feedbackBox: {
     flex: 1,
     borderRadius: 24,
-    backgroundColor: "#edf2ec",
+    backgroundColor: colors.primaryTint,
     padding: 12,
     alignItems: "center",
   },
-  feedbackValue: { fontSize: 22, fontWeight: "700", color: "#14453a" },
+  feedbackValue: { fontSize: 22, fontWeight: "700", color: colors.primary },
   feedbackTime: {
     paddingTop: 5,
     fontSize: 15,
     fontWeight: "700",
-    color: "#14453a",
+    color: colors.primary,
   },
   alert: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#c0492f",
+    backgroundColor: colors.danger,
     alignItems: "center",
     justifyContent: "center",
   },
-  alertText: { fontSize: 36, color: "#fff" },
-  bodyMuted: { fontSize: 15, color: "#6b7268", textAlign: "center" },
+  alertText: { fontSize: 36, color: colors.white },
+  bodyMuted: { fontSize: 15, color: colors.muted, textAlign: "center" },
   retryBox: {
     width: "100%",
     borderRadius: 24,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     padding: 16,
   },
   retryTitle: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#c0492f",
+    color: colors.danger,
     marginBottom: 8,
   },
   appeal: {
@@ -596,6 +597,6 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 11,
     fontWeight: "600",
-    color: "#c0492f",
+    color: colors.danger,
   },
 });

@@ -4,6 +4,7 @@ import Svg, { Circle, Line } from 'react-native-svg';
 import Animated, { useSharedValue, useAnimatedStyle, withDelay, withTiming, Easing } from 'react-native-reanimated';
 
 import Mascot from '@/components/common/Mascot';
+import { colors } from '@/theme';
 
 // AI 코치 메시지 + 데이터 시각화 (웹 AiMessage 포팅). viz: pips/ring/columns/versus.
 // 애니메이션(막대 차오름 등)은 최종 상태로 렌더(등장 애니는 상위에서 Reanimated로).
@@ -30,19 +31,19 @@ function VizRing({ value, goal, unit, note }) {
     <View className="mt-3 flex-row items-center gap-4">
       <View style={{ width: size, height: size }}>
         <Svg width={size} height={size} style={{ transform: [{ rotate: '-90deg' }] }}>
-          <Circle cx={42} cy={42} r={r} stroke="#e7e3d8" strokeWidth={9} fill="none" />
+          <Circle cx={42} cy={42} r={r} stroke={colors.line} strokeWidth={9} fill="none" />
           <Circle
             cx={42}
             cy={42}
             r={r}
-            stroke="#14453a"
+            stroke={colors.primary}
             strokeWidth={9}
             fill="none"
             strokeLinecap="round"
             strokeDasharray={circ}
             strokeDashoffset={offset}
           />
-          <Line x1={42} y1={4} x2={42} y2={12} stroke="#c08a24" strokeWidth={3} strokeLinecap="round" transform={`rotate(${goal * 3.6} 42 42)`} />
+          <Line x1={42} y1={4} x2={42} y2={12} stroke={colors.reward} strokeWidth={3} strokeLinecap="round" transform={`rotate(${goal * 3.6} 42 42)`} />
         </Svg>
         <View className="absolute inset-0 items-center justify-center">
           <Text className="text-[17px] font-bold text-primary">{value}{unit}</Text>
@@ -65,7 +66,7 @@ function GrowBar({ targetH, highlight, index }) {
   const style = useAnimatedStyle(() => ({ height: h.value }));
   return (
     <Animated.View
-      style={[{ width: 28, borderTopLeftRadius: 4, borderTopRightRadius: 4, backgroundColor: highlight ? '#14453a' : '#bababa' }, style]}
+      style={[{ width: 28, borderTopLeftRadius: 4, borderTopRightRadius: 4, backgroundColor: highlight ? colors.primary : colors.disabled }, style]}
     />
   );
 }
@@ -88,7 +89,7 @@ function VizColumns({ data, unit }) {
 
 function VizVersus({ left, right, delta, metric, unit }) {
   const Card = ({ item, me }) => (
-    <View className={`flex-1 items-center rounded-item px-2 py-2.5 ${me ? 'bg-primary-tint' : 'bg-surface-alt'}`} style={me ? { borderWidth: 1.5, borderColor: '#14453a' } : undefined}>
+    <View className={`flex-1 items-center rounded-item px-2 py-2.5 ${me ? 'bg-primary-tint' : 'bg-surface-alt'}`} style={me ? { borderWidth: 1.5, borderColor: colors.primary } : undefined}>
       <Text className={`text-[22px] font-bold ${me ? 'text-primary' : 'text-muted'}`}>{item.value}<Text className="text-[11px] font-bold">{unit}</Text></Text>
       <Text className={`text-[11px] ${me ? 'text-primary' : 'text-muted'}`}>{item.label}</Text>
     </View>
@@ -124,7 +125,7 @@ export default function AiMessageRN({ text, viz }) {
   const wide = viz?.type === 'columns';
   return (
     <View className="flex-row items-start gap-2">
-      <View className="h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary-tint" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
+      <View className="h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary-tint" style={{ borderWidth: 1, borderColor: colors.line }}>
         <Mascot size={30} />
       </View>
       <View className={`rounded-2xl bg-primary-tint px-4 py-3 ${wide ? 'flex-1' : 'max-w-[80%]'}`}>

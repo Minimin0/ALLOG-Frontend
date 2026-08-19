@@ -1,11 +1,13 @@
 import { View, Text } from 'react-native';
 
+import { colors } from '@/theme';
+
 // 랭킹 한 줄 (웹 RankingItem 포팅). 1·2·3위 메달 + 테두리, 그 외 숫자.
 // score를 주면(전체 랭킹) 우측에 점수를 표시한다.
 const TIER = {
-  1: { medal: '🥇', border: '#f6b424' },
-  2: { medal: '🥈', border: '#bababa' },
-  3: { medal: '🥉', border: '#cba04d' },
+  1: { medal: '🥇', border: colors.rankGold },
+  2: { medal: '🥈', border: colors.rankSilver },
+  3: { medal: '🥉', border: colors.rankBronze },
 };
 
 export default function RankingItemRN({ rank, name, caption, isMe = false, score }) {
@@ -14,7 +16,7 @@ export default function RankingItemRN({ rank, name, caption, isMe = false, score
   return (
     <View
       className="flex-row items-center gap-3 rounded-item bg-surface px-4 py-3"
-      style={{ borderWidth: tier ? 2 : 1, borderColor: tier ? tier.border : '#e7e3d8' }}
+      style={{ borderWidth: tier ? 2 : 1, borderColor: tier ? tier.border : colors.line }}
     >
       <View className="w-7 items-center">
         {tier ? (
