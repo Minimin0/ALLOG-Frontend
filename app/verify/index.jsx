@@ -107,20 +107,20 @@ export default function VerifyStartScreen() {
           <View className="h-16 w-16 items-center justify-center rounded-full bg-surface">
             <PhotoIcon size={28} color={colors.ink} />
           </View>
-          <Text className="text-[15px] font-medium text-ink">사진 촬영</Text>
+          <Text className="text-[15px] font-medium text-ink">3초 영상 촬영</Text>
         </Pressable>
 
         <View className="mt-5 rounded-card bg-primary-tint p-5">
           <Text className="mb-3 text-[17px] font-bold text-ink">인증 가이드</Text>
           <View className="gap-2">
-            <Text className="text-[15px] text-muted">• 오늘 촬영한 사진만 인증 가능합니다.</Text>
+            <Text className="text-[15px] text-muted">• 오늘 촬영한 3초 영상으로 인증을 준비합니다.</Text>
             <Text className="text-[15px] text-muted">• 얼굴은 가려도 괜찮습니다.</Text>
             <Text className="text-[15px] text-muted">• 루틴을 실천한 모습이 잘 보이도록 촬영해주세요.</Text>
           </View>
           <View className="mt-3 flex-row items-center gap-2 rounded-item bg-surface px-3 py-2">
             <PhotoIcon size={16} color={colors.primary} />
             <Text className="flex-1 text-[11px] text-muted">
-              위치·촬영 정보는 <Text className="font-bold text-primary">서버에서 자동으로 삭제</Text>된 뒤 저장돼요.
+              영상은 기기에만 임시 보관되고, 인증에는 <Text className="font-bold text-primary">사진 한 장만 제출</Text>돼요.
             </Text>
           </View>
         </View>

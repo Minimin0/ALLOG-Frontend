@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -64,7 +64,7 @@ const CheckIcon = () => (
 const STEPS = [
   { Icon: FlagIcon, title: '오늘 인증 슬롯 확인', sub: 'POST verifications/current' },
   { Icon: KeyIcon, title: '업로드 주소 발급', sub: 'presigned URL 요청' },
-  { Icon: UploadIcon, title: '사진 업로드', sub: '저장소로 직접 전송' },
+  { Icon: UploadIcon, title: '인증 사진 업로드', sub: '저장소로 직접 전송' },
   { Icon: CheckIcon, title: '인증 제출', sub: '서버에 제출 확정' },
 ];
 
@@ -73,8 +73,16 @@ export default function LoadingScreen() {
   const media = useVerificationStore((s) => s.media);
   const storedGroupId = useVerificationStore((s) => s.groupId);
   const [step, setStep] = useState(0);
+  const started = useRef(false);
+
+  // Preview가 unmount된 뒤 video preview URI만 해제한다. JPEG media는 retry용으로 유지한다.
+  useEffect(() => {
+    useVerificationStore.getState().clearVideo();
+  }, []);
 
   useEffect(() => {
+    if (started.current) return;
+    started.current = true;
     let cancelled = false;
     const groupId = storedGroupId ?? useGroupStore.getState().currentGroup()?.groupId;
 
@@ -90,13 +98,13 @@ export default function LoadingScreen() {
         return;
       }
 
-      // 1) 오늘 슬롯 열기 — S3가 없어도 이 단계는 동작한다.
+      // 1) 오늘 슬롯 열기 — 인증 사진 저장소가 없어도 이 단계는 동작한다.
       const opened = await openTodayVerification(groupId);
       if (cancelled) return;
       if (!opened.ok) return finish({ state: 'failed', step: 'open', errorCode: opened.errorCode });
       setStep(1);
 
-      // 2) presigned URL — 저장소 미구성이면 여기서 503이 난다(정상적인 운영 상태).
+      // 2) signed upload URL — 저장소 미구성이면 여기서 503이 난다(정상적인 운영 상태).
       let blob;
       try {
         blob = await (await fetch(media.uri)).blob();

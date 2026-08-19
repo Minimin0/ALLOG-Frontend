@@ -53,16 +53,23 @@ function failureMessage(errorCode) {
 export default function ResultScreen() {
   const router = useRouter();
   const outcome = useVerificationStore((s) => s.outcome);
+  const media = useVerificationStore((s) => s.media);
   const reset = useVerificationStore((s) => s.reset);
   const progress = useGroupStore((s) => s.progress);
   const [praise] = useState(() => PRAISES[Math.floor(Math.random() * PRAISES.length)]);
 
   const state = outcome?.state ?? 'failed';
   const personal = progress?.personal ?? null;
+  const canRetryUpload = state === 'failed' && media && outcome?.errorCode === ApiError.NETWORK;
 
   const goToGroup = () => {
     reset();
     router.replace('/group');
+  };
+
+  const retake = () => {
+    reset();
+    router.replace('/verify/camera');
   };
 
   return (
@@ -124,7 +131,12 @@ export default function ResultScreen() {
       <View className="w-full gap-2">
         {state === 'failed' ? (
           <>
-            <Pressable onPress={() => router.replace('/verify/camera')} className="h-[52px] items-center justify-center rounded-pill bg-primary">
+            {canRetryUpload && (
+              <Pressable onPress={() => router.replace('/verify/loading')} className="h-[52px] items-center justify-center rounded-pill bg-primary">
+                <Text className="text-[15px] font-bold text-white">다시 시도하기</Text>
+              </Pressable>
+            )}
+            <Pressable onPress={retake} className="h-[52px] items-center justify-center rounded-pill bg-disabled">
               <Text className="text-[15px] font-bold text-white">다시 촬영하기</Text>
             </Pressable>
             <Pressable onPress={goToGroup} className="items-center py-2">
