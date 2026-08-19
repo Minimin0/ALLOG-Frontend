@@ -45,11 +45,11 @@ export default function Terms() {
           {sections.map((section) => (
             <View key={section.title}>
               <Text className="text-[13px] font-bold text-ink">{section.title}</Text>
-              {section.body && <Text className="mt-1.5 text-[12px] font-medium leading-5 text-[#4a4a4a]">{section.body}</Text>}
+              {section.body && <Text className="mt-1.5 text-[12px] font-medium leading-5 text-subtle">{section.body}</Text>}
               {section.list && (
                 <View className="mt-1.5 gap-1">
                   {section.list.map((line) => (
-                    <Text key={line} className="text-[11px] font-medium leading-5 text-[#4a4a4a]">· {line}</Text>
+                    <Text key={line} className="text-[11px] font-medium leading-5 text-subtle">· {line}</Text>
                   ))}
                 </View>
               )}

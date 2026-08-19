@@ -44,6 +44,7 @@
   --color-success: #14453a;      /* 인증 성공(= 브랜드 그린) */
   --color-warning: #c08a24;      /* AI 검토중·목표 안내(골드) */
   --color-danger: #c0492f;       /* 재인증 요청·인증 실패(테라코타) */
+  --color-heart: #d9573b;        /* 하트 잔량·소모 안내 */
 
   /* ── Ranking medals ────────────────────── */
   --color-rank-gold: #f6b424;    /* 1위 테두리 */

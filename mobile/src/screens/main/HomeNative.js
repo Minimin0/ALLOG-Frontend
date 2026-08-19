@@ -16,6 +16,7 @@ import { useAppState } from "../../state/AppState";
 import { getCoachImage } from "../../utils/coach";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import CoachMascotButton from "../../components/CoachMascotButton";
+import { colors } from "../../theme";
 export default function HomeNative({ navigation }) {
   const { coachStyle, points, hearts } = useAppState();
   const isFocused = useIsFocused();
@@ -142,7 +143,7 @@ function Card({ icon, value, label, note, onPress }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f7f6f3" },
+  screen: { flex: 1, backgroundColor: colors.bg },
   header: {
     height: 76,
     paddingHorizontal: 30,
@@ -163,8 +164,8 @@ const s = StyleSheet.create({
     flex: 1,
     borderRadius: 17,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -174,56 +175,56 @@ const s = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     fontWeight: "600",
-    color: "#d9573b",
+    color: colors.heart,
   },
-  note: { marginTop: 4, fontSize: 12, fontWeight: "600", color: "#6b7268" },
+  note: { marginTop: 4, fontSize: 12, fontWeight: "600", color: colors.muted },
   routine: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     overflow: "hidden",
   },
-  routineTop: { backgroundColor: "#edf2ec", padding: 20, alignItems: "center" },
-  smallGreen: { fontSize: 13, fontWeight: "600", color: "#14453a" },
+  routineTop: { backgroundColor: colors.primaryTint, padding: 20, alignItems: "center" },
+  smallGreen: { fontSize: 13, fontWeight: "600", color: colors.primary },
   routineTitle: { marginTop: 8, fontSize: 20, fontWeight: "700" },
   verify: {
     marginTop: 16,
     width: "100%",
     height: 35,
     borderRadius: 15,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
   verifyText: { fontSize: 12, fontWeight: "700", color: "#e5f4e8" },
   routineBottom: {
     height: 42,
-    backgroundColor: "#fefefe",
+    backgroundColor: colors.surface,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
   },
   deadline: { fontSize: 13, fontWeight: "700" },
-  vline: { width: 1, height: 16, backgroundColor: "#e7e3d8" },
+  vline: { width: 1, height: 16, backgroundColor: colors.line },
   stats: {
     height: 81,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     flexDirection: "row",
     alignItems: "center",
   },
   stat: { flex: 1, alignItems: "center", gap: 4 },
   statLabel: { fontSize: 12, fontWeight: "700" },
-  statBig: { fontSize: 25, fontWeight: "700", color: "#14453a" },
-  vlineTall: { width: 1, height: 47, backgroundColor: "#e7e3d8" },
+  statBig: { fontSize: 25, fontWeight: "700", color: colors.primary },
+  vlineTall: { width: 1, height: 47, backgroundColor: colors.line },
   gaugeCard: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     padding: 16,
   },
   between: { flexDirection: "row", justifyContent: "space-between" },
@@ -245,6 +246,6 @@ const s = StyleSheet.create({
     textAlign: "right",
     fontSize: 11,
     fontWeight: "700",
-    color: "#c08a24",
+    color: colors.reward,
   },
 });

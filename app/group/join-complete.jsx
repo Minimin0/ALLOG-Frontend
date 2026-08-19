@@ -31,11 +31,11 @@ export default function JoinCompleteScreen() {
           <Text className="text-muted"> 그룹에 참가했어요.</Text>
         </Text>
         <Text className="mt-6 text-center text-[18px] font-semibold text-subtle">
-          <Text className="font-bold text-[#d9573b]">하트</Text> 1개가 사용됐어요.
+          <Text className="font-bold text-heart">하트</Text> 1개가 사용됐어요.
         </Text>
 
         <View className="mt-8 w-[243px] items-center rounded-full border border-line bg-surface py-6">
-          <Text className="text-[15px] font-semibold text-[#d9573b]">잔여 하트 수</Text>
+          <Text className="text-[15px] font-semibold text-heart">잔여 하트 수</Text>
           <View className="mt-1 flex-row items-center gap-2">
             <Icon name="heart" size={20} />
             <Text className="text-[18px] font-bold text-ink">{hearts ?? '–'}</Text>

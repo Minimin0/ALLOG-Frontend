@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import FieldError from '@/components/common/FieldError';
 import { formatBirthInput, toIsoBirthDate, useOnboardingStore } from '@/stores/onboardingStore';
+import { colors } from '@/theme';
 
 const genders = ['여성', '남성', '선택 안함'];
 
@@ -40,7 +41,7 @@ export default function BasicInfoScreen() {
       <View className="gap-4">
         <View>
           <Text className="mb-2 text-[13px] font-bold text-subtle">닉네임</Text>
-          <TextInput value={form.nickname} onChangeText={(v) => set('nickname', v)} placeholder="사용하실 닉네임을 입력해주세요." placeholderTextColor="#bababa"
+          <TextInput value={form.nickname} onChangeText={(v) => set('nickname', v)} placeholder="사용하실 닉네임을 입력해주세요." placeholderTextColor={colors.disabled}
             className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" />
         </View>
 
@@ -60,7 +61,7 @@ export default function BasicInfoScreen() {
 
         <View>
           <Text className="mb-2 text-[13px] font-bold text-subtle">생년월일</Text>
-          <TextInput value={form.birth} onChangeText={(v) => set('birth', formatBirthInput(v))} placeholder="YYYY-MM-DD" placeholderTextColor="#bababa" keyboardType="number-pad" maxLength={10}
+          <TextInput value={form.birth} onChangeText={(v) => set('birth', formatBirthInput(v))} placeholder="YYYY-MM-DD" placeholderTextColor={colors.disabled} keyboardType="number-pad" maxLength={10}
             className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" />
           <FieldError>{form.birth && !birthIso ? '생년월일을 YYYY-MM-DD 형식의 실제 날짜로 입력해주세요.' : null}</FieldError>
         </View>
@@ -69,14 +70,14 @@ export default function BasicInfoScreen() {
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">키</Text>
             <View className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
-              <TextInput value={form.height} onChangeText={(v) => set('height', v)} placeholder="165" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+              <TextInput value={form.height} onChangeText={(v) => set('height', v)} placeholder="165" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
               <Text className="text-[12px] text-subtle">cm</Text>
             </View>
           </View>
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">몸무게</Text>
             <View className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
-              <TextInput value={form.weight} onChangeText={(v) => set('weight', v)} placeholder="50" placeholderTextColor="#bababa" keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+              <TextInput value={form.weight} onChangeText={(v) => set('weight', v)} placeholder="50" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
               <Text className="text-[12px] text-subtle">kg</Text>
             </View>
           </View>

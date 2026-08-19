@@ -9,9 +9,10 @@ import { ApiError } from '@/services/api';
 import { openTodayVerification } from '@/services/verificationApi';
 import { useGroupStore } from '@/stores/groupStore';
 import { useVerificationStore } from '@/stores/verificationStore.js';
+import { colors } from '@/theme';
 
 // 사진 아이콘 (이모지는 기기별 폰트 미지원 시 깨져 보일 수 있어 벡터로).
-function PhotoIcon({ size = 24, color = '#111111' }) {
+function PhotoIcon({ size = 24, color = colors.ink }) {
   return (
     <Svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
       <Rect x={3} y={4} width={18} height={16} rx={2.5} />
@@ -86,7 +87,7 @@ export default function VerifyStartScreen() {
       <ScrollView className="flex-1 px-5" contentContainerClassName="pb-6 pt-2">
         <View className="mx-auto w-[86%] items-center rounded-card bg-surface p-5 shadow-sm">
           {loading ? (
-            <ActivityIndicator color="#4b7f63" />
+            <ActivityIndicator color={colors.spinner} />
           ) : (
             <>
               <Text className="text-[12px] font-bold text-primary">{verification?.scheduledDate ?? '오늘'}</Text>
@@ -104,7 +105,7 @@ export default function VerifyStartScreen() {
 
         <Pressable onPress={goCamera} disabled={loading || !!error} className={`mt-5 h-[320px] items-center justify-center gap-3 rounded-card bg-line ${loading || error ? 'opacity-50' : ''}`}>
           <View className="h-16 w-16 items-center justify-center rounded-full bg-surface">
-            <PhotoIcon size={28} color="#111111" />
+            <PhotoIcon size={28} color={colors.ink} />
           </View>
           <Text className="text-[15px] font-medium text-ink">사진 촬영</Text>
         </Pressable>
@@ -117,7 +118,7 @@ export default function VerifyStartScreen() {
             <Text className="text-[15px] text-muted">• 루틴을 실천한 모습이 잘 보이도록 촬영해주세요.</Text>
           </View>
           <View className="mt-3 flex-row items-center gap-2 rounded-item bg-surface px-3 py-2">
-            <PhotoIcon size={16} color="#14453a" />
+            <PhotoIcon size={16} color={colors.primary} />
             <Text className="flex-1 text-[11px] text-muted">
               위치·촬영 정보는 <Text className="font-bold text-primary">서버에서 자동으로 삭제</Text>된 뒤 저장돼요.
             </Text>

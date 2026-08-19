@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
+import { colors } from "../theme";
 import {
   ScrollView,
   StyleSheet,
@@ -84,9 +85,9 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
   },
-  line: { width: 3, height: 20, borderRadius: 9, backgroundColor: "#bababa" },
+  line: { width: 3, height: 20, borderRadius: 9, backgroundColor: colors.disabled },
   hour: { height: 37 },
-  selected: { width: 4, height: 54, backgroundColor: "#14453a" },
-  label: { marginTop: 8, fontSize: 13, fontWeight: "500", color: "#bababa" },
+  selected: { width: 4, height: 54, backgroundColor: colors.primary },
+  label: { marginTop: 8, fontSize: 13, fontWeight: "500", color: colors.disabled },
   hidden: { opacity: 0 },
 });

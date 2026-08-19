@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { authErrorMessage, signIn } from '@/services/authApi';
 import { isFirebaseConfigured } from '@/services/firebase';
 import { AuthStatus, useAuthStore } from '@/stores/authStore';
+import { colors } from '@/theme';
 
 // 로그인. Firebase 이메일/비밀번호 인증 → 백엔드가 검증하는 ID Token 발급.
 // signInWithPopup 같은 웹 전용 API는 RN에서 동작하지 않으므로 쓰지 않는다.
@@ -55,7 +56,7 @@ export default function LoginScreen() {
           value={email}
           onChangeText={setEmail}
           placeholder="이메일"
-          placeholderTextColor="#000000"
+          placeholderTextColor={colors.black}
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="email-address"
@@ -65,7 +66,7 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
           placeholder="비밀번호"
-          placeholderTextColor="#000000"
+          placeholderTextColor={colors.black}
           secureTextEntry
           onSubmitEditing={submit}
           className="mb-2 h-[50px] rounded-[30px] border border-line bg-white px-5 text-[15px] text-ink"
@@ -83,7 +84,7 @@ export default function LoginScreen() {
           disabled={waiting || !email || !password}
           className={`mt-3 h-[50px] items-center justify-center rounded-[20px] bg-primary ${waiting || !email || !password ? 'opacity-50' : ''}`}
         >
-          {waiting ? <ActivityIndicator color="#fff" /> : <Text className="text-[18px] font-bold text-white">로그인</Text>}
+          {waiting ? <ActivityIndicator color={colors.white} /> : <Text className="text-[18px] font-bold text-white">로그인</Text>}
         </Pressable>
 
         <View className="mt-3 flex-row justify-center gap-6">
@@ -109,7 +110,7 @@ export default function LoginScreen() {
               // 인증을 우회해 온보딩으로 보내는 대신 준비 중임을 알린다.
               onPress={() => setError('소셜 로그인은 아직 준비 중이에요. 이메일로 로그인해주세요.')}
               className="h-[42px] w-[42px] items-center justify-center rounded-full opacity-40"
-              style={{ backgroundColor: s.bg, borderWidth: s.border ? 1 : 0, borderColor: '#e7e3d8' }}
+              style={{ backgroundColor: s.bg, borderWidth: s.border ? 1 : 0, borderColor: colors.line }}
             >
               <Text className="text-[16px] font-bold" style={{ color: s.bg === '#ffffff' || s.bg === '#FEE500' ? '#000' : '#fff' }}>{s.label || ''}</Text>
             </Pressable>

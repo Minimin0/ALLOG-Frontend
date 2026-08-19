@@ -8,6 +8,7 @@ import { ApiError } from '@/services/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 import { useUserStore } from '@/stores/userStore';
+import { colors } from '@/theme';
 
 // 온보딩 완료. 4단계에서 모은 값을 POST /api/v1/users 한 번으로 보낸다.
 // 초기 하트는 백엔드가 지급하고, 프론트는 stats의 실제 잔액만 표시한다.
@@ -52,7 +53,7 @@ export default function OnboardingCompleteScreen() {
   if (state === 'submitting') {
     return (
       <SafeAreaView edges={['top', 'bottom']} className="flex-1 items-center justify-center gap-4 bg-bg px-5">
-        <ActivityIndicator size="large" color="#4b7f63" />
+        <ActivityIndicator size="large" color={colors.spinner} />
         <Text className="text-[15px] font-semibold text-subtle">프로필을 저장하고 있어요…</Text>
       </SafeAreaView>
     );
@@ -88,12 +89,12 @@ export default function OnboardingCompleteScreen() {
         </View>
 
         <Text className="mt-6 text-center text-[18px] font-semibold text-subtle">
-          <Text className="font-bold text-[#d9573b]">하트</Text>는 <Text className="font-bold text-ink">그룹 참가</Text>에 사용돼요.
+          <Text className="font-bold text-heart">하트</Text>는 <Text className="font-bold text-ink">그룹 참가</Text>에 사용돼요.
         </Text>
 
         <View className="mt-6 w-full gap-4 rounded-[23px] border border-line bg-surface p-5">
           <Text className="text-center text-[13px] font-semibold text-subtle">
-            그룹에 참가할 때 <Text className="font-bold text-[#d9573b]">하트 1개</Text>를 사용해요.
+            그룹에 참가할 때 <Text className="font-bold text-heart">하트 1개</Text>를 사용해요.
           </Text>
           <View className="h-px w-full bg-line" />
           <Text className="text-center text-[13px] font-semibold text-subtle" style={{ lineHeight: 20 }}>

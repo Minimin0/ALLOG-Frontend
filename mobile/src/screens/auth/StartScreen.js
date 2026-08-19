@@ -1,9 +1,10 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import DesignScreen from "../../components/DesignScreen";
+import { colors } from "../../theme";
 
 export default function StartScreen({ navigation }) {
   return (
-    <DesignScreen backgroundColor="#fff">
+    <DesignScreen backgroundColor={colors.white}>
       <View style={s.body}>
         <View style={s.logo}>
           <Image
@@ -70,11 +71,11 @@ const s = StyleSheet.create({
   primary: {
     height: 50,
     borderRadius: 20,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  primaryText: { fontSize: 18, fontWeight: "700", color: "#fff" },
+  primaryText: { fontSize: 18, fontWeight: "700", color: colors.white },
   loginCopy: {
     height: 35,
     textAlign: "center",

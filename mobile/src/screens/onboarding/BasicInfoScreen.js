@@ -11,6 +11,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Svg, { Line, Path, Rect } from "react-native-svg";
 import OnboardingShell from "../../components/OnboardingShell";
 import { useAppState } from "../../state/AppState";
+import { colors } from "../../theme";
 export default function BasicInfoScreen({ navigation }) {
   const { nickname, setNickname, setBirth } = useAppState();
   const [form, setForm] = useState({
@@ -165,13 +166,13 @@ function CalendarIcon() {
         height={14.5}
         rx={3}
         fill="none"
-        stroke="#14453a"
+        stroke={colors.primary}
         strokeWidth={1.7}
       />
-      <Line x1={2} y1={8} x2={18} y2={8} stroke="#14453a" strokeWidth={1.7} />
+      <Line x1={2} y1={8} x2={18} y2={8} stroke={colors.primary} strokeWidth={1.7} />
       <Path
         d="M6 2 L6 5 M14 2 L14 5"
-        stroke="#14453a"
+        stroke={colors.primary}
         strokeWidth={1.7}
         strokeLinecap="round"
       />
@@ -185,18 +186,18 @@ const s = StyleSheet.create({
     height: 44,
     borderWidth: 1,
     borderColor: "#d9d9d9",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 15,
     paddingHorizontal: 14,
     fontSize: 13,
     justifyContent: "center",
   },
-  dateText: { fontSize: 13, color: "#111" },
+  dateText: { fontSize: 13, color: colors.ink },
   dateField: {
     height: 48,
     borderWidth: 1,
     borderColor: "#d9d9d9",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -219,7 +220,7 @@ const s = StyleSheet.create({
     height: 44,
     borderWidth: 1,
     borderColor: "#d9d9d9",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -232,22 +233,22 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     fontWeight: "600",
-    color: "#111",
+    color: colors.ink,
   },
   measureUnit: {
     width: 24,
     marginLeft: 4,
     fontSize: 13,
     fontWeight: "700",
-    color: "#111",
+    color: colors.ink,
   },
   row: { flexDirection: "row", gap: 10 },
   choice: {
     flex: 1,
     minHeight: 54,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
@@ -255,8 +256,8 @@ const s = StyleSheet.create({
   },
   active: {
     borderWidth: 2,
-    borderColor: "#14453a",
-    backgroundColor: "#eaf4ec",
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPale,
   },
   choiceText: { fontSize: 14, fontWeight: "700" },
   center: { textAlign: "center" },

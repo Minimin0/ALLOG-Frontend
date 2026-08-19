@@ -5,6 +5,7 @@ import Care from "../../../assets/images/SelfCareIcon.svg";
 import Exercise from "../../../assets/images/ExerciseIcon.svg";
 import Meal from "../../../assets/images/MealIcon.svg";
 import Sleep from "../../../assets/images/SleepIcon.svg";
+import { colors } from "../../theme";
 const items = [
   ["수분케어", "충분한 수분 섭취", Care],
   ["운동", "꾸준한 신체 운동", Exercise],
@@ -49,8 +50,8 @@ const s = StyleSheet.create({
     width: "48%",
     minHeight: 98,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
@@ -59,9 +60,9 @@ const s = StyleSheet.create({
   },
   active: {
     borderWidth: 2,
-    borderColor: "#14453a",
-    backgroundColor: "#eaf4ec",
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPale,
   },
   name: { fontSize: 15, fontWeight: "700" },
-  sub: { fontSize: 10, fontWeight: "500", color: "#4a4a4a" },
+  sub: { fontSize: 10, fontWeight: "500", color: colors.subtle },
 });

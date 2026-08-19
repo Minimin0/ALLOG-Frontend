@@ -27,6 +27,7 @@ module.exports = {
         success: '#14453a',
         warning: '#c08a24',
         danger: '#c0492f',
+        heart: '#d9573b',
         'rank-gold': '#f6b424',
         'rank-silver': '#bababa',
         'rank-bronze': '#cba04d',

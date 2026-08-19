@@ -8,6 +8,7 @@ import Icon from '@/components/common/Icon';
 import { ApiError } from '@/services/api';
 import { fetchPublicGroups, fetchRoutineCatalog, joinGroup } from '@/services/groupApi';
 import { useUserStore } from '@/stores/userStore';
+import { colors } from '@/theme';
 
 // 탐색 화면. 목록은 GET /api/v1/groups가 authority다 —
 // PUBLIC + RECRUITING 필터링은 백엔드가 하므로 여기서 다시 하지 않는다.
@@ -149,7 +150,7 @@ export default function ExploreScreen() {
               value={query}
               onChangeText={setQuery}
               placeholder="그룹 또는 루틴 검색..."
-              placeholderTextColor="#6b7268"
+              placeholderTextColor={colors.muted}
               className="flex-1 text-[14px] text-muted"
             />
           </View>
@@ -161,7 +162,7 @@ export default function ExploreScreen() {
             className="h-[45px] w-[45px] items-center justify-center rounded-[14px] bg-primary"
           >
             <Icon name="filter" size={18} />
-            {hasActiveFilter && <View className="absolute right-[6px] top-[6px] h-[8px] w-[8px] rounded-full bg-[#d9573b]" />}
+            {hasActiveFilter && <View className="absolute right-[6px] top-[6px] h-[8px] w-[8px] rounded-full bg-heart" />}
           </Pressable>
         </View>
 
@@ -194,7 +195,7 @@ export default function ExploreScreen() {
               <Text className="mt-2 text-[16px] font-bold text-ink">{almostFull.name}</Text>
               <View className="mt-2 flex-row items-center gap-2.5">
                 <Text className="text-[12px] font-semibold text-ink">{almostFull.currentMembers}/{almostFull.maxMembers}명</Text>
-                <Text className="text-[12px] text-ink"><Text className="text-[#d9573b]">♥</Text> 1개</Text>
+                <Text className="text-[12px] text-ink"><Text className="text-heart">♥</Text> 1개</Text>
                 <Text className="text-[12px] font-bold text-ink">모집중</Text>
               </View>
             </Pressable>
@@ -212,7 +213,7 @@ export default function ExploreScreen() {
           <Text className="mb-2.5 text-[13px] font-bold text-ink">모집중인 그룹</Text>
           {loading ? (
             <View className="items-center rounded-[16px] border border-line bg-surface p-6">
-              <ActivityIndicator color="#4b7f63" />
+              <ActivityIndicator color={colors.spinner} />
             </View>
           ) : loadError ? (
             <Pressable onPress={load} className="rounded-[16px] border border-line bg-surface p-4">
@@ -238,7 +239,7 @@ export default function ExploreScreen() {
                     <Pressable className="flex-1" onPress={() => router.push(`/explore/group/${group.groupId}`)}>
                       <Text className={`text-[15px] font-bold ${full ? 'text-disabled' : 'text-ink'}`}>{group.name}</Text>
                       <Text className={`mt-1.5 text-[12px] ${full ? 'text-disabled' : 'text-muted'}`}>
-                        {group.currentMembers}/{group.maxMembers}명 <Text className={full ? '' : 'text-[#d9573b]'}>♥</Text> 1개 필요
+                        {group.currentMembers}/{group.maxMembers}명 <Text className={full ? '' : 'text-heart'}>♥</Text> 1개 필요
                       </Text>
                     </Pressable>
                     <Pressable
@@ -246,7 +247,7 @@ export default function ExploreScreen() {
                       onPress={() => { setJoinError(''); setJoinTarget(group); }}
                       className={`rounded-[12px] px-3.5 py-2 ${full ? 'bg-[#f9ddd7] opacity-40' : 'bg-primary-tint'}`}
                     >
-                      <Text className={`text-[12px] font-bold ${full ? 'text-[#d9573b]' : 'text-[#1f3d2b]'}`}>{full ? '마감' : '참가'}</Text>
+                      <Text className={`text-[12px] font-bold ${full ? 'text-heart' : 'text-[#1f3d2b]'}`}>{full ? '마감' : '참가'}</Text>
                     </Pressable>
                   </View>
                 );
@@ -282,7 +283,7 @@ export default function ExploreScreen() {
                 <Text className="text-[14px] font-bold text-ink">취소</Text>
               </Pressable>
               <Pressable disabled={joining} onPress={confirmJoin} className={`flex-1 items-center justify-center rounded-[14px] bg-primary py-3 ${joining ? 'opacity-60' : ''}`}>
-                {joining ? <ActivityIndicator color="#fff" /> : <Text className="text-[14px] font-bold text-white">참가하기</Text>}
+                {joining ? <ActivityIndicator color={colors.white} /> : <Text className="text-[14px] font-bold text-white">참가하기</Text>}
               </Pressable>
             </View>
           </Pressable>

@@ -2,6 +2,11 @@ import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Line, Path, Rect } from 'react-native-svg';
+import { colors } from '@/theme';
+
+// 활성 탭 색. tabBarIcon이 받는 color prop과 문자열이 정확히 같아야 홈 아이콘 배경이
+// 활성으로 잡히므로(문자열 비교), colors.black('#000000')으로 바꾸면 안 된다.
+const TAB_ACTIVE = '#000';
 
 function GroupTabIcon({ color }) {
   return (
@@ -28,7 +33,7 @@ function RewardTabIcon({ color }) {
     <Svg width={29} height={27} viewBox="0 0 29 27">
       <Rect x={2} y={9} width={25} height={16} rx={3} fill={color} />
       <Rect x={0} y={6} width={29} height={7} rx={3} fill={color} />
-      <Rect x={13} y={6} width={3} height={19} fill="#ffffff" />
+      <Rect x={13} y={6} width={3} height={19} fill={colors.white} />
       <Path d="M14 6 C8 -1 4 1 5 4 C6 7 10 7 14 6 Z M15 6 C21 -1 25 1 24 4 C23 7 19 7 15 6 Z" fill={color} />
     </Svg>
   );
@@ -54,14 +59,14 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarStyle: s.bar,
           tabBarLabelStyle: s.label,
-          tabBarActiveTintColor: '#000',
-          tabBarInactiveTintColor: '#bababa',
+          tabBarActiveTintColor: TAB_ACTIVE,
+          tabBarInactiveTintColor: colors.disabled,
           tabBarIcon: ({ color }) => {
             if (route.name === 'home') {
               return (
-                <View style={[s.home, { backgroundColor: color === '#000' ? '#000' : '#bababa' }]}>
+                <View style={[s.home, { backgroundColor: color === TAB_ACTIVE ? TAB_ACTIVE : colors.disabled }]}>
                   <Svg width={26} height={28} viewBox="0 0 24 24">
-                    <Path fill="#ffffff" d="M2 10.5 L12 2 L22 10.5 L20.4 12.4 L19 11.2 L19 22 L14 22 L14 15 L10 15 L10 22 L5 22 L5 11.2 L3.6 12.4 Z" />
+                    <Path fill={colors.white} d="M2 10.5 L12 2 L22 10.5 L20.4 12.4 L19 11.2 L19 22 L14 22 L14 15 L10 15 L10 22 L5 22 L5 11.2 L3.6 12.4 Z" />
                   </Svg>
                 </View>
               );
@@ -82,12 +87,12 @@ export default function TabsLayout() {
 }
 
 const s = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#f7f6f3' },
+  safe: { flex: 1, backgroundColor: colors.bg },
   bar: {
     height: 80,
     paddingTop: 10,
     paddingBottom: 10,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderTopWidth: 0,
     elevation: 12,
   },
@@ -100,6 +105,6 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     marginTop: -30,
     borderWidth: 8,
-    borderColor: '#fff',
+    borderColor: colors.white,
   },
 });

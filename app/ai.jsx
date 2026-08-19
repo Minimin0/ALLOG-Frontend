@@ -9,6 +9,7 @@ import BottomNavBar from '@/components/nav/BottomNavBar';
 import { ApiError } from '@/services/api';
 import { fetchAiCoach } from '@/services/aiApi';
 import { useGroupStore } from '@/stores/groupStore';
+import { colors } from '@/theme';
 
 // AI 코칭. GET /api/v1/groups/{groupId}/ai-coach가 authority다.
 // dev preview 엔드포인트는 일반 배포에 없으므로 쓰지 않는다.
@@ -71,7 +72,7 @@ export default function AiCoachScreen() {
       <ScrollView ref={scrollRef} className="flex-1" contentContainerClassName="gap-3 p-4">
         {loading ? (
           <View className="items-center py-10">
-            <ActivityIndicator color="#4b7f63" />
+            <ActivityIndicator color={colors.spinner} />
           </View>
         ) : coach ? (
           <>
@@ -91,7 +92,7 @@ export default function AiCoachScreen() {
                   </View>
                 ) : null}
                 {coach.insightType ? (
-                  <View className="rounded-pill bg-surface px-3 py-1.5" style={{ borderWidth: 1, borderColor: '#e7e3d8' }}>
+                  <View className="rounded-pill bg-surface px-3 py-1.5" style={{ borderWidth: 1, borderColor: colors.line }}>
                     <Text className="text-[11px] font-semibold text-muted">{coach.insightType}</Text>
                   </View>
                 ) : null}

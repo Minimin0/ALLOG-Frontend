@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
 import SleepTimeDial from "../../components/SleepTimeDial";
 import { useAppState } from "../../state/AppState";
+import { colors } from "../../theme";
 export default function LifestyleScreen({ navigation }) {
   const { setLifestyle } = useAppState();
   const [form, setForm] = useState({
@@ -107,9 +108,9 @@ const s = StyleSheet.create({
   sleep: {
     height: 191,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 15,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "center",
@@ -130,16 +131,16 @@ const s = StyleSheet.create({
   choice: {
     height: 54,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
+    borderColor: colors.line,
     borderRadius: 15,
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
   active: {
     borderWidth: 2,
-    borderColor: "#14453a",
-    backgroundColor: "#eaf4ec",
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPale,
   },
   choiceText: { fontSize: 13, fontWeight: "700" },
 });

@@ -22,6 +22,7 @@ import { useAppState } from "../../state/AppState";
 import SleepTimeDial from "../../components/SleepTimeDial";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import { COACH_IMAGES } from "../../utils/coach";
+import { colors } from "../../theme";
 function Header({ navigation, title }) {
   return (
     <View style={s.header}>
@@ -35,7 +36,7 @@ function Header({ navigation, title }) {
 function Button({ children, onPress, danger = false }) {
   return (
     <Pressable style={[s.button, danger && s.dangerButton]} onPress={onPress}>
-      <Text style={[s.buttonText, danger && { color: "#d9573b" }]}>
+      <Text style={[s.buttonText, danger && { color: colors.heart }]}>
         {children}
       </Text>
     </Pressable>
@@ -78,7 +79,7 @@ export function RewardDetailScreen({ navigation, route }) {
         </View>
       </ScrollView>
       <View style={s.footer}>
-        <Pressable disabled style={[s.button, { backgroundColor: "#bababa" }]}>
+        <Pressable disabled style={[s.button, { backgroundColor: colors.disabled }]}>
           <Text style={s.buttonText}>혜택 준비 중</Text>
         </Pressable>
       </View>
@@ -89,7 +90,7 @@ function Row({ label, value, danger }) {
   return (
     <View style={s.between}>
       <Text style={s.rowLabel}>{label}</Text>
-      <Text style={[s.rowValue, danger && { color: "#d9573b" }]}>{value}</Text>
+      <Text style={[s.rowValue, danger && { color: colors.heart }]}>{value}</Text>
     </View>
   );
 }
@@ -308,13 +309,13 @@ function CalendarIcon() {
         height={14.5}
         rx={3}
         fill="none"
-        stroke="#14453a"
+        stroke={colors.primary}
         strokeWidth={1.7}
       />
-      <Line x1={2} y1={8} x2={18} y2={8} stroke="#14453a" strokeWidth={1.7} />
+      <Line x1={2} y1={8} x2={18} y2={8} stroke={colors.primary} strokeWidth={1.7} />
       <Path
         d="M6 2 L6 5 M14 2 L14 5"
-        stroke="#14453a"
+        stroke={colors.primary}
         strokeWidth={1.7}
         strokeLinecap="round"
       />
@@ -389,7 +390,7 @@ export function NotificationsScreen({ navigation }) {
             <Switch
               value={values[key]}
               onValueChange={(v) => setValues((x) => ({ ...x, [key]: v }))}
-              trackColor={{ false: "#d9d9d9", true: "#14453a" }}
+              trackColor={{ false: "#d9d9d9", true: colors.primary }}
             />
           </View>
         ))}
@@ -453,7 +454,7 @@ function ToggleRow({ title, desc, value, set, line }) {
       <Switch
         value={value}
         onValueChange={set}
-        trackColor={{ false: "#d9d9d9", true: "#14453a" }}
+        trackColor={{ false: "#d9d9d9", true: colors.primary }}
       />
     </View>
   );
@@ -609,7 +610,7 @@ function ListScreen({ navigation, title, children }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f7f6f3" },
+  screen: { flex: 1, backgroundColor: colors.bg },
   header: {
     height: 67,
     paddingHorizontal: 20,
@@ -622,8 +623,8 @@ const s = StyleSheet.create({
     height: 43,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -635,21 +636,21 @@ const s = StyleSheet.create({
   button: {
     height: 50,
     borderRadius: 27.5,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: { fontSize: 15, fontWeight: "700", color: "#fff" },
+  buttonText: { fontSize: 15, fontWeight: "700", color: colors.white },
   dangerButton: {
     borderWidth: 1,
-    borderColor: "#d9573b",
-    backgroundColor: "#fff",
+    borderColor: colors.heart,
+    backgroundColor: colors.white,
   },
   rewardCard: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     padding: 24,
     alignItems: "center",
   },
@@ -668,7 +669,7 @@ const s = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
-  sub: { marginTop: 6, fontSize: 12, color: "#6b7268" },
+  sub: { marginTop: 6, fontSize: 12, color: colors.muted },
   pointRow: {
     marginTop: 16,
     flexDirection: "row",
@@ -679,8 +680,8 @@ const s = StyleSheet.create({
   balanceCard: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     padding: 20,
     gap: 12,
   },
@@ -689,9 +690,9 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  rowLabel: { fontSize: 13, fontWeight: "600", color: "#6b7268" },
+  rowLabel: { fontSize: 13, fontWeight: "600", color: colors.muted },
   rowValue: { fontSize: 15, fontWeight: "700" },
-  line: { height: 1, backgroundColor: "#e7e3d8" },
+  line: { height: 1, backgroundColor: colors.line },
   dim: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,.4)",
@@ -703,7 +704,7 @@ const s = StyleSheet.create({
     width: "100%",
     maxWidth: 340,
     borderRadius: 28,
-    backgroundColor: "#f7f6f3",
+    backgroundColor: colors.bg,
     padding: 26,
     alignItems: "center",
   },
@@ -719,11 +720,11 @@ const s = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: "#14453a",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  checkText: { fontSize: 26, fontWeight: "700", color: "#fff" },
+  checkText: { fontSize: 26, fontWeight: "700", color: colors.white },
   successBadge: {
     marginTop: 14,
     borderRadius: 99,
@@ -738,7 +739,7 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: "#6b7268",
+    color: colors.muted,
   },
   purchasedItem: {
     marginTop: 20,
@@ -746,8 +747,8 @@ const s = StyleSheet.create({
     minHeight: 86,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fefefe",
+    borderColor: colors.line,
+    backgroundColor: colors.surface,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
@@ -766,7 +767,7 @@ const s = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
-  purchaseNote: { marginTop: 4, fontSize: 10, color: "#6b7268" },
+  purchaseNote: { marginTop: 4, fontSize: 10, color: colors.muted },
   purchaseCostRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   purchaseCost: { fontSize: 13, fontWeight: "800" },
   remain: {
@@ -774,7 +775,7 @@ const s = StyleSheet.create({
     marginBottom: 18,
     width: "100%",
     borderRadius: 15,
-    backgroundColor: "#eaf4ec",
+    backgroundColor: colors.primaryPale,
     paddingHorizontal: 16,
     paddingVertical: 13,
     flexDirection: "row",
@@ -782,18 +783,18 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
   },
   remainLabel: { fontSize: 12, fontWeight: "600", color: "#496157" },
-  remainValue: { fontSize: 17, fontWeight: "800", color: "#14453a" },
+  remainValue: { fontSize: 17, fontWeight: "800", color: colors.primary },
   purchaseAction: { width: "100%" },
   profileSaved: {
     width: "100%",
     maxWidth: 330,
     borderRadius: 28,
-    backgroundColor: "#f7f6f3",
+    backgroundColor: colors.bg,
     paddingHorizontal: 26,
     paddingTop: 30,
     paddingBottom: 22,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.18,
     shadowRadius: 24,
@@ -805,35 +806,35 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     lineHeight: 19,
-    color: "#6b7268",
+    color: colors.muted,
   },
   savedButton: {
     marginTop: 24,
     width: "100%",
     height: 50,
     borderRadius: 17,
-    backgroundColor: "#14453a",
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
-  savedButtonText: { fontSize: 15, fontWeight: "800", color: "#fff" },
+  savedButtonText: { fontSize: 15, fontWeight: "800", color: colors.white },
   profileEdit: { alignItems: "center" },
   avatar: {
     width: 68,
     height: 68,
     borderRadius: 34,
-    backgroundColor: "#000",
+    backgroundColor: colors.black,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: 22, fontWeight: "700", color: "#fff" },
-  change: { marginTop: 10, fontSize: 12, fontWeight: "600", color: "#6b7268" },
+  avatarText: { fontSize: 22, fontWeight: "700", color: colors.white },
+  change: { marginTop: 10, fontSize: 12, fontWeight: "600", color: colors.muted },
   nick: {
     height: 52,
     borderRadius: 26,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -842,15 +843,15 @@ const s = StyleSheet.create({
   nickInput: { flex: 1, textAlign: "center", fontSize: 15, fontWeight: "600" },
   field: { gap: 8 },
   half: { flex: 1 },
-  fieldTitle: { fontSize: 13, fontWeight: "700", color: "#4a4a4a" },
+  fieldTitle: { fontSize: 13, fontWeight: "700", color: colors.subtle },
   chips: { flexDirection: "row", gap: 8 },
   chipGrid: { flexWrap: "wrap", gap: 12 },
   chip: {
     minHeight: 42,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -861,8 +862,8 @@ const s = StyleSheet.create({
   threeColumnChip: { width: "30.8%" },
   active: {
     borderWidth: 2,
-    borderColor: "#14453a",
-    backgroundColor: "#eaf4ec",
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPale,
   },
   chipText: { fontSize: 12, fontWeight: "600" },
   date: { flexDirection: "row", gap: 8 },
@@ -870,7 +871,7 @@ const s = StyleSheet.create({
     height: 48,
     borderWidth: 1,
     borderColor: "#d9d9d9",
-    backgroundColor: "#fff",
+    backgroundColor: colors.white,
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -882,7 +883,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 14,
     justifyContent: "center",
   },
-  birthText: { fontSize: 13, color: "#111" },
+  birthText: { fontSize: 13, color: colors.ink },
   calendarButton: {
     width: 48,
     height: 48,
@@ -895,8 +896,8 @@ const s = StyleSheet.create({
     height: 44,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     textAlign: "center",
   },
   two: { flexDirection: "row", gap: 12 },
@@ -904,8 +905,8 @@ const s = StyleSheet.create({
     height: 48,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
     position: "relative",
@@ -918,15 +919,15 @@ const s = StyleSheet.create({
     paddingRight: 34,
     textAlign: "center",
   },
-  unit: { position: "absolute", right: 12, color: "#bababa" },
+  unit: { position: "absolute", right: 12, color: colors.disabled },
   coaches: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   coach: {
     width: "48%",
     height: 82,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -935,8 +936,8 @@ const s = StyleSheet.create({
     height: 191,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "center",
@@ -956,8 +957,8 @@ const s = StyleSheet.create({
   listCard: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#e7e3d8",
-    backgroundColor: "#fff",
+    borderColor: colors.line,
+    backgroundColor: colors.white,
     overflow: "hidden",
   },
   setting: {
@@ -968,23 +969,23 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  topLine: { borderTopWidth: 1, borderColor: "#e7e3d8" },
+  topLine: { borderTopWidth: 1, borderColor: colors.line },
   settingTitle: { fontSize: 14, fontWeight: "700" },
-  settingDesc: { marginTop: 4, fontSize: 11, lineHeight: 17, color: "#6b7268" },
+  settingDesc: { marginTop: 4, fontSize: 11, lineHeight: 17, color: colors.muted },
   notice: {
     paddingHorizontal: 4,
     fontSize: 11,
     lineHeight: 18,
-    color: "#6b7268",
+    color: colors.muted,
   },
-  sectionLabel: { fontSize: 13, fontWeight: "700", color: "#4a4a4a" },
+  sectionLabel: { fontSize: 13, fontWeight: "700", color: colors.subtle },
   textRow: { paddingHorizontal: 20, paddingVertical: 16 },
   faq: { padding: 18 },
   faqQ: { flex: 1, fontSize: 13, fontWeight: "700" },
-  faqA: { marginTop: 12, fontSize: 12, lineHeight: 19, color: "#6b7268" },
+  faqA: { marginTop: 12, fontSize: 12, lineHeight: 19, color: colors.muted },
   center: {
     flex: 1,
-    backgroundColor: "#f7f6f3",
+    backgroundColor: colors.bg,
     padding: 32,
     alignItems: "center",
     justifyContent: "center",
