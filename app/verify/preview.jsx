@@ -11,7 +11,6 @@ export default function PreviewScreen() {
   const router = useRouter();
   const videoUri = useVerificationStore((s) => s.videoUri);
   const media = useVerificationStore((s) => s.media);
-  const clearVideo = useVerificationStore((s) => s.clearVideo);
   const reset = useVerificationStore((s) => s.reset);
   const detail = useGroupStore((s) => s.detail);
   const [submitting, setSubmitting] = useState(false);
@@ -34,7 +33,6 @@ export default function PreviewScreen() {
   const submit = () => {
     if (submitting) return;
     setSubmitting(true);
-    clearVideo();
     router.replace('/verify/loading');
   };
 

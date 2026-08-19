@@ -75,6 +75,11 @@ export default function LoadingScreen() {
   const [step, setStep] = useState(0);
   const started = useRef(false);
 
+  // Preview가 unmount된 뒤 video preview URI만 해제한다. JPEG media는 retry용으로 유지한다.
+  useEffect(() => {
+    useVerificationStore.getState().clearVideo();
+  }, []);
+
   useEffect(() => {
     if (started.current) return;
     started.current = true;
