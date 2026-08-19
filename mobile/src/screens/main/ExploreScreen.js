@@ -15,7 +15,6 @@ import AnimatedEntrance from "../../components/AnimatedEntrance";
 import CoachMascotButton from "../../components/CoachMascotButton";
 import { useAppState } from "../../state/AppState";
 import { getCoachImage } from "../../utils/coach";
-import { colors } from "../../theme";
 const categories = ["전체", "수분케어", "식사", "운동", "수면"];
 const groups = [
   {
@@ -79,7 +78,7 @@ export default function ExploreScreen({ navigation }) {
   return (
     <View style={s.screen}>
       <View style={s.header}>
-        <Text style={s.title}>탐색</Text>
+        <Text className="text-[28px] font-black text-ink">탐색</Text>
         <CoachMascotButton
           source={getCoachImage(coachStyle)}
           onPress={() => navigation.navigate("AiCoach")}
@@ -121,7 +120,7 @@ export default function ExploreScreen({ navigation }) {
         <AnimatedEntrance style={s.ai}>
           <View style={{ flex: 1 }}>
             <Text style={s.aiHint}>
-              <Text style={{ fontWeight: "700", color: colors.black }}>AI 추천 </Text>
+              <Text style={{ fontWeight: "700", color: "#000" }}>AI 추천 </Text>
               곧 마감돼요, 자리 1개 남았어요
             </Text>
             <Text style={s.aiTitle}>매일 물 1.5L 마시기</Text>
@@ -157,7 +156,7 @@ export default function ExploreScreen({ navigation }) {
                 onPress={() => setJoin(g)}
               >
                 <Text
-                  style={[s.groupButtonText, g.full && { color: colors.heart }]}
+                  style={[s.groupButtonText, g.full && { color: "#d9573b" }]}
                 >
                   {g.full ? "마감" : "참가"}
                 </Text>
@@ -288,7 +287,7 @@ export default function ExploreScreen({ navigation }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   header: {
     paddingHorizontal: 30,
     paddingTop: 16,
@@ -296,7 +295,6 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  title: { fontSize: 28, fontWeight: "700" },
   content: {
     paddingHorizontal: 30,
     paddingTop: 20,
@@ -309,19 +307,19 @@ const s = StyleSheet.create({
     flex: 1,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
-  searchInput: { flex: 1, fontSize: 14, color: colors.muted },
+  searchInput: { flex: 1, fontSize: 14, color: "#6b7268" },
   filter: {
     width: 45,
     height: 45,
     borderRadius: 14,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -332,56 +330,56 @@ const s = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.heart,
+    backgroundColor: "#d9573b",
   },
   categories: { gap: 6 },
   chip: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
-  chipOn: { borderColor: colors.black, backgroundColor: colors.black },
-  chipText: { fontSize: 13, fontWeight: "600", color: colors.muted },
-  chipTextOn: { color: colors.white },
+  chipOn: { borderColor: "#000", backgroundColor: "#000" },
+  chipText: { fontSize: 13, fontWeight: "600", color: "#6b7268" },
+  chipTextOn: { color: "#fff" },
   ai: {
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.primaryTint,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#edf2ec",
     padding: 16,
     flexDirection: "row",
     alignItems: "flex-start",
   },
-  aiHint: { fontSize: 11, color: colors.primary },
+  aiHint: { fontSize: 11, color: "#14453a" },
   aiTitle: { marginTop: 8, fontSize: 16, fontWeight: "700" },
   meta: { marginTop: 8, fontSize: 12, fontWeight: "600" },
-  heart: { color: colors.heart },
+  heart: { color: "#d9573b" },
   join: {
     borderRadius: 12,
-    backgroundColor: colors.primary,
+    backgroundColor: "#14453a",
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
-  joinText: { fontSize: 12, fontWeight: "700", color: colors.white },
+  joinText: { fontSize: 12, fontWeight: "700", color: "#fff" },
   section: { fontSize: 13, fontWeight: "700", marginTop: 4 },
   group: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
   },
   groupTitle: { fontSize: 15, fontWeight: "700", color: "#1f2a24" },
-  groupMeta: { marginTop: 6, fontSize: 12, color: colors.muted },
-  muted: { color: colors.disabled },
+  groupMeta: { marginTop: 6, fontSize: 12, color: "#6b7268" },
+  muted: { color: "#bababa" },
   groupButton: {
     borderRadius: 12,
-    backgroundColor: colors.primaryTint,
+    backgroundColor: "#edf2ec",
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
@@ -390,32 +388,32 @@ const s = StyleSheet.create({
   empty: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 16,
     textAlign: "center",
     fontSize: 13,
-    color: colors.muted,
+    color: "#6b7268",
   },
   question: {
     marginTop: 8,
     textAlign: "center",
     fontSize: 13,
-    color: colors.muted,
+    color: "#6b7268",
   },
   create: {
     height: 50,
     borderRadius: 27.5,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  createText: { fontSize: 15, fontWeight: "700", color: colors.white },
+  createText: { fontSize: 15, fontWeight: "700", color: "#fff" },
   code: {
     textAlign: "center",
     fontSize: 12,
     fontWeight: "600",
-    color: colors.muted,
+    color: "#6b7268",
     textDecorationLine: "underline",
   },
   dim: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,.4)" },
@@ -431,7 +429,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 22,
     paddingTop: 20,
     paddingBottom: 18,
-    shadowColor: colors.black,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.18,
     shadowRadius: 24,
@@ -447,7 +445,7 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 19,
-    backgroundColor: colors.primaryTint,
+    backgroundColor: "#edf2ec",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -460,7 +458,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  closeText: { marginTop: -2, fontSize: 24, color: colors.muted },
+  closeText: { marginTop: -2, fontSize: 24, color: "#6b7268" },
   dialogEyebrow: {
     marginTop: 16,
     marginBottom: 7,
@@ -473,7 +471,7 @@ const s = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     lineHeight: 21,
-    color: colors.muted,
+    color: "#6b7268",
   },
   joinSummary: {
     marginTop: 18,
@@ -488,7 +486,7 @@ const s = StyleSheet.create({
   summaryLabel: { fontSize: 11, color: "#7c8178" },
   summaryValue: { fontSize: 15, fontWeight: "800", color: "#202420" },
   summaryLine: { width: 1, height: 32, backgroundColor: "#dfddd5" },
-  heartCost: { color: colors.heart },
+  heartCost: { color: "#d9573b" },
   joinNotice: {
     marginTop: 12,
     fontSize: 11,
@@ -514,7 +512,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  confirmText: { fontSize: 15, fontWeight: "800", color: colors.white },
+  confirmText: { fontSize: 15, fontWeight: "800", color: "#fff" },
   sheet: {
     position: "absolute",
     left: 0,
@@ -522,7 +520,7 @@ const s = StyleSheet.create({
     bottom: 0,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     padding: 24,
     paddingBottom: 35,
   },
@@ -530,7 +528,7 @@ const s = StyleSheet.create({
     flex: 1,
     height: 42,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",

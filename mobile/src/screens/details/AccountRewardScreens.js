@@ -22,7 +22,6 @@ import { useAppState } from "../../state/AppState";
 import SleepTimeDial from "../../components/SleepTimeDial";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import { COACH_IMAGES } from "../../utils/coach";
-import { colors } from "../../theme";
 function Header({ navigation, title }) {
   return (
     <View style={s.header}>
@@ -36,17 +35,14 @@ function Header({ navigation, title }) {
 function Button({ children, onPress, danger = false }) {
   return (
     <Pressable style={[s.button, danger && s.dangerButton]} onPress={onPress}>
-      <Text style={[s.buttonText, danger && { color: colors.heart }]}>
+      <Text style={[s.buttonText, danger && { color: "#d9573b" }]}>
         {children}
       </Text>
     </Pressable>
   );
 }
-// 교환은 백엔드에 catalogue도 redemption도 없다. 예전에는 여기서 AsyncStorage의
-// 포인트를 직접 깎고 "구매가 완료됐어요"를 띄웠는데, 서버에는 아무 일도 일어나지
-// 않으므로 앱을 지우면 사라지는 잔액과 존재하지 않는 쿠폰을 보여주는 셈이었다.
-// 실제 교환 API가 생기기 전까지는 상품만 보여주고 아무것도 차감하지 않는다.
 export function RewardDetailScreen({ navigation, route }) {
+  const { points, deductPoints } = useAppState();
   const reward = route.params?.reward || {
     id: "serum-trial",
     title: "AAC 시그니처 세럼\n체험권",
@@ -59,6 +55,8 @@ export function RewardDetailScreen({ navigation, route }) {
       : reward.id === "free-shipping"
         ? ShippingIcon
         : TrialIcon;
+  const [done, setDone] = useState(false);
+  const afford = points >= reward.cost;
   return (
     <View style={s.screen}>
       <Header navigation={navigation} title="리워드 상세" />
@@ -75,14 +73,74 @@ export function RewardDetailScreen({ navigation, route }) {
           </View>
         </View>
         <View style={s.balanceCard}>
-          <Row label="교환" value="혜택 준비 중" />
+          <Row label="보유 포인트" value={points} />
+          <View style={s.line} />
+          <Row
+            label="교환 후 남는 포인트"
+            value={afford ? points - reward.cost : "포인트 부족"}
+            danger={!afford}
+          />
         </View>
       </ScrollView>
       <View style={s.footer}>
-        <Pressable disabled style={[s.button, { backgroundColor: colors.disabled }]}>
-          <Text style={s.buttonText}>혜택 준비 중</Text>
+        <Pressable
+          disabled={!afford}
+          style={[s.button, !afford && { backgroundColor: "#bababa" }]}
+          onPress={() => {
+            deductPoints(reward.cost);
+            setDone(true);
+          }}
+        >
+          <Text style={s.buttonText}>
+            {afford ? "교환하기" : "포인트 부족"}
+          </Text>
         </Pressable>
       </View>
+      <Modal visible={done} transparent animationType="fade">
+        <View style={s.dim}>
+          <AnimatedEntrance distance={8} duration={260} style={s.purchase}>
+            <View style={s.successHalo}>
+              <View style={s.check}>
+                <Text style={s.checkText}>✓</Text>
+              </View>
+            </View>
+            <View style={s.successBadge}>
+              <Text style={s.successBadgeText}>교환 완료</Text>
+            </View>
+            <Text style={s.purchaseTitle}>구매가 완료됐어요!</Text>
+            <Text style={s.purchaseSub}>
+              새로운 리워드가 내 쿠폰함에 추가됐어요.
+            </Text>
+            <View style={s.purchasedItem}>
+              <View style={s.purchasedIcon}>
+                <DetailIcon width={32} height={32} />
+              </View>
+              <View style={s.purchasedCopy}>
+                <Text style={s.purchaseName}>{reward.title}</Text>
+                <Text style={s.purchaseNote}>{reward.note}</Text>
+              </View>
+              <View style={s.purchaseCostRow}>
+                <RewardIcon width={15} height={15} />
+                <Text style={s.purchaseCost}>{reward.cost}</Text>
+              </View>
+            </View>
+            <View style={s.remain}>
+              <Text style={s.remainLabel}>남은 포인트</Text>
+              <Text style={s.remainValue}>{points}</Text>
+            </View>
+            <View style={s.purchaseAction}>
+              <Button
+                onPress={() => {
+                  setDone(false);
+                  navigation.goBack();
+                }}
+              >
+                확인
+              </Button>
+            </View>
+          </AnimatedEntrance>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -90,7 +148,7 @@ function Row({ label, value, danger }) {
   return (
     <View style={s.between}>
       <Text style={s.rowLabel}>{label}</Text>
-      <Text style={[s.rowValue, danger && { color: colors.heart }]}>{value}</Text>
+      <Text style={[s.rowValue, danger && { color: "#d9573b" }]}>{value}</Text>
     </View>
   );
 }
@@ -309,13 +367,13 @@ function CalendarIcon() {
         height={14.5}
         rx={3}
         fill="none"
-        stroke={colors.primary}
+        stroke="#14453a"
         strokeWidth={1.7}
       />
-      <Line x1={2} y1={8} x2={18} y2={8} stroke={colors.primary} strokeWidth={1.7} />
+      <Line x1={2} y1={8} x2={18} y2={8} stroke="#14453a" strokeWidth={1.7} />
       <Path
         d="M6 2 L6 5 M14 2 L14 5"
-        stroke={colors.primary}
+        stroke="#14453a"
         strokeWidth={1.7}
         strokeLinecap="round"
       />
@@ -390,7 +448,7 @@ export function NotificationsScreen({ navigation }) {
             <Switch
               value={values[key]}
               onValueChange={(v) => setValues((x) => ({ ...x, [key]: v }))}
-              trackColor={{ false: colors.grayBorder, true: colors.primary }}
+              trackColor={{ false: "#d9d9d9", true: "#14453a" }}
             />
           </View>
         ))}
@@ -454,7 +512,7 @@ function ToggleRow({ title, desc, value, set, line }) {
       <Switch
         value={value}
         onValueChange={set}
-        trackColor={{ false: colors.grayBorder, true: colors.primary }}
+        trackColor={{ false: "#d9d9d9", true: "#14453a" }}
       />
     </View>
   );
@@ -610,7 +668,7 @@ function ListScreen({ navigation, title, children }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   header: {
     height: 67,
     paddingHorizontal: 20,
@@ -623,8 +681,8 @@ const s = StyleSheet.create({
     height: 43,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -636,21 +694,21 @@ const s = StyleSheet.create({
   button: {
     height: 50,
     borderRadius: 27.5,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: { fontSize: 15, fontWeight: "700", color: colors.white },
+  buttonText: { fontSize: 15, fontWeight: "700", color: "#fff" },
   dangerButton: {
     borderWidth: 1,
-    borderColor: colors.heart,
-    backgroundColor: colors.white,
+    borderColor: "#d9573b",
+    backgroundColor: "#fff",
   },
   rewardCard: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 24,
     alignItems: "center",
   },
@@ -658,7 +716,7 @@ const s = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 20,
-    backgroundColor: colors.beigeIcon,
+    backgroundColor: "#f3efe4",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -669,7 +727,7 @@ const s = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
-  sub: { marginTop: 6, fontSize: 12, color: colors.muted },
+  sub: { marginTop: 6, fontSize: 12, color: "#6b7268" },
   pointRow: {
     marginTop: 16,
     flexDirection: "row",
@@ -680,8 +738,8 @@ const s = StyleSheet.create({
   balanceCard: {
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 20,
     gap: 12,
   },
@@ -690,9 +748,9 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  rowLabel: { fontSize: 13, fontWeight: "600", color: colors.muted },
+  rowLabel: { fontSize: 13, fontWeight: "600", color: "#6b7268" },
   rowValue: { fontSize: 15, fontWeight: "700" },
-  line: { height: 1, backgroundColor: colors.line },
+  line: { height: 1, backgroundColor: "#e7e3d8" },
   dim: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,.4)",
@@ -704,7 +762,7 @@ const s = StyleSheet.create({
     width: "100%",
     maxWidth: 340,
     borderRadius: 28,
-    backgroundColor: colors.bg,
+    backgroundColor: "#f7f6f3",
     padding: 26,
     alignItems: "center",
   },
@@ -712,7 +770,7 @@ const s = StyleSheet.create({
     width: 82,
     height: 82,
     borderRadius: 41,
-    backgroundColor: colors.mintBadge,
+    backgroundColor: "#e5f4e8",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -720,11 +778,11 @@ const s = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 29,
-    backgroundColor: colors.primary,
+    backgroundColor: "#14453a",
     alignItems: "center",
     justifyContent: "center",
   },
-  checkText: { fontSize: 26, fontWeight: "700", color: colors.white },
+  checkText: { fontSize: 26, fontWeight: "700", color: "#fff" },
   successBadge: {
     marginTop: 14,
     borderRadius: 99,
@@ -739,7 +797,7 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     lineHeight: 18,
-    color: colors.muted,
+    color: "#6b7268",
   },
   purchasedItem: {
     marginTop: 20,
@@ -747,8 +805,8 @@ const s = StyleSheet.create({
     minHeight: 86,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
@@ -758,7 +816,7 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 16,
-    backgroundColor: colors.beigeIcon,
+    backgroundColor: "#f3efe4",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -767,7 +825,7 @@ const s = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
-  purchaseNote: { marginTop: 4, fontSize: 10, color: colors.muted },
+  purchaseNote: { marginTop: 4, fontSize: 10, color: "#6b7268" },
   purchaseCostRow: { flexDirection: "row", alignItems: "center", gap: 4 },
   purchaseCost: { fontSize: 13, fontWeight: "800" },
   remain: {
@@ -775,7 +833,7 @@ const s = StyleSheet.create({
     marginBottom: 18,
     width: "100%",
     borderRadius: 15,
-    backgroundColor: colors.primaryPale,
+    backgroundColor: "#eaf4ec",
     paddingHorizontal: 16,
     paddingVertical: 13,
     flexDirection: "row",
@@ -783,18 +841,18 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
   },
   remainLabel: { fontSize: 12, fontWeight: "600", color: "#496157" },
-  remainValue: { fontSize: 17, fontWeight: "800", color: colors.primary },
+  remainValue: { fontSize: 17, fontWeight: "800", color: "#14453a" },
   purchaseAction: { width: "100%" },
   profileSaved: {
     width: "100%",
     maxWidth: 330,
     borderRadius: 28,
-    backgroundColor: colors.bg,
+    backgroundColor: "#f7f6f3",
     paddingHorizontal: 26,
     paddingTop: 30,
     paddingBottom: 22,
     alignItems: "center",
-    shadowColor: colors.black,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.18,
     shadowRadius: 24,
@@ -806,35 +864,35 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 13,
     lineHeight: 19,
-    color: colors.muted,
+    color: "#6b7268",
   },
   savedButton: {
     marginTop: 24,
     width: "100%",
     height: 50,
     borderRadius: 17,
-    backgroundColor: colors.primary,
+    backgroundColor: "#14453a",
     alignItems: "center",
     justifyContent: "center",
   },
-  savedButtonText: { fontSize: 15, fontWeight: "800", color: colors.white },
+  savedButtonText: { fontSize: 15, fontWeight: "800", color: "#fff" },
   profileEdit: { alignItems: "center" },
   avatar: {
     width: 68,
     height: 68,
     borderRadius: 34,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: 22, fontWeight: "700", color: colors.white },
-  change: { marginTop: 10, fontSize: 12, fontWeight: "600", color: colors.muted },
+  avatarText: { fontSize: 22, fontWeight: "700", color: "#fff" },
+  change: { marginTop: 10, fontSize: 12, fontWeight: "600", color: "#6b7268" },
   nick: {
     height: 52,
     borderRadius: 26,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -843,15 +901,15 @@ const s = StyleSheet.create({
   nickInput: { flex: 1, textAlign: "center", fontSize: 15, fontWeight: "600" },
   field: { gap: 8 },
   half: { flex: 1 },
-  fieldTitle: { fontSize: 13, fontWeight: "700", color: colors.subtle },
+  fieldTitle: { fontSize: 13, fontWeight: "700", color: "#4a4a4a" },
   chips: { flexDirection: "row", gap: 8 },
   chipGrid: { flexWrap: "wrap", gap: 12 },
   chip: {
     minHeight: 42,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -862,16 +920,16 @@ const s = StyleSheet.create({
   threeColumnChip: { width: "30.8%" },
   active: {
     borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryPale,
+    borderColor: "#14453a",
+    backgroundColor: "#eaf4ec",
   },
   chipText: { fontSize: 12, fontWeight: "600" },
   date: { flexDirection: "row", gap: 8 },
   birthField: {
     height: 48,
     borderWidth: 1,
-    borderColor: colors.grayBorder,
-    backgroundColor: colors.white,
+    borderColor: "#d9d9d9",
+    backgroundColor: "#fff",
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -883,7 +941,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 14,
     justifyContent: "center",
   },
-  birthText: { fontSize: 13, color: colors.ink },
+  birthText: { fontSize: 13, color: "#111" },
   calendarButton: {
     width: 48,
     height: 48,
@@ -896,8 +954,8 @@ const s = StyleSheet.create({
     height: 44,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     textAlign: "center",
   },
   two: { flexDirection: "row", gap: 12 },
@@ -905,8 +963,8 @@ const s = StyleSheet.create({
     height: 48,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "center",
     position: "relative",
@@ -919,15 +977,15 @@ const s = StyleSheet.create({
     paddingRight: 34,
     textAlign: "center",
   },
-  unit: { position: "absolute", right: 12, color: colors.disabled },
+  unit: { position: "absolute", right: 12, color: "#bababa" },
   coaches: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   coach: {
     width: "48%",
     height: 82,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -936,8 +994,8 @@ const s = StyleSheet.create({
     height: 191,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "center",
@@ -957,8 +1015,8 @@ const s = StyleSheet.create({
   listCard: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     overflow: "hidden",
   },
   setting: {
@@ -969,23 +1027,23 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  topLine: { borderTopWidth: 1, borderColor: colors.line },
+  topLine: { borderTopWidth: 1, borderColor: "#e7e3d8" },
   settingTitle: { fontSize: 14, fontWeight: "700" },
-  settingDesc: { marginTop: 4, fontSize: 11, lineHeight: 17, color: colors.muted },
+  settingDesc: { marginTop: 4, fontSize: 11, lineHeight: 17, color: "#6b7268" },
   notice: {
     paddingHorizontal: 4,
     fontSize: 11,
     lineHeight: 18,
-    color: colors.muted,
+    color: "#6b7268",
   },
-  sectionLabel: { fontSize: 13, fontWeight: "700", color: colors.subtle },
+  sectionLabel: { fontSize: 13, fontWeight: "700", color: "#4a4a4a" },
   textRow: { paddingHorizontal: 20, paddingVertical: 16 },
   faq: { padding: 18 },
   faqQ: { flex: 1, fontSize: 13, fontWeight: "700" },
-  faqA: { marginTop: 12, fontSize: 12, lineHeight: 19, color: colors.muted },
+  faqA: { marginTop: 12, fontSize: 12, lineHeight: 19, color: "#6b7268" },
   center: {
     flex: 1,
-    backgroundColor: colors.bg,
+    backgroundColor: "#f7f6f3",
     padding: 32,
     alignItems: "center",
     justifyContent: "center",

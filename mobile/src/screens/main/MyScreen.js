@@ -11,7 +11,6 @@ import Terms from "../../../assets/images/TermsIcon.svg";
 import Support from "../../../assets/images/SupportIcon.svg";
 import { useAppState } from "../../state/AppState";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
-import { colors } from "../../theme";
 const records = [
     ["운동", "3회", Exercise],
     ["수면", "5회", Sleep],
@@ -28,7 +27,7 @@ export default function MyScreen({ navigation }) {
   const { nickname, points } = useAppState();
   return (
     <View style={s.screen}>
-      <Text style={s.title}>마이 페이지</Text>
+      <Text className="px-[30px] pt-4 text-[28px] font-black text-ink">마이 페이지</Text>
       <ScrollView contentContainerStyle={s.content}>
         <AnimatedEntrance style={s.profile}>
           <View style={s.profileRow}>
@@ -90,7 +89,7 @@ export default function MyScreen({ navigation }) {
 function Metric({ label, value, Icon, red }) {
   return (
     <View style={s.metric}>
-      <Text style={[s.metricLabel, red && { color: colors.heart }]}>{label}</Text>
+      <Text style={[s.metricLabel, red && { color: "#d9573b" }]}>{label}</Text>
       <View style={s.metricValue}>
         {Icon && <Icon width={13} height={13} />}
         <Text style={s.metricValueText}>{value}</Text>
@@ -99,13 +98,7 @@ function Metric({ label, value, Icon, red }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
-  title: {
-    paddingHorizontal: 30,
-    paddingTop: 16,
-    fontSize: 28,
-    fontWeight: "700",
-  },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   content: {
     paddingHorizontal: 30,
     paddingTop: 16,
@@ -115,8 +108,8 @@ const s = StyleSheet.create({
   profile: {
     borderRadius: 26,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     padding: 20,
   },
   profileRow: { flexDirection: "row", alignItems: "center", gap: 16 },
@@ -124,24 +117,24 @@ const s = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontSize: 20, fontWeight: "700", color: colors.white },
+  avatarText: { fontSize: 20, fontWeight: "700", color: "#fff" },
   name: { fontSize: 18, fontWeight: "700" },
-  email: { marginTop: 2, fontSize: 12, color: colors.muted },
+  email: { marginTop: 2, fontSize: 12, color: "#6b7268" },
   edit: {
     borderRadius: 99,
-    backgroundColor: colors.mintBadge,
+    backgroundColor: "#e5f4e8",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   editText: { fontSize: 12, fontWeight: "700" },
-  line: { height: 1, backgroundColor: colors.line, marginVertical: 16 },
+  line: { height: 1, backgroundColor: "#e7e3d8", marginVertical: 16 },
   metrics: { flexDirection: "row" },
   metric: { flex: 1, alignItems: "center" },
-  metricLabel: { fontSize: 10, fontWeight: "600", color: colors.muted },
+  metricLabel: { fontSize: 10, fontWeight: "600", color: "#6b7268" },
   metricValue: {
     marginTop: 4,
     flexDirection: "row",
@@ -154,13 +147,13 @@ const s = StyleSheet.create({
     fontSize: 13,
     lineHeight: 16,
     fontWeight: "700",
-    color: colors.muted,
+    color: "#6b7268",
   },
   records: {
     borderRadius: 26,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     padding: 16,
     flexDirection: "row",
     gap: 8,
@@ -170,7 +163,7 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: colors.beigeIcon,
+    backgroundColor: "#f3efe4",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -180,13 +173,13 @@ const s = StyleSheet.create({
     fontSize: 15,
     lineHeight: 18,
     fontWeight: "700",
-    color: colors.primary,
+    color: "#14453a",
   },
   menus: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     overflow: "hidden",
   },
   menu: {
@@ -196,17 +189,17 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  menuLine: { borderTopWidth: 1, borderTopColor: colors.line },
+  menuLine: { borderTopWidth: 1, borderTopColor: "#e7e3d8" },
   menuText: { flex: 1, fontSize: 13, fontWeight: "500" },
-  arrow: { fontSize: 18, color: colors.disabled },
+  arrow: { fontSize: 18, color: "#bababa" },
   logout: {
     height: 50,
     borderRadius: 13,
     borderWidth: 1,
-    borderColor: colors.heart,
-    backgroundColor: colors.surface,
+    borderColor: "#d9573b",
+    backgroundColor: "#fefefe",
     alignItems: "center",
     justifyContent: "center",
   },
-  logoutText: { fontSize: 15, fontWeight: "700", color: colors.heart },
+  logoutText: { fontSize: 15, fontWeight: "700", color: "#d9573b" },
 });

@@ -11,7 +11,6 @@ import {
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import { useAppState } from "../../state/AppState";
 import { getCoachImage } from "../../utils/coach";
-import { colors } from "../../theme";
 function Header({ navigation, title, right }) {
   return (
     <View style={s.header}>
@@ -65,7 +64,7 @@ export function FullRankingScreen({ navigation }) {
 }
 function Rank({ rank, name, score, me, group }) {
   return (
-    <View style={[s.rank, me && { backgroundColor: colors.primaryTint }]}>
+    <View style={[s.rank, me && { backgroundColor: "#edf2ec" }]}>
       <Text style={s.rankNo}>{rank}</Text>
       <View style={s.avatar}>
         <Text>{name[0]}</Text>
@@ -98,7 +97,7 @@ export function RankingCriteriaScreen({ navigation }) {
       <ScrollView contentContainerStyle={s.content}>
         <Text style={s.intro}>
           순위는 아래 4가지 항목을{" "}
-          <Text style={{ fontWeight: "700", color: colors.ink }}>
+          <Text style={{ fontWeight: "700", color: "#111" }}>
             가중 합산(총 100점)
           </Text>
           해서 정해져요.
@@ -214,7 +213,7 @@ function ResultCell({ label, value, gold }) {
   return (
     <View style={s.resultCell}>
       <Text style={s.label}>{label}</Text>
-      <Text style={[s.cellValue, gold && { color: colors.reward }]}>{value}</Text>
+      <Text style={[s.cellValue, gold && { color: "#c08a24" }]}>{value}</Text>
     </View>
   );
 }
@@ -255,11 +254,11 @@ export function ExploreGroupDetailScreen({ navigation }) {
       <View style={s.tabs}>
         {["인증", "랭킹", "정보"].map((x) => (
           <Pressable key={x} style={s.tab} onPress={() => setTab(x)}>
-            <Text style={[s.tabText, tab !== x && { color: colors.disabled }]}>
+            <Text style={[s.tabText, tab !== x && { color: "#bababa" }]}>
               {x}
             </Text>
             <View
-              style={[s.tabLine, tab === x && { backgroundColor: colors.black }]}
+              style={[s.tabLine, tab === x && { backgroundColor: "#000" }]}
             />
           </Pressable>
         ))}
@@ -413,7 +412,7 @@ function Info({ label, value }) {
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   header: {
     height: 67,
     paddingHorizontal: 20,
@@ -425,41 +424,41 @@ const s = StyleSheet.create({
     width: 43,
     height: 43,
     borderRadius: 13,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  backText: { fontSize: 30, lineHeight: 32, color: colors.white },
+  backText: { fontSize: 30, lineHeight: 32, color: "#fff" },
   headerTitle: { fontSize: 19, fontWeight: "700" },
   content: { padding: 20, paddingBottom: 35, gap: 12 },
   rank: {
     height: 62,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     paddingHorizontal: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
   },
-  rankNo: { width: 24, fontSize: 18, fontWeight: "700", color: colors.primary },
+  rankNo: { width: 24, fontSize: 18, fontWeight: "700", color: "#14453a" },
   avatar: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: "#eae9e7",
     alignItems: "center",
     justifyContent: "center",
   },
   rankName: { flex: 1, fontSize: 14, fontWeight: "600" },
   rankScore: { fontSize: 13, fontWeight: "700" },
-  intro: { fontSize: 15, lineHeight: 23, color: colors.muted },
+  intro: { fontSize: 15, lineHeight: 23, color: "#6b7268" },
   criteria: {
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 16,
   },
   between: {
@@ -470,24 +469,24 @@ const s = StyleSheet.create({
   criteriaTitle: { fontSize: 17, fontWeight: "600" },
   weight: {
     borderRadius: 99,
-    backgroundColor: colors.primary,
+    backgroundColor: "#14453a",
     paddingHorizontal: 10,
     paddingVertical: 3,
   },
-  weightText: { fontSize: 12, color: colors.white },
-  caption: { marginTop: 6, fontSize: 11, color: colors.muted },
+  weightText: { fontSize: 12, color: "#fff" },
+  caption: { marginTop: 6, fontSize: 11, color: "#6b7268" },
   track: {
     marginTop: 9,
     height: 7,
     borderRadius: 99,
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: "#eae9e7",
   },
-  fill: { height: 7, borderRadius: 99, backgroundColor: colors.primary },
+  fill: { height: 7, borderRadius: 99, backgroundColor: "#14453a" },
   example: {
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.primaryTint,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#edf2ec",
     padding: 16,
     gap: 7,
   },
@@ -497,26 +496,26 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   exampleValue: { fontSize: 11, fontWeight: "600" },
-  line: { height: 1, backgroundColor: colors.line, marginVertical: 6 },
-  total: { fontSize: 25, fontWeight: "700", color: colors.primary },
+  line: { height: 1, backgroundColor: "#e7e3d8", marginVertical: 6 },
+  total: { fontSize: 25, fontWeight: "700", color: "#14453a" },
   summary: {
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.primaryTint,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#edf2ec",
     padding: 20,
   },
   resultTitle: { textAlign: "center", fontSize: 22, fontWeight: "700" },
-  rate: { fontSize: 22, fontWeight: "800", color: colors.primary },
+  rate: { fontSize: 22, fontWeight: "800", color: "#14453a" },
   marker: {
     position: "absolute",
     left: "80%",
     top: -4,
     width: 2,
     height: 15,
-    backgroundColor: colors.reward,
+    backgroundColor: "#c08a24",
   },
-  goal: { marginTop: 5, textAlign: "right", fontSize: 11, color: colors.reward },
+  goal: { marginTop: 5, textAlign: "right", fontSize: 11, color: "#c08a24" },
   podium: {
     height: 180,
     flexDirection: "row",
@@ -533,30 +532,30 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 10,
     lineHeight: 15,
-    color: colors.reward,
+    color: "#c08a24",
   },
   podiumBlock: {
     marginTop: 6,
     width: 78,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    backgroundColor: colors.primaryTint,
+    backgroundColor: "#edf2ec",
     alignItems: "center",
     justifyContent: "center",
   },
-  podiumRank: { fontSize: 25, fontWeight: "700", color: colors.primary },
+  podiumRank: { fontSize: 25, fontWeight: "700", color: "#14453a" },
   fullLink: {
     textAlign: "right",
     fontSize: 11,
     fontWeight: "600",
-    color: colors.muted,
+    color: "#6b7268",
   },
   myResult: {
     height: 84,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     flexDirection: "row",
   },
   resultCell: {
@@ -564,25 +563,25 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRightWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
   },
   label: { fontSize: 12 },
   cellValue: {
     marginTop: 5,
     fontSize: 20,
     fontWeight: "700",
-    color: colors.primary,
+    color: "#14453a",
   },
   button: {
     height: 52,
     borderRadius: 18,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonText: { fontSize: 15, fontWeight: "700", color: colors.white },
-  secondary: { backgroundColor: colors.line },
-  secondaryText: { fontSize: 15, fontWeight: "700", color: colors.subtle },
+  buttonText: { fontSize: 15, fontWeight: "700", color: "#fff" },
+  secondary: { backgroundColor: "#e7e3d8" },
+  secondaryText: { fontSize: 15, fontWeight: "700", color: "#4a4a4a" },
   groupHeader: {
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -595,8 +594,8 @@ const s = StyleSheet.create({
     height: 43,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -605,16 +604,16 @@ const s = StyleSheet.create({
   detailTitle: { fontSize: 18, fontWeight: "700" },
   dayBadge: {
     borderRadius: 99,
-    backgroundColor: colors.primaryPale,
+    backgroundColor: "#eaf4ec",
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
-  dayText: { fontSize: 11, fontWeight: "700", color: colors.primary },
+  dayText: { fontSize: 11, fontWeight: "700", color: "#14453a" },
   invite: {
     borderRadius: 99,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     paddingHorizontal: 10,
     paddingVertical: 7,
   },
@@ -628,7 +627,7 @@ const s = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 2,
-    backgroundColor: colors.line,
+    backgroundColor: "#e7e3d8",
   },
   memberGrid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   memberCard: {
@@ -636,40 +635,40 @@ const s = StyleSheet.create({
     minHeight: 176,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 12,
   },
   doneBox: {
     height: 110,
     borderRadius: 10,
-    backgroundColor: colors.primaryPale,
+    backgroundColor: "#eaf4ec",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
   },
   waitBox: { height: 80, alignItems: "center", justifyContent: "center" },
-  waitText: { textAlign: "center", fontSize: 13, color: colors.subtle },
+  waitText: { textAlign: "center", fontSize: 13, color: "#4a4a4a" },
   memberName: {
     marginTop: 5,
     textAlign: "center",
     fontSize: 12,
     fontWeight: "700",
   },
-  comment: { marginTop: 6, fontSize: 10, color: colors.subtle },
+  comment: { marginTop: 6, fontSize: 10, color: "#4a4a4a" },
   smallButton: {
     marginTop: 8,
     borderRadius: 99,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     paddingVertical: 8,
     alignItems: "center",
   },
-  smallButtonText: { fontSize: 12, fontWeight: "700", color: colors.white },
+  smallButtonText: { fontSize: 12, fontWeight: "700", color: "#fff" },
   rewardBox: {
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     padding: 16,
     gap: 8,
   },
@@ -677,8 +676,8 @@ const s = StyleSheet.create({
     height: 46,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -687,7 +686,7 @@ const s = StyleSheet.create({
   infoRow: {
     height: 42,
     borderBottomWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -695,8 +694,8 @@ const s = StyleSheet.create({
   sticky: {
     padding: 16,
     borderTopWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.white,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fff",
   },
   fab: {
     position: "absolute",
@@ -705,7 +704,7 @@ const s = StyleSheet.create({
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -713,7 +712,7 @@ const s = StyleSheet.create({
     textAlign: "center",
     fontSize: 10,
     fontWeight: "700",
-    color: colors.white,
+    color: "#fff",
   },
   dim: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,.45)" },
   sheet: {
@@ -723,7 +722,7 @@ const s = StyleSheet.create({
     bottom: 0,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    backgroundColor: colors.white,
+    backgroundColor: "#fff",
     padding: 24,
     gap: 10,
   },
@@ -731,13 +730,13 @@ const s = StyleSheet.create({
     height: 46,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
     paddingHorizontal: 14,
     justifyContent: "center",
   },
   reasonOn: {
     borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryPale,
+    borderColor: "#14453a",
+    backgroundColor: "#eaf4ec",
   },
 });

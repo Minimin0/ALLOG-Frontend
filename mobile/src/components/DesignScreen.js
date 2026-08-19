@@ -1,9 +1,8 @@
 import { useWindowDimensions, View } from "react-native";
-import { colors } from "../theme";
 
 export default function DesignScreen({
   children,
-  backgroundColor = colors.bg,
+  backgroundColor = "#f7f6f3",
 }) {
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width / 393, height / 852);

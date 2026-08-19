@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
 import { useAppState } from "../../state/AppState";
 import { COACH_IMAGES } from "../../utils/coach";
-import { colors } from "../../theme";
 const items = [
   ["응원형", "따뜻하게 격려해드려요", COACH_IMAGES["응원형"]],
   ["압박형", "긴장감 있게 자극할게요", COACH_IMAGES["압박형"]],
@@ -26,18 +25,50 @@ export default function CoachStyleScreen({ navigation }) {
     >
       <View style={s.grid}>
         {items.map(([name, tone, image]) => (
-          <Pressable
+          <CoachCard
             key={name}
+            name={name}
+            tone={tone}
+            image={image}
+            active={selected === name}
             onPress={() => setSelected(name)}
-            style={[s.card, selected === name && s.active]}
-          >
-            <Image source={image} style={s.coachImage} resizeMode="contain" />
-            <Text style={s.name}>{name}</Text>
-            <Text style={s.tone}>{tone}</Text>
-          </Pressable>
+          />
         ))}
       </View>
     </OnboardingShell>
+  );
+}
+function CoachCard({ name, tone, image, active, onPress }) {
+  const imgScale = useRef(new Animated.Value(1)).current;
+  // 선택되는 순간에만 캐릭터가 한 번 살짝 커졌다 돌아옴.
+  useEffect(() => {
+    if (active) {
+      Animated.sequence([
+        Animated.timing(imgScale, {
+          toValue: 1.18,
+          duration: 130,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(imgScale, {
+          toValue: 1,
+          duration: 170,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [active]);
+  return (
+    <Pressable onPress={onPress} style={[s.card, active && s.active]}>
+      <Animated.Image
+        source={image}
+        style={[s.coachImage, { transform: [{ scale: imgScale }] }]}
+        resizeMode="contain"
+      />
+      <Text style={s.name}>{name}</Text>
+      <Text style={s.tone}>{tone}</Text>
+    </Pressable>
   );
 }
 const s = StyleSheet.create({
@@ -45,20 +76,19 @@ const s = StyleSheet.create({
   card: {
     width: "48%",
     height: 160,
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
     padding: 12,
   },
   active: {
-    borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryPale,
+    borderColor: "#14453a",
+    backgroundColor: "#eaf4ec",
   },
   name: { fontSize: 15, fontWeight: "700", marginTop: 8 },
-  tone: { fontSize: 10, fontWeight: "500", color: colors.subtle, marginTop: 4 },
+  tone: { fontSize: 10, fontWeight: "500", color: "#4a4a4a", marginTop: 4 },
   coachImage: { width: 80, height: 80 },
 });

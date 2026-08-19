@@ -1,11 +1,10 @@
-import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
 import Care from "../../../assets/images/SelfCareIcon.svg";
 import Exercise from "../../../assets/images/ExerciseIcon.svg";
 import Meal from "../../../assets/images/MealIcon.svg";
 import Sleep from "../../../assets/images/SleepIcon.svg";
-import { colors } from "../../theme";
 const items = [
   ["수분케어", "충분한 수분 섭취", Care],
   ["운동", "꾸준한 신체 운동", Exercise],
@@ -29,29 +28,77 @@ export default function HabitScreen({ navigation }) {
         {items.map(([name, sub, Icon]) => {
           const active = selected.includes(name);
           return (
-            <Pressable
+            <HabitCard
               key={name}
+              name={name}
+              sub={sub}
+              Icon={Icon}
+              active={active}
               onPress={() => toggle(name)}
-              style={[s.card, active && s.active]}
-            >
-              <Icon width={24} height={24} />
-              <Text style={s.name}>{name}</Text>
-              <Text style={s.sub}>{sub}</Text>
-            </Pressable>
+            />
           );
         })}
       </View>
     </OnboardingShell>
   );
 }
+function HabitCard({ name, sub, Icon, active, onPress }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const iconScale = useRef(new Animated.Value(1)).current;
+  const animate = (toValue) => {
+    Animated.spring(scale, {
+      toValue,
+      speed: 32,
+      bounciness: toValue === 1 ? 5 : 0,
+      useNativeDriver: true,
+    }).start();
+  };
+  // 선택되는 순간에만 아이콘이 한 번 살짝 커졌다 돌아옴.
+  useEffect(() => {
+    if (active) {
+      Animated.sequence([
+        Animated.timing(iconScale, {
+          toValue: 1.22,
+          duration: 120,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(iconScale, {
+          toValue: 1,
+          duration: 160,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [active]);
+  const iconSize = name === "운동" ? 34 : 24;
+  return (
+    <Animated.View style={[s.cardWrap, { transform: [{ scale }] }]}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={() => animate(0.92)}
+        onPressOut={() => animate(1)}
+        style={[s.card, active && s.active]}
+      >
+        <Animated.View style={{ transform: [{ scale: iconScale }] }}>
+          <Icon width={iconSize} height={iconSize} />
+        </Animated.View>
+        <Text style={s.name}>{name}</Text>
+        <Text style={s.sub}>{sub}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
 const s = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
+  cardWrap: { width: "48%" },
   card: {
-    width: "48%",
+    width: "100%",
     minHeight: 98,
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
@@ -59,10 +106,9 @@ const s = StyleSheet.create({
     gap: 4,
   },
   active: {
-    borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryPale,
+    borderColor: "#14453a",
+    backgroundColor: "#eaf4ec",
   },
   name: { fontSize: 15, fontWeight: "700" },
-  sub: { fontSize: 10, fontWeight: "500", color: colors.subtle },
+  sub: { fontSize: 10, fontWeight: "500", color: "#4a4a4a" },
 });

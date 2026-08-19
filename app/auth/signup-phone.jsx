@@ -1,5 +1,5 @@
-import { Redirect } from 'expo-router';
+import MobileScreenRoute from '@/components/MobileScreenRoute';
 
 export default function SignUpPhoneRoute() {
-  return <Redirect href="/auth/signup-account" />;
+  return <MobileScreenRoute screen="SignUpPhone" />;
 }

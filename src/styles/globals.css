@@ -1,0 +1,171 @@
+﻿/* Pretendard Variable (Figma 지정 폰트) — @import는 반드시 파일 최상단 */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+@import "./variables.css";
+@import "./onboarding.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 스크롤바 자리를 항상 예약 → 탭마다 스크롤바 유무가 달라져도 화면이 가로로 밀리지 않음 */
+html {
+  scrollbar-gutter: stable;
+}
+
+:root {
+  font-family:
+    "Pretendard Variable",
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg-app);
+  color: var(--text-primary);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes bounce-once {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-18%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  65% {
+    transform: translateY(-8%);
+  }
+  80% {
+    transform: translateY(0);
+  }
+}
+
+.bounce-once {
+  animation: bounce-once 0.6s ease-in-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:disabled) {
+    transition: transform 0.15s ease;
+  }
+
+  button:not(:disabled):active {
+    transform: scale(0.96);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out both;
+}
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-up {
+  animation: fade-slide-up 0.3s ease-out both;
+}
+
+@keyframes sheet-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-sheet-slide-up {
+  animation: sheet-slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-backdrop-fade-in {
+  animation: backdrop-fade-in 0.2s ease-out both;
+}
+
+.accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.accordion-content.is-open {
+  grid-template-rows: 1fr;
+}
+
+.accordion-content > div {
+  overflow: hidden;
+}

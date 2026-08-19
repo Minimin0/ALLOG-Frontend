@@ -1,5 +1,6 @@
 import {
   Animated,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -16,9 +17,8 @@ import { useAppState } from "../../state/AppState";
 import { getCoachImage } from "../../utils/coach";
 import AnimatedEntrance from "../../components/AnimatedEntrance";
 import CoachMascotButton from "../../components/CoachMascotButton";
-import { colors } from "../../theme";
 export default function HomeNative({ navigation }) {
-  const { coachStyle, points, hearts } = useAppState();
+  const { coachStyle, points, hearts, verifiedToday } = useAppState();
   const isFocused = useIsFocused();
   const gauge = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function HomeNative({ navigation }) {
   return (
     <View style={s.screen}>
       <View style={s.header}>
-        <Text style={s.logo}>ALLOG</Text>
+        <Text className="text-[28px] font-black text-ink">홈</Text>
         <CoachMascotButton
           source={coachImage}
           onPress={() => navigation.navigate("AiCoach")}
@@ -50,13 +50,14 @@ export default function HomeNative({ navigation }) {
             icon={<Heart width={21} height={19} />}
             value={String(hearts)}
             label="보유 하트"
-            note="하트 이벤트 가기 >"
+            note="하트 얻으러 가기 >"
             onPress={() => navigation.navigate("HeartEvent")}
           />
           <Card
             icon={<Reward width={18} height={18} />}
             value={String(points)}
             label="포인트"
+            labelColor="#c08a24"
             note="포인트 혜택 보러가기 >"
             onPress={() => navigation.navigate("Reward")}
           />
@@ -66,10 +67,13 @@ export default function HomeNative({ navigation }) {
             <Text style={s.smallGreen}>오늘의 루틴</Text>
             <Text style={s.routineTitle}>하루 운동 30분</Text>
             <Pressable
-              style={s.verify}
+              disabled={verifiedToday}
+              style={[s.verify, verifiedToday && s.verifyDone]}
               onPress={() => navigation.navigate("Camera")}
             >
-              <Text style={s.verifyText}>인증하러 가기</Text>
+              <Text style={s.verifyText}>
+                {verifiedToday ? "인증 완료" : "인증하러 가기"}
+              </Text>
             </Pressable>
           </View>
           <View style={s.routineBottom}>
@@ -81,17 +85,17 @@ export default function HomeNative({ navigation }) {
         <AnimatedEntrance delay={120}>
           <Pressable
             style={s.stats}
-            onPress={() => navigation.navigate("Group")}
+            onPress={() => navigation.navigate("My")}
           >
             <View style={s.stat}>
               <View style={s.inline}>
                 <Chart width={16} height={16} />
                 <Text style={s.statLabel}>개인 순위</Text>
               </View>
-              <Text>
+              <View style={s.statValueRow}>
                 <Text style={s.statBig}>2</Text>
                 <Text style={s.statLabel}> 위 / 5명</Text>
-              </Text>
+              </View>
             </View>
             <View style={s.vlineTall} />
             <View style={s.stat}>
@@ -99,10 +103,10 @@ export default function HomeNative({ navigation }) {
                 <Fire width={16} height={16} />
                 <Text style={s.statLabel}>연속 성공</Text>
               </View>
-              <Text>
+              <View style={s.statValueRow}>
                 <Text style={s.statBig}>3</Text>
-                <Text style={s.statLabel}>일째</Text>
-              </Text>
+                <Text style={s.daySuffix}> 일째</Text>
+              </View>
             </View>
           </Pressable>
         </AnimatedEntrance>
@@ -123,6 +127,9 @@ export default function HomeNative({ navigation }) {
                 },
               ]}
             />
+            <View style={s.goalMarker}>
+              <Text style={s.goalMarkerText}>▲</Text>
+            </View>
           </View>
           <Text style={s.goal}>개인 목표 70%</Text>
         </AnimatedEntrance>
@@ -130,29 +137,29 @@ export default function HomeNative({ navigation }) {
     </View>
   );
 }
-function Card({ icon, value, label, note, onPress }) {
+function Card({ icon, value, label, labelColor, note, onPress }) {
   return (
     <Pressable style={s.card} onPress={onPress}>
       <View style={s.inline}>
         {icon}
         <Text style={s.value}>{value}</Text>
       </View>
-      <Text style={s.cardLabel}>{label}</Text>
+      <Text style={[s.cardLabel, labelColor && { color: labelColor }]}>
+        {label}
+      </Text>
       <Text style={s.note}>{note}</Text>
     </Pressable>
   );
 }
 const s = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bg },
+  screen: { flex: 1, backgroundColor: "#f7f6f3" },
   header: {
-    height: 76,
     paddingHorizontal: 30,
     paddingTop: 16,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  logo: { fontSize: 28, fontWeight: "700" },
   content: {
     paddingHorizontal: 30,
     paddingTop: 20,
@@ -164,8 +171,8 @@ const s = StyleSheet.create({
     flex: 1,
     borderRadius: 17,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -175,62 +182,80 @@ const s = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     fontWeight: "600",
-    color: colors.heart,
+    color: "#d9573b",
   },
-  note: { marginTop: 4, fontSize: 12, fontWeight: "600", color: colors.muted },
+  note: { marginTop: 4, fontSize: 12, fontWeight: "600", color: "#6b7268" },
   routine: {
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.line,
+    borderColor: "#e7e3d8",
     overflow: "hidden",
   },
-  routineTop: { backgroundColor: colors.primaryTint, padding: 20, alignItems: "center" },
-  smallGreen: { fontSize: 13, fontWeight: "600", color: colors.primary },
+  routineTop: {
+    backgroundColor: "#edf2ec",
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 20,
+    alignItems: "center",
+  },
+  smallGreen: { fontSize: 13, fontWeight: "600", color: "#14453a" },
   routineTitle: { marginTop: 8, fontSize: 20, fontWeight: "700" },
   verify: {
     marginTop: 16,
     width: "100%",
     height: 35,
     borderRadius: 15,
-    backgroundColor: colors.black,
+    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
-  verifyText: { fontSize: 12, fontWeight: "700", color: colors.mintBadge },
+  verifyText: { fontSize: 12, fontWeight: "700", color: "#e5f4e8" },
+  verifyDone: { backgroundColor: "#bababa" },
   routineBottom: {
     height: 42,
-    backgroundColor: colors.surface,
+    backgroundColor: "#fefefe",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
   },
   deadline: { fontSize: 13, fontWeight: "700" },
-  vline: { width: 1, height: 16, backgroundColor: colors.line },
+  vline: { width: 1, height: 16, backgroundColor: "#e7e3d8" },
   stats: {
     height: 81,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     flexDirection: "row",
     alignItems: "center",
   },
   stat: { flex: 1, alignItems: "center", gap: 4 },
+  statValueRow: { flexDirection: "row", alignItems: "baseline" },
   statLabel: { fontSize: 12, fontWeight: "700" },
-  statBig: { fontSize: 25, fontWeight: "700", color: colors.primary },
-  vlineTall: { width: 1, height: 47, backgroundColor: colors.line },
+  statBig: {
+    fontFamily: Platform.OS === "android" ? "sans-serif-black" : "Pretendard",
+    fontSize: 25,
+    fontWeight: "900",
+    color: "#14453a",
+    textShadowColor: "#14453a",
+    textShadowOffset: { width: 0.7, height: 0 },
+    textShadowRadius: 0,
+  },
+  daySuffix: { fontSize: 12, fontWeight: "700" },
+  vlineTall: { width: 1, height: 47, backgroundColor: "#e7e3d8" },
   gaugeCard: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
+    borderColor: "#e7e3d8",
+    backgroundColor: "#fefefe",
     padding: 16,
   },
   between: { flexDirection: "row", justifyContent: "space-between" },
   gaugeLabel: { fontSize: 13, fontWeight: "600" },
-  rate: { fontSize: 20, fontWeight: "900", color: colors.primaryLight },
+  rate: { fontSize: 20, fontWeight: "900", color: "#669884" },
   track: {
+    position: "relative",
     marginTop: 12,
     height: 9,
     borderRadius: 5,
@@ -239,13 +264,24 @@ const s = StyleSheet.create({
   fill: {
     height: 9,
     borderRadius: 5,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: "#669884",
+  },
+  goalMarker: {
+    position: "absolute",
+    top: 13,
+    left: "70%",
+    transform: [{ translateX: -5 }],
+  },
+  goalMarkerText: {
+    fontSize: 10,
+    lineHeight: 10,
+    color: "#c08a24",
   },
   goal: {
     marginTop: 8,
     textAlign: "right",
     fontSize: 11,
     fontWeight: "700",
-    color: colors.reward,
+    color: "#c08a24",
   },
 });
