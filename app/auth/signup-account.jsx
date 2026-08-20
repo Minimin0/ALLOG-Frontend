@@ -18,6 +18,7 @@ export default function SignUpAccountScreen() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const normalizedLoginId = loginId.trim().toLowerCase();
   const match = confirm.length > 0 && password === confirm;
 
   // 계정이 생기면 프로필이 없으므로 GET /users/me는 404 → 온보딩으로 간다.
@@ -41,7 +42,7 @@ export default function SignUpAccountScreen() {
     try {
       const response = status === AuthStatus.ERROR_RETRYABLE && hasSession
         ? await useAuthStore.getState().bootstrap()
-        : await useAuthStore.getState().signUp(loginId, password);
+        : await useAuthStore.getState().signUp(normalizedLoginId, password);
       if (!response.ok && response.errorCode !== 'NOT_FOUND') setError(
         useAuthStore.getState().status === AuthStatus.AUTH_ERROR
           ? authErrorMessage(response)
@@ -55,7 +56,7 @@ export default function SignUpAccountScreen() {
   };
 
   const waiting = busy || status === AuthStatus.LOADING;
-  const validLoginId = /^[a-z0-9_]{4,32}$/.test(loginId);
+  const validLoginId = /^[a-z0-9_]{4,32}$/.test(normalizedLoginId);
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
