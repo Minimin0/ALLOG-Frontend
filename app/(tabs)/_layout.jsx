@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Line, Path, Rect } from 'react-native-svg';
 import { colors } from '@/theme';
 
@@ -51,13 +51,15 @@ function MyTabIcon({ color }) {
 const icons = { group: GroupTabIcon, explore: ExploreTabIcon, reward: RewardTabIcon, my: MyTabIcon };
 
 export default function TabsLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
       <Tabs
         initialRouteName="home"
         screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarStyle: s.bar,
+          tabBarStyle: [s.bar, { height: 80 + insets.bottom, paddingBottom: 10 + insets.bottom }],
           tabBarLabelStyle: s.label,
           tabBarActiveTintColor: TAB_ACTIVE,
           tabBarInactiveTintColor: colors.disabled,

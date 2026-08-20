@@ -27,7 +27,7 @@ function HabitCard({ item, active, onPress }) {
   return (
     <Animated.View style={{ width: '48%', transform: [{ scale }] }}>
       <Pressable onPress={onPress} onPressIn={() => press(0.92)} onPressOut={() => press(1)} className={`min-h-[98px] items-center justify-center gap-1 rounded-[15px] border-2 p-3 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
-        <Animated.View style={{ transform: [{ scale: iconScale }] }}><Icon name={item.icon} size={item.label === '운동' ? 34 : 24} /></Animated.View>
+        <Animated.View style={{ transform: [{ scale: iconScale }] }}><Icon name={item.icon} size={24} /></Animated.View>
         <Text className="text-[15px] font-bold text-ink">{item.label}</Text>
         <Text className="text-[10px] font-medium text-subtle">{item.subtitle}</Text>
       </Pressable>
@@ -47,7 +47,7 @@ export default function HabitsScreen() {
       total={4}
       title="어떤 루틴을 개선하고 싶나요?"
       subtitle="여러 개를 선택할 수 있어요. AI가 맞춤 그룹을 추천해드립니다."
-      onBack={() => router.replace('/onboarding/basic-info')}
+      onBack={() => router.canGoBack() ? router.back() : router.replace('/onboarding/basic-info')}
       onNext={() => {
         patch({ interests: selected });
         router.push('/onboarding/coach-style');

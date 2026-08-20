@@ -42,7 +42,7 @@ export default function CoachStyleScreen() {
       total={4}
       title="어떤 방식으로 응원받고 싶나요?"
       subtitle="선택한 스타일로 AI 코치가 매일 말을 걸어드려요."
-      onBack={() => router.replace('/onboarding/habits')}
+      onBack={() => router.canGoBack() ? router.back() : router.replace('/onboarding/habits')}
       onNext={() => {
         patch({ coachStyle: selected });
         router.push('/onboarding/lifestyle');

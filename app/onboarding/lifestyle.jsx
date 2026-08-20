@@ -37,7 +37,7 @@ export default function LifestyleScreen() {
       total={4}
       title="생활 패턴을 알려주세요"
       subtitle="AI가 최적의 그룹과 루틴 시간을 추천해 드려요."
-      onBack={() => router.replace('/onboarding/coach-style')}
+      onBack={() => router.canGoBack() ? router.back() : router.replace('/onboarding/coach-style')}
       onNext={() => {
         patch(form);
         router.push('/onboarding/complete');
