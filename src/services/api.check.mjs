@@ -9,6 +9,14 @@ assert.equal(source.includes('http://localhost:8080'), false);
 const { ApiError, apiRequest } = await import(
   `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`,
 );
+const aiSource = fs.readFileSync(new URL('./aiApi.js', import.meta.url), 'utf8')
+  .replace('import { apiRequest } from "./api";', 'const apiRequest = (path, options) => ({ path, options });');
+const { fetchAiCoachFollowUp } = await import(
+  `data:text/javascript;base64,${Buffer.from(aiSource).toString('base64')}`,
+);
+const followUp = fetchAiCoachFollowUp(42, 'PACE_CHECK');
+assert.equal(followUp.path, '/api/v1/groups/42/ai-coach/follow-up');
+assert.deepEqual(followUp.options, { method: 'POST', body: { questionId: 'PACE_CHECK' } });
 
 const originalFetch = globalThis.fetch;
 const response = (status, body = null) => ({

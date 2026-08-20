@@ -7,3 +7,11 @@ import { apiRequest } from "./api";
 export function fetchAiCoach(groupId, options) {
   return apiRequest(`/api/v1/groups/${groupId}/ai-coach`, options);
 }
+
+export function fetchAiCoachFollowUp(groupId, questionId, options) {
+  return apiRequest(`/api/v1/groups/${groupId}/ai-coach/follow-up`, {
+    ...options,
+    method: "POST",
+    body: { questionId },
+  });
+}

@@ -7,7 +7,7 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import AiMessageRN from '@/components/ai/AiMessageRN';
 import BottomNavBar from '@/components/nav/BottomNavBar';
 import { ApiError } from '@/services/api';
-import { fetchAiCoach } from '@/services/aiApi';
+import { fetchAiCoach, fetchAiCoachFollowUp } from '@/services/aiApi';
 import { useGroupStore } from '@/stores/groupStore';
 import { colors } from '@/theme';
 
@@ -17,6 +17,7 @@ import { colors } from '@/theme';
 const ACTION_ROUTE = {
   OPEN_CERTIFICATION: '/verify',
   OPEN_GROUP: '/group',
+  OPEN_PROGRESS: '/group',
   OPEN_EXPLORE: '/explore',
 };
 
@@ -28,10 +29,14 @@ export default function AiCoachScreen() {
   const [coach, setCoach] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState(null);
+  const [followUps, setFollowUps] = useState([]);
+  const [pendingQuestionId, setPendingQuestionId] = useState(null);
   const scrollRef = useRef(null);
+  const followUpKeyRef = useRef(0);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setFollowUps([]);
     const store = useGroupStore.getState();
     if (store.myGroups.length === 0) await store.loadMyGroups();
     const groupId = paramGroupId ?? store.currentGroup()?.groupId;
@@ -48,13 +53,34 @@ export default function AiCoachScreen() {
     setLoading(false);
   }, [paramGroupId]);
 
+  const ask = async (question) => {
+    if (pendingQuestionId) return;
+    const store = useGroupStore.getState();
+    const groupId = paramGroupId ?? store.currentGroup()?.groupId;
+    if (!groupId) return;
+
+    const key = ++followUpKeyRef.current;
+    setPendingQuestionId(question.id);
+    setFollowUps((current) => [...current, { key, label: question.label, answer: null, failed: false }]);
+    let response;
+    try {
+      response = await fetchAiCoachFollowUp(groupId, question.id);
+    } catch {
+      response = { ok: false };
+    }
+    setFollowUps((current) => current.map((item) => item.key === key
+      ? { ...item, answer: response.ok ? response.data : null, failed: !response.ok }
+      : item));
+    setPendingQuestionId(null);
+  };
+
   useEffect(() => {
     load();
   }, [load]);
 
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
-  }, [coach]);
+  }, [coach, followUps, pendingQuestionId]);
 
   const actionRoute = coach?.actionType ? ACTION_ROUTE[coach.actionType] : null;
 
@@ -98,6 +124,18 @@ export default function AiCoachScreen() {
                 ) : null}
               </View>
             ) : null}
+            {followUps.map((item) => (
+              <View key={item.key} className="gap-2">
+                <View className="max-w-[80%] self-end rounded-2xl bg-primary px-4 py-3">
+                  <Text className="text-[15px] leading-6 text-white">{item.label}</Text>
+                </View>
+                {item.answer ? <AiMessageRN text={item.answer.message} /> : item.failed ? (
+                  <Text className="px-1 text-[13px] font-semibold text-danger">답변을 가져오지 못했어요.</Text>
+                ) : (
+                  <View className="items-start pl-12"><ActivityIndicator color={colors.spinner} /></View>
+                )}
+              </View>
+            ))}
           </>
         ) : (
           <View className="items-center gap-2 py-10">
@@ -117,13 +155,28 @@ export default function AiCoachScreen() {
 
       {/* 액션 — 문구와 이동 지점 모두 백엔드가 정한다 */}
       <View className="border-t border-line p-3">
+        {coach?.suggestedQuestions?.length ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2 pb-3">
+            {coach.suggestedQuestions.map((question) => (
+              <Pressable
+                key={question.id}
+                disabled={!!pendingQuestionId}
+                onPress={() => ask(question)}
+                className={`flex-row items-center gap-2 rounded-pill border border-line bg-surface px-4 py-2 ${pendingQuestionId ? 'opacity-50' : ''}`}
+              >
+                <Text className="text-[13px] font-semibold text-ink">{question.label}</Text>
+                {pendingQuestionId === question.id ? <ActivityIndicator size="small" color={colors.spinner} /> : null}
+              </Pressable>
+            ))}
+          </ScrollView>
+        ) : null}
         <View className="flex-row gap-2">
           {coach?.actionLabel && actionRoute ? (
             <Pressable onPress={() => router.push(actionRoute)} className="h-11 flex-1 items-center justify-center rounded-pill bg-primary">
               <Text className="text-[15px] font-bold text-white" numberOfLines={1}>{coach.actionLabel}</Text>
             </Pressable>
           ) : null}
-          <Pressable onPress={load} className="h-11 items-center justify-center rounded-pill bg-primary-tint px-5">
+          <Pressable disabled={!!pendingQuestionId} onPress={load} className={`h-11 items-center justify-center rounded-pill bg-primary-tint px-5 ${pendingQuestionId ? 'opacity-50' : ''}`}>
             <Text className="text-[15px] font-medium text-primary">새로고침</Text>
           </Pressable>
         </View>
