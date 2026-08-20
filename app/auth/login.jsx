@@ -24,6 +24,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const normalizedLoginId = loginId.trim().toLowerCase();
 
   // 로그인 성공 후 갈 곳은 GET /users/me 한 번으로 정해진다 (authStore.bootstrap).
   //   READY → 메인 / ONBOARDING(404) → 온보딩. 404는 에러가 아니다.
@@ -47,7 +48,7 @@ export default function LoginScreen() {
     try {
       const response = status === AuthStatus.ERROR_RETRYABLE && hasSession
         ? await useAuthStore.getState().bootstrap()
-        : await useAuthStore.getState().signIn(loginId, password);
+        : await useAuthStore.getState().signIn(normalizedLoginId, password);
       if (!response.ok && response.errorCode !== 'NOT_FOUND') setError(
         useAuthStore.getState().status === AuthStatus.AUTH_ERROR
           ? authErrorMessage(response)
@@ -62,7 +63,7 @@ export default function LoginScreen() {
 
   const waiting = busy || status === AuthStatus.LOADING;
   const canRetryBootstrap = status === AuthStatus.ERROR_RETRYABLE && hasSession;
-  const validLoginId = /^[a-z0-9_]{4,32}$/.test(loginId);
+  const validLoginId = /^[a-z0-9_]{4,32}$/.test(normalizedLoginId);
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">

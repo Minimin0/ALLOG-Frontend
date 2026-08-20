@@ -143,6 +143,9 @@ for (const path of ['../../app/auth/login.jsx', '../../app/auth/signup-account.j
   assert.match(screen, /if \(busy/);
   assert.match(screen, /finally/);
   assert.match(screen, /useAuthStore\.getState\(\)\.status === AuthStatus\.AUTH_ERROR/);
+  assert.match(screen, /const normalizedLoginId = loginId\.trim\(\)\.toLowerCase\(\)/);
+  assert.match(screen, /\^\[a-z0-9_\]\{4,32\}\$\/\.test\(normalizedLoginId\)/);
+  assert.match(screen, /sign(?:In|Up)\(normalizedLoginId, password\)/);
   assert.doesNotMatch(screen, /Firebase|phone|email-address|placeholder="이메일"/i);
 }
 
@@ -154,13 +157,28 @@ const authApiSource = fs.readFileSync(new URL('../services/authApi.js', import.m
     const ApiError = {
       VALIDATION: 'VALIDATION_ERROR', NETWORK: 'NETWORK_ERROR', SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
     };
-    const apiRequest = async () => ({ ok: false });
+    let authRequest;
+    const apiRequest = async (path, options) => {
+      authRequest = { path, options };
+      return { ok: false };
+    };
+    export const __authRequest = () => authRequest;
   `)
   .replace("import { setAccessToken } from './tokenStore';", 'const setAccessToken = async () => {};');
 const authApiModule = await import(`data:text/javascript;base64,${Buffer.from(authApiSource).toString('base64')}`);
+await authApiModule.signIn(' alloguser ', 'password');
+assert.equal(authApiModule.__authRequest().path, '/api/v1/auth/login');
+assert.equal(authApiModule.__authRequest().options.body.loginId, 'alloguser');
+await authApiModule.signUp(' ALLOGUSER ', 'password');
+assert.equal(authApiModule.__authRequest().path, '/api/v1/auth/signup');
+assert.equal(authApiModule.__authRequest().options.body.loginId, 'alloguser');
 assert.equal(
   authApiModule.authErrorMessage({ status: 429, errorCode: 'RATE_LIMITED' }),
   '로그인 시도가 너무 많아요. 잠시 후 다시 시도해 주세요.',
+);
+assert.equal(
+  authApiModule.authErrorMessage({ status: 429, data: { error: { code: 'SIGNUP_RATE_LIMITED' } } }),
+  '회원가입 시도가 너무 많아요. 잠시 후 다시 시도해 주세요.',
 );
 
 const rootLayout = fs.readFileSync(new URL('../../app/_layout.jsx', import.meta.url), 'utf8');
