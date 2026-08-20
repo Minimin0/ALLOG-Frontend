@@ -18,13 +18,15 @@ export async function setAccessToken(token) {
 }
 
 export async function clearAccessToken() {
+  const previousToken = cachedToken;
   cachedToken = null;
-  if (Platform.OS !== 'web') {
-    try {
-      await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-    } catch {
-      // In-memory invalidation must still complete so logout/401 handling stays finite.
-    }
+  if (Platform.OS === 'web') return true;
+  try {
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+    return true;
+  } catch {
+    cachedToken = previousToken;
+    return false;
   }
 }
 

@@ -31,8 +31,13 @@ let source = fs.readFileSync(new URL('./authStore.js', import.meta.url), 'utf8')
   `)
   .replace("import { clearAccessToken, getAccessToken, onUnauthorized } from '../services/tokenStore';", `
     let storedToken = null;
+    let clearSucceeds = true;
     let unauthorizedHandler = () => {};
-    const clearAccessToken = async () => { storedToken = null; };
+    const clearAccessToken = async () => {
+      if (!clearSucceeds) return false;
+      storedToken = null;
+      return true;
+    };
     const getAccessToken = async () => storedToken;
     const onUnauthorized = (handler) => { unauthorizedHandler = handler; };
   `)
@@ -42,6 +47,7 @@ let source = fs.readFileSync(new URL('./authStore.js', import.meta.url), 'utf8')
   `);
 source += `
   export const __setToken = (token) => { storedToken = token; };
+  export const __setClearSucceeds = (value) => { clearSucceeds = value; };
   export const __setProfileLoader = (loader) => { profileLoader = loader; };
   export const __setAuthResponder = (responder) => { authResponder = responder; authCalls = 0; };
   export const __authCalls = () => authCalls;
@@ -50,7 +56,7 @@ source += `
 
 const module = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const {
-  AuthStatus, __authCalls, __setAuthResponder, __setProfileLoader, __setToken,
+  AuthStatus, __authCalls, __setAuthResponder, __setClearSucceeds, __setProfileLoader, __setToken,
   __unauthorized, useAuthStore,
 } = module;
 
@@ -111,12 +117,24 @@ assert.equal(useAuthStore.getState().status, AuthStatus.AUTH_ERROR);
 __unauthorized();
 assert.equal(useAuthStore.getState().status, AuthStatus.SIGNED_OUT);
 
+useAuthStore.setState({ status: AuthStatus.READY, hasSession: true });
+__setClearSucceeds(false);
+assert.equal(await useAuthStore.getState().signOut(), false);
+assert.equal(useAuthStore.getState().status, AuthStatus.READY);
+__setClearSucceeds(true);
+assert.equal(await useAuthStore.getState().signOut(), true);
+assert.equal(useAuthStore.getState().status, AuthStatus.SIGNED_OUT);
+
 for (const path of ['../../app/auth/login.jsx', '../../app/auth/signup-account.jsx']) {
   const screen = fs.readFileSync(new URL(path, import.meta.url), 'utf8');
   assert.match(screen, /if \(busy/);
   assert.match(screen, /finally/);
   assert.doesNotMatch(screen, /Firebase|phone|email-address|placeholder="이메일"/i);
 }
+
+const rootLayout = fs.readFileSync(new URL('../../app/_layout.jsx', import.meta.url), 'utf8');
+assert.match(rootLayout, /authStatus === AuthStatus\.SIGNED_OUT/);
+assert.match(rootLayout, /router\.replace\('\/'\)/);
 
 const tokenStore = fs.readFileSync(new URL('../services/tokenStore.js', import.meta.url), 'utf8');
 assert.match(tokenStore, /expo-secure-store/);
@@ -149,7 +167,10 @@ tokenModule.__failWrite();
 await assert.rejects(tokenModule.setAccessToken('unsaved-token'));
 assert.equal(await tokenModule.getAccessToken(), 'stable-token');
 tokenModule.__failDelete();
-await tokenModule.clearAccessToken();
-assert.equal(await tokenModule.getAccessToken(), null);
+assert.equal(await tokenModule.clearAccessToken(), false);
+assert.equal(await tokenModule.getAccessToken(), 'stable-token');
+
+const myScreen = fs.readFileSync(new URL('../../app/(tabs)/my.jsx', import.meta.url), 'utf8');
+assert.match(myScreen, /if \(!await useAuthStore\.getState\(\)\.signOut\(\)\)/);
 
 console.log('finite local auth states, SecureStore, and duplicate-submit guard OK');

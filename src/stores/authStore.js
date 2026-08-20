@@ -101,9 +101,10 @@ export const useAuthStore = create((set, get) => ({
   markReady: () => set({ status: AuthStatus.READY, hasSession: true, errorCode: null }),
 
   signOut: async () => {
-    await clearAccessToken();
+    if (!await clearAccessToken()) return false;
     useUserStore.getState().reset();
     set({ status: AuthStatus.SIGNED_OUT, hasSession: false, errorCode: null });
+    return true;
   },
 }));
 
