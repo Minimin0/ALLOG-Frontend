@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { View, Text, Pressable, ScrollView, RefreshControl } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
@@ -68,7 +67,7 @@ export default function HomeScreen() {
   const deadline = formatDeadline(personal?.certificationDeadline);
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-bg">
+    <View className="flex-1 bg-bg">
       {/* 헤더 */}
       <View className="flex-row items-center justify-between px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">홈</Text>
@@ -163,6 +162,6 @@ export default function HomeScreen() {
           <Text className="mt-2 text-right text-[11px] font-bold text-reward">완주 목표 {completedTowardGoal} / {required}회</Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

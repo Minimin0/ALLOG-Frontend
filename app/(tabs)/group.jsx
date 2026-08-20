@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
@@ -115,15 +114,15 @@ export default function GroupScreen() {
 
   if ((loading || listLoading) && !detail) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 items-center justify-center bg-bg">
+      <View className="flex-1 items-center justify-center bg-bg">
         <ActivityIndicator size="large" color={colors.spinner} />
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!detail) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 items-center justify-center gap-4 bg-bg px-8">
+      <View className="flex-1 items-center justify-center gap-4 bg-bg px-8">
         <Text className="text-center text-[17px] font-bold text-ink">
           {detailError === ApiError.NETWORK ? '서버에 연결할 수 없어요' : '참여 중인 그룹이 없어요'}
         </Text>
@@ -133,7 +132,7 @@ export default function GroupScreen() {
         <Pressable onPress={() => (detailError ? load() : router.push('/explore'))} className="w-full items-center rounded-[27.5px] bg-primary py-4">
           <Text className="text-[15px] font-bold text-white">{detailError ? '다시 시도' : '그룹 탐색하기'}</Text>
         </Pressable>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -194,7 +193,7 @@ export default function GroupScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-bg">
+    <View className="flex-1 bg-bg">
       {/* 헤더 */}
       <View className="flex-row items-center justify-between px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">내 그룹</Text>
@@ -373,6 +372,6 @@ export default function GroupScreen() {
           </Animated.View>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

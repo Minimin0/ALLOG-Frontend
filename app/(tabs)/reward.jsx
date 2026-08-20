@@ -1,5 +1,4 @@
 import { View, Text, Pressable, ScrollView, Linking } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Icon from '@/components/common/Icon';
 import { useUserStore } from '@/stores/userStore';
@@ -15,7 +14,7 @@ export default function RewardScreen() {
   const points = useUserStore((s) => s.stats?.rewardPoints ?? 0);
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-bg">
+    <View className="flex-1 bg-bg">
       <View className="px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">리워드</Text>
       </View>
@@ -61,6 +60,6 @@ export default function RewardScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
