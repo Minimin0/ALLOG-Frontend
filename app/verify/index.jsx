@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import Svg, { Rect, Circle, Path } from 'react-native-svg';
+import Svg, { Rect, Path } from 'react-native-svg';
 
 import BottomNavBar from '@/components/nav/BottomNavBar';
 import { ApiError } from '@/services/api';
@@ -11,13 +11,12 @@ import { useGroupStore } from '@/stores/groupStore';
 import { useVerificationStore } from '@/stores/verificationStore.js';
 import { colors } from '@/theme';
 
-// 사진 아이콘 (이모지는 기기별 폰트 미지원 시 깨져 보일 수 있어 벡터로).
-function PhotoIcon({ size = 24, color = colors.ink }) {
+// 영상 아이콘 (이모지는 기기별 폰트 미지원 시 깨져 보일 수 있어 벡터로).
+function VideoIcon({ size = 24, color = colors.ink }) {
   return (
     <Svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-      <Rect x={3} y={4} width={18} height={16} rx={2.5} />
-      <Circle cx={8.5} cy={9} r={1.4} />
-      <Path d="M4 17l4.5-4.5 3.5 3.5 3-3 5 5" />
+      <Rect x={2} y={5} width={15} height={14} rx={2.5} />
+      <Path d="M17 9l5-3v12l-5-3z" />
     </Svg>
   );
 }
@@ -105,20 +104,20 @@ export default function VerifyStartScreen() {
 
         <Pressable onPress={goCamera} disabled={loading || !!error} className={`mt-5 h-[320px] items-center justify-center gap-3 rounded-card bg-line ${loading || error ? 'opacity-50' : ''}`}>
           <View className="h-16 w-16 items-center justify-center rounded-full bg-surface">
-            <PhotoIcon size={28} color={colors.ink} />
+            <VideoIcon size={28} color={colors.ink} />
           </View>
-          <Text className="text-[15px] font-medium text-ink">3초 영상 촬영</Text>
+          <Text className="text-[15px] font-medium text-ink">동영상 촬영</Text>
         </Pressable>
 
         <View className="mt-5 rounded-card bg-primary-tint p-5">
           <Text className="mb-3 text-[17px] font-bold text-ink">인증 가이드</Text>
           <View className="gap-2">
-            <Text className="text-[15px] text-muted">• 오늘 촬영한 3초 영상으로 인증을 준비합니다.</Text>
+            <Text className="text-[15px] text-muted">• 오늘 촬영한 영상만 인증 가능합니다.</Text>
             <Text className="text-[15px] text-muted">• 얼굴은 가려도 괜찮습니다.</Text>
             <Text className="text-[15px] text-muted">• 루틴을 실천한 모습이 잘 보이도록 촬영해주세요.</Text>
           </View>
           <View className="mt-3 flex-row items-center gap-2 rounded-item bg-surface px-3 py-2">
-            <PhotoIcon size={16} color={colors.primary} />
+            <VideoIcon size={16} color={colors.primary} />
             <Text className="flex-1 text-[11px] text-muted">
               영상은 기기에만 임시 보관되고, 인증에는 <Text className="font-bold text-primary">사진 한 장만 제출</Text>돼요.
             </Text>

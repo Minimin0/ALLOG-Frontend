@@ -38,7 +38,8 @@ export default function ExploreScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [loadError, setLoadError] = useState(null);
 
-  const [category, setCategory] = useState('전체');
+  const [appliedCategories, setAppliedCategories] = useState([]);
+  const [draftCategories, setDraftCategories] = useState([]);
   const [query, setQuery] = useState('');
   const [joinTarget, setJoinTarget] = useState(null);
   const [joining, setJoining] = useState(false);
@@ -71,18 +72,17 @@ export default function ExploreScreen() {
     setRefreshing(false);
   };
 
-  const hasActiveFilter = appliedDuration !== '전체';
-  const selectedKey = categories.find((c) => c.label === category)?.key ?? null;
+  const hasActiveFilter = appliedCategories.length > 0 || appliedDuration !== '전체';
 
   const filteredGroups = useMemo(
     () =>
       items.filter((g) => {
-        if (selectedKey && routineKeys[g.routine?.routineDefinitionId] !== selectedKey) return false;
+        if (appliedCategories.length > 0 && !appliedCategories.includes(routineKeys[g.routine?.routineDefinitionId])) return false;
         if (appliedDuration !== '전체' && `${durationDays(g.schedule)}일` !== appliedDuration) return false;
         if (query.trim() && !`${g.name} ${g.routine?.name ?? ''}`.includes(query.trim())) return false;
         return true;
       }),
-    [items, selectedKey, routineKeys, appliedDuration, query],
+    [items, appliedCategories, routineKeys, appliedDuration, query],
   );
 
   // "마감 임박" = 남은 자리가 가장 적은 그룹. 추천 API는 아직 없으므로 실제 값으로만 뽑는다.
@@ -156,6 +156,7 @@ export default function ExploreScreen() {
           </View>
           <Pressable
             onPress={() => {
+              setDraftCategories(appliedCategories);
               setDurationFilter(appliedDuration);
               setFilterOpen(true);
             }}
@@ -169,11 +170,15 @@ export default function ExploreScreen() {
         {/* 카테고리 칩 */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-1.5">
           {categories.map((item) => {
-            const active = category === item.label;
+            const active = item.key ? appliedCategories.includes(item.key) : appliedCategories.length === 0;
             return (
               <Pressable
                 key={item.label}
-                onPress={() => setCategory(item.label)}
+                onPress={() => item.key
+                  ? setAppliedCategories((current) => current.includes(item.key)
+                    ? current.filter((key) => key !== item.key)
+                    : [...current, item.key])
+                  : setAppliedCategories([])}
                 className={`rounded-[10px] border px-4 py-2.5 ${active ? 'border-primary bg-primary' : 'border-line bg-surface'}`}
               >
                 <Text className={`text-[13px] font-semibold ${active ? 'text-surface' : 'text-muted'}`}>{item.label}</Text>
@@ -290,11 +295,29 @@ export default function ExploreScreen() {
         </Pressable>
       </Modal>
 
-      {/* 필터 모달 — 모집 상태는 백엔드가 RECRUITING으로 고정하므로 기간만 남긴다 */}
+      {/* 모집 상태는 백엔드가 RECRUITING으로 고정하므로 카테고리 + 기간만 제공한다. */}
       <Modal visible={filterOpen} transparent animationType="slide" onRequestClose={() => setFilterOpen(false)}>
         <Pressable className="flex-1 justify-end bg-black/40" onPress={() => setFilterOpen(false)}>
           <Pressable className="rounded-t-[24px] bg-surface p-6" onPress={() => {}}>
             <Text className="text-[17px] font-bold text-ink">필터</Text>
+
+            <Text className="mt-4 mb-2 text-[13px] font-bold text-muted">카테고리</Text>
+            <View className="flex-row flex-wrap gap-2">
+              {categories.filter((item) => item.key).map((item) => {
+                const active = draftCategories.includes(item.key);
+                return (
+                  <Pressable
+                    key={item.key}
+                    onPress={() => setDraftCategories((current) => current.includes(item.key)
+                      ? current.filter((key) => key !== item.key)
+                      : [...current, item.key])}
+                    className={`rounded-[10px] border px-4 py-2 ${active ? 'border-primary bg-primary' : 'border-line bg-surface'}`}
+                  >
+                    <Text className={`text-[13px] font-semibold ${active ? 'text-surface' : 'text-muted'}`}>{item.label}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
 
             <Text className="mt-4 mb-2 text-[13px] font-bold text-muted">기간</Text>
             <View className="flex-row flex-wrap gap-2">
@@ -310,11 +333,11 @@ export default function ExploreScreen() {
             </View>
 
             <View className="mt-6 flex-row gap-3">
-              <Pressable onPress={() => setDurationFilter('전체')} className="flex-1 items-center justify-center rounded-[14px] bg-surface-alt py-3">
+              <Pressable onPress={() => { setDraftCategories([]); setDurationFilter('전체'); }} className="flex-1 items-center justify-center rounded-[14px] bg-surface-alt py-3">
                 <Text className="text-[14px] font-bold text-ink">초기화</Text>
               </Pressable>
               <Pressable
-                onPress={() => { setAppliedDuration(durationFilter); setFilterOpen(false); }}
+                onPress={() => { setAppliedCategories(draftCategories); setAppliedDuration(durationFilter); setFilterOpen(false); }}
                 className="flex-1 items-center justify-center rounded-[14px] bg-primary py-3"
               >
                 <Text className="text-[14px] font-bold text-white">적용</Text>

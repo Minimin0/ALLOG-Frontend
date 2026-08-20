@@ -49,7 +49,8 @@ export function toIsoBirthDate(value) {
   ) {
     return null;
   }
-  if (at > Date.now()) return null;
+  const now = new Date();
+  if (year * 10000 + month * 100 + day > now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate()) return null;
   return m[1] + "-" + m[2] + "-" + m[3];
 }
 

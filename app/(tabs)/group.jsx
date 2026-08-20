@@ -1,7 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
+import * as Clipboard from 'expo-clipboard';
+import * as Linking from 'expo-linking';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
@@ -62,6 +64,8 @@ export default function GroupScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [inviteCode, setInviteCode] = useState(null);
   const [leaving, setLeaving] = useState(false);
+  const cheerTimerRef = useRef(null);
+  const toastTimerRef = useRef(null);
 
   const myGroups = useGroupStore((s) => s.myGroups);
   const detail = useGroupStore((s) => s.detail);
@@ -84,6 +88,11 @@ export default function GroupScreen() {
     }, [load]),
   );
 
+  useEffect(() => () => {
+    clearTimeout(cheerTimerRef.current);
+    clearTimeout(toastTimerRef.current);
+  }, []);
+
   const refresh = async () => {
     setRefreshing(true);
     await load();
@@ -91,15 +100,17 @@ export default function GroupScreen() {
   };
 
   const toast = (msg) => {
+    clearTimeout(toastTimerRef.current);
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(''), 2000);
+    toastTimerRef.current = setTimeout(() => setToastMsg(''), 2000);
   };
 
   const cheer = () => {
     setCheerCount((c) => (c % 3) + 1);
     setCheerKey((k) => k + 1);
     setCheerOn(true);
-    setTimeout(() => setCheerOn(false), 1900);
+    clearTimeout(cheerTimerRef.current);
+    cheerTimerRef.current = setTimeout(() => setCheerOn(false), 1900);
   };
 
   if ((loading || listLoading) && !detail) {
@@ -139,11 +150,29 @@ export default function GroupScreen() {
   const successRate = groupProgress ? Math.round((groupProgress.groupCompletionRate ?? 0) * 100) : 0;
   const statusLabel = group.status === 'ACTIVE' && day ? `DAY ${day}` : (GROUP_STATUS_LABELS[group.status] ?? group.status);
 
-  const showInvite = async () => {
-    const response = await issueInviteCode(group.groupId);
-    if (response.ok) setInviteCode(response.data?.code ?? null);
-    else if (response.errorCode === ApiError.CONFLICT) toast('공개 그룹은 초대 코드가 필요 없어요.');
-    else toast('초대 코드를 만들지 못했어요.');
+  const copyShare = async () => {
+    try {
+      if (group.visibility === 'PUBLIC') {
+        await Clipboard.setStringAsync(Linking.createURL(`explore/group/${group.groupId}`));
+        toast('복사했어요!');
+        return;
+      }
+
+      let code = inviteCode;
+      if (!code) {
+        const response = await issueInviteCode(group.groupId);
+        if (!response.ok || !response.data?.code) {
+          toast('초대 코드를 만들지 못했어요.');
+          return;
+        }
+        code = response.data.code;
+        setInviteCode(code);
+      }
+      await Clipboard.setStringAsync(code);
+      toast('복사했어요!');
+    } catch {
+      toast('복사하지 못했어요.');
+    }
   };
 
   // 방장은 취소, 멤버는 탈퇴. 하트 환급은 백엔드가 자동으로 한다 — 프론트가 계산하지 않는다.
@@ -280,10 +309,12 @@ export default function GroupScreen() {
               <InfoRow label="목표 인증" value={`${group.requiredCompletionCount}회`} />
               <InfoRow label="내 역할" value={membership.myRole === 'OWNER' ? '방장' : '멤버'} />
 
-              {group.visibility === 'PRIVATE' && isOwner && (
-                <Pressable onPress={showInvite} className="flex-row items-center justify-between border-b border-line py-3">
-                  <Text className="text-[15px] text-muted">초대 코드</Text>
-                  <Text className="text-[15px] font-semibold text-ink">{inviteCode ?? '코드 받기 ›'}</Text>
+              {(group.visibility === 'PUBLIC' || isOwner) && (
+                <Pressable onPress={copyShare} className="flex-row items-center justify-between border-b border-line py-3">
+                  <Text className="text-[15px] text-muted">{group.visibility === 'PUBLIC' ? '그룹 링크' : '초대 코드'}</Text>
+                  <Text className="text-[15px] font-semibold text-ink">
+                    {group.visibility === 'PUBLIC' ? '링크 복사하기 ›' : inviteCode ? '코드 복사하기 ›' : '코드 받기 ›'}
+                  </Text>
                 </Pressable>
               )}
             </View>
