@@ -41,11 +41,7 @@ export default function BasicInfoScreen() {
   // 서버는 birthDate를 LocalDate로 파싱한다. 형식이 어긋난 값을 들고 다음 단계로
   // 넘어가면 온보딩을 다 끝낸 뒤에야 400을 보게 되므로 여기서 막는다.
   const birthIso = toIsoBirthDate(form.birth);
-  const heightNumber = Number(form.height);
-  const weightNumber = Number(form.weight);
-  const heightError = !!form.height && (heightNumber < 120 || heightNumber > 250);
-  const weightError = !!form.weight && (weightNumber < 30 || weightNumber > 120);
-  const isValid = form.nickname.trim() && birthIso && form.height && form.weight && !heightError && !weightError;
+  const isValid = form.nickname.trim() && birthIso && form.height && form.weight;
 
   const returnToStart = async () => {
     const signedOut = await useAuthStore.getState().signOut();
@@ -119,19 +115,17 @@ export default function BasicInfoScreen() {
         <View className="flex-row gap-3">
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">키</Text>
-            <View className={`h-11 flex-row items-center rounded-[15px] border bg-white px-3.5 ${heightError ? 'border-heart' : 'border-gray-border'}`}>
-              <TextInput value={form.height} onChangeText={(v) => set('height', v.replace(/\D/g, '').slice(0, 3))} placeholder="165" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="h-full flex-1 text-center text-[13px] font-semibold text-ink" />
+            <View className="h-11 flex-row items-center rounded-[15px] border border-gray-border bg-white px-3.5">
+              <TextInput value={form.height} onChangeText={(v) => set('height', v)} placeholder="165" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="h-full flex-1 text-center text-[13px] font-semibold text-ink" />
               <Text className="w-6 text-[13px] font-bold text-ink">cm</Text>
             </View>
-            {heightError ? <Text className="mt-1.5 text-[11px] font-semibold text-heart">정확히 입력해주세요</Text> : null}
           </View>
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">몸무게</Text>
-            <View className={`h-11 flex-row items-center rounded-[15px] border bg-white px-3.5 ${weightError ? 'border-heart' : 'border-gray-border'}`}>
-              <TextInput value={form.weight} onChangeText={(v) => set('weight', v.replace(/\D/g, '').slice(0, 3))} placeholder="50" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="h-full flex-1 text-center text-[13px] font-semibold text-ink" />
+            <View className="h-11 flex-row items-center rounded-[15px] border border-gray-border bg-white px-3.5">
+              <TextInput value={form.weight} onChangeText={(v) => set('weight', v)} placeholder="50" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="h-full flex-1 text-center text-[13px] font-semibold text-ink" />
               <Text className="w-6 text-[13px] font-bold text-ink">kg</Text>
             </View>
-            {weightError ? <Text className="mt-1.5 text-[11px] font-semibold text-heart">정확히 입력해주세요</Text> : null}
           </View>
         </View>
       </View>
