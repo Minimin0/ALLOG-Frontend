@@ -61,7 +61,7 @@ export default function AiCoachScreen() {
 
     const key = ++followUpKeyRef.current;
     setPendingQuestionId(question.id);
-    setFollowUps((current) => [...current, { key, label: question.label, answer: null, failed: false }]);
+    setFollowUps((current) => [...current, { key, questionId: question.id, label: question.label, answer: null, failed: false }]);
     let response;
     try {
       response = await fetchAiCoachFollowUp(groupId, question.id);
@@ -130,7 +130,12 @@ export default function AiCoachScreen() {
                   <Text className="text-[15px] leading-6 text-white">{item.label}</Text>
                 </View>
                 {item.answer ? <AiMessageRN text={item.answer.message} /> : item.failed ? (
-                  <Text className="px-1 text-[13px] font-semibold text-danger">답변을 가져오지 못했어요.</Text>
+                  <View className="ml-11 max-w-[80%] rounded-2xl border border-line bg-surface px-4 py-3">
+                    <Text className="text-[13px] font-semibold text-danger">답변을 가져오지 못했어요.</Text>
+                    <Pressable onPress={() => ask({ id: item.questionId, label: item.label })} className="mt-2 self-start rounded-pill bg-primary-tint px-3 py-1.5">
+                      <Text className="text-[12px] font-bold text-primary">다시 시도</Text>
+                    </Pressable>
+                  </View>
                 ) : (
                   <View className="items-start pl-12"><ActivityIndicator color={colors.spinner} /></View>
                 )}
@@ -172,7 +177,7 @@ export default function AiCoachScreen() {
         ) : null}
         <View className="flex-row gap-2">
           {coach?.actionLabel && actionRoute ? (
-            <Pressable onPress={() => router.push(actionRoute)} className="h-11 flex-1 items-center justify-center rounded-pill bg-primary">
+            <Pressable onPress={() => router.push(actionRoute)} className="h-11 flex-1 items-center justify-center rounded-pill bg-black">
               <Text className="text-[15px] font-bold text-white" numberOfLines={1}>{coach.actionLabel}</Text>
             </Pressable>
           ) : null}

@@ -24,6 +24,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
   const normalizedLoginId = loginId.trim().toLowerCase();
 
   // 로그인 성공 후 갈 곳은 GET /users/me 한 번으로 정해진다 (authStore.bootstrap).
@@ -77,7 +78,9 @@ export default function LoginScreen() {
           placeholderTextColor={colors.black}
           autoCapitalize="none"
           autoCorrect={false}
-          className="mb-4 h-[50px] rounded-[30px] border border-line bg-white px-5 text-[15px] text-ink"
+          onFocus={() => setFocusedField('loginId')}
+          onBlur={() => setFocusedField(null)}
+          className={`mb-4 h-[50px] rounded-[30px] border bg-white px-5 text-[15px] text-ink ${error ? 'border-danger' : focusedField === 'loginId' ? 'border-primary' : 'border-line'}`}
         />
         <TextInput
           value={password}
@@ -86,7 +89,9 @@ export default function LoginScreen() {
           placeholderTextColor={colors.black}
           secureTextEntry
           onSubmitEditing={submit}
-          className="mb-2 h-[50px] rounded-[30px] border border-line bg-white px-5 text-[15px] text-ink"
+          onFocus={() => setFocusedField('password')}
+          onBlur={() => setFocusedField(null)}
+          className={`mb-2 h-[50px] rounded-[30px] border bg-white px-5 text-[15px] text-ink ${error ? 'border-danger' : focusedField === 'password' ? 'border-primary' : 'border-line'}`}
         />
 
         {error ? <Text className="mb-2 text-center text-[12px] font-semibold text-danger">{error}</Text> : null}
@@ -94,9 +99,14 @@ export default function LoginScreen() {
         <Pressable
           onPress={submit}
           disabled={waiting || (!canRetryBootstrap && (!validLoginId || password.length < 8))}
-          className={`mt-3 h-[50px] items-center justify-center rounded-[20px] bg-primary ${waiting || (!canRetryBootstrap && (!validLoginId || password.length < 8)) ? 'opacity-50' : ''}`}
+          className={`mt-3 h-[50px] items-center justify-center rounded-[20px] bg-black ${waiting || (!canRetryBootstrap && (!validLoginId || password.length < 8)) ? 'opacity-50' : ''}`}
         >
-          {waiting ? <ActivityIndicator color={colors.white} /> : <Text className="text-[18px] font-bold text-white">{canRetryBootstrap ? '다시 연결하기' : '로그인'}</Text>}
+          {waiting ? (
+            <View className="flex-row items-center gap-2">
+              <ActivityIndicator size="small" color={colors.white} />
+              <Text className="text-[15px] font-bold text-white">로그인 중...</Text>
+            </View>
+          ) : <Text className="text-[18px] font-bold text-white">{canRetryBootstrap ? '다시 연결하기' : '로그인'}</Text>}
         </Pressable>
 
         <View className="mt-5 flex-row justify-center">

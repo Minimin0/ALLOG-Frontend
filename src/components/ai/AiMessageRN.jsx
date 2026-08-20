@@ -125,10 +125,10 @@ export default function AiMessageRN({ text, viz }) {
   const wide = viz?.type === 'columns';
   return (
     <View className="flex-row items-start gap-2">
-      <View className="h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary-tint" style={{ borderWidth: 1, borderColor: colors.line }}>
+      <View className="h-9 w-9 items-center justify-center">
         <Mascot size={30} />
       </View>
-      <View className={`rounded-2xl bg-primary-tint px-4 py-3 ${wide ? 'flex-1' : 'max-w-[80%]'}`}>
+      <View className={`rounded-2xl border border-line bg-surface px-4 py-3 ${wide ? 'flex-1' : 'max-w-[80%]'}`}>
         <Text className="text-[15px] leading-6 text-ink">{text}</Text>
         {viz ? <CoachViz viz={viz} /> : null}
       </View>

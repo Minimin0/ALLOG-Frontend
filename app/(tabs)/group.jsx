@@ -129,7 +129,7 @@ export default function GroupScreen() {
         <Text className="text-center text-[13px] text-muted">
           {detailError === ApiError.NETWORK ? '잠시 후 다시 시도해주세요.' : '탐색에서 마음에 드는 그룹을 찾아보세요.'}
         </Text>
-        <Pressable onPress={() => (detailError ? load() : router.push('/explore'))} className="w-full items-center rounded-[27.5px] bg-primary py-4">
+        <Pressable onPress={() => (detailError ? load() : router.push('/explore'))} className="w-full items-center rounded-[27.5px] bg-black py-4">
           <Text className="text-[15px] font-bold text-white">{detailError ? '다시 시도' : '그룹 탐색하기'}</Text>
         </Pressable>
       </View>
@@ -276,22 +276,25 @@ export default function GroupScreen() {
               )}
             </View>
 
-            <Pressable onPress={cheer} className="items-center rounded-item border border-line bg-surface py-3">
-              <Text className="text-[13px] font-bold text-ink">그룹원 응원하기</Text>
+            <Pressable onPress={cheer} className="self-center items-center rounded-pill bg-black px-6 py-3">
+              <Text className="text-[13px] font-bold text-white">그룹원 응원하기</Text>
             </Pressable>
-            <Text className="text-center text-[11px] text-muted">
-              멤버별 인증 피드는 아직 준비 중이에요.
-            </Text>
+            <View className="mt-1 items-center rounded-[18px] border border-line bg-surface px-5 py-8">
+              <Text className="text-[24px]">◌</Text>
+              <Text className="mt-3 text-[14px] font-bold text-ink">멤버별 인증 피드는 준비 중이에요</Text>
+              <Text className="mt-1 text-center text-[11px] text-muted">실제 멤버별 인증 기록이 제공되면 이곳에 표시돼요.</Text>
+            </View>
           </View>
         )}
 
         {/* 랭킹 탭 — 랭킹 API가 없다. 가짜 순위를 만들지 않는다. */}
         {tab === 'ranking' && (
-          <View className="items-center gap-2 px-5 py-16">
-            <Text className="text-[15px] font-bold text-ink">랭킹은 아직 준비 중이에요</Text>
-            <Text className="text-center text-[13px] text-muted">
-              그룹 공동 진행률은 정보 탭에서 확인할 수 있어요.
-            </Text>
+          <View className="px-5 py-8">
+            <View className="items-center rounded-[18px] border border-line bg-surface px-5 py-10">
+              <Text className="text-[28px]">♜</Text>
+              <Text className="mt-3 text-[15px] font-bold text-ink">랭킹은 아직 준비 중이에요</Text>
+              <Text className="mt-2 text-center text-[13px] text-muted">그룹 공동 진행률은 정보 탭에서 확인할 수 있어요.</Text>
+            </View>
           </View>
         )}
 

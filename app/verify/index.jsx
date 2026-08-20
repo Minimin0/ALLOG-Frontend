@@ -127,7 +127,7 @@ export default function VerifyStartScreen() {
         <Pressable
           onPress={goCamera}
           disabled={loading || !!error || alreadyDone}
-          className={`mt-5 h-[52px] items-center justify-center rounded-pill bg-primary ${loading || error || alreadyDone ? 'opacity-50' : ''}`}
+          className={`mt-5 h-[52px] items-center justify-center rounded-pill bg-black ${loading || error || alreadyDone ? 'opacity-50' : ''}`}
         >
           <Text className="text-[15px] font-bold text-white">{alreadyDone ? '오늘 인증 완료' : '인증하기'}</Text>
         </Pressable>

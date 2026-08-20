@@ -93,7 +93,7 @@ export default function GroupDetailScreen() {
         <Text className="text-center text-[17px] font-bold text-ink">
           {loadError === ApiError.NETWORK ? '서버에 연결할 수 없어요' : '그룹을 찾을 수 없어요'}
         </Text>
-        <Pressable onPress={() => router.back()} className="w-full items-center rounded-[27.5px] bg-primary py-4">
+        <Pressable onPress={() => router.back()} className="w-full items-center rounded-[27.5px] bg-black py-4">
           <Text className="text-[15px] font-bold text-white">돌아가기</Text>
         </Pressable>
       </SafeAreaView>
@@ -158,7 +158,7 @@ export default function GroupDetailScreen() {
         {isMember ? (
           <Pressable
             onPress={() => router.replace({ pathname: '/group', params: { groupId: String(groupId) } })}
-            className="items-center justify-center rounded-[27.5px] bg-primary py-4"
+            className="items-center justify-center rounded-[27.5px] bg-black py-4"
           >
             <Text className="text-[15px] font-bold text-white">내 그룹에서 보기</Text>
           </Pressable>
@@ -166,7 +166,7 @@ export default function GroupDetailScreen() {
           <Pressable
             onPress={join}
             disabled={joining || full}
-            className={`items-center justify-center rounded-[27.5px] bg-primary py-4 ${joining || full ? 'opacity-50' : ''}`}
+            className={`items-center justify-center rounded-[27.5px] bg-black py-4 ${joining || full ? 'opacity-50' : ''}`}
           >
             {joining
               ? <ActivityIndicator color={colors.white} />

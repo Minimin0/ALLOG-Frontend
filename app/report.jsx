@@ -25,7 +25,7 @@ export default function ReportScreen() {
         <View className="h-16 w-16 items-center justify-center rounded-full bg-success"><Text className="text-3xl text-white">✓</Text></View>
         <Text className="text-[22px] font-bold text-ink">접수됐어요</Text>
         <Text className="text-[15px] text-muted">검토 후 결과를 알려드릴게요.</Text>
-        <Pressable onPress={() => router.back()} className="mt-2 rounded-pill bg-primary px-6 py-3"><Text className="font-bold text-white">돌아가기</Text></Pressable>
+        <Pressable onPress={() => router.back()} className="mt-2 rounded-pill bg-black px-6 py-3"><Text className="font-bold text-white">돌아가기</Text></Pressable>
       </SafeAreaView>
     );
   }
@@ -68,7 +68,7 @@ export default function ReportScreen() {
       </ScrollView>
 
       <View className="px-5 pb-4">
-        <Pressable onPress={() => canSubmit && setSubmitted(true)} disabled={!canSubmit} className={`h-[52px] items-center justify-center rounded-pill ${canSubmit ? 'bg-primary' : 'bg-disabled'}`}>
+        <Pressable onPress={() => canSubmit && setSubmitted(true)} disabled={!canSubmit} className={`h-[52px] items-center justify-center rounded-pill ${canSubmit ? 'bg-black' : 'bg-disabled'}`}>
           <Text className="text-[15px] font-bold text-white">제출하기</Text>
         </Pressable>
       </View>

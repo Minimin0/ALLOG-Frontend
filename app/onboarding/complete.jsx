@@ -64,7 +64,7 @@ export default function OnboardingCompleteScreen() {
       <SafeAreaView edges={['top', 'bottom']} className="flex-1 items-center justify-center gap-5 bg-bg px-8">
         <Text className="text-center text-[17px] font-bold text-ink">프로필 저장에 실패했어요</Text>
         <Text className="text-center text-[13px] font-medium text-muted">{message}</Text>
-        <Pressable onPress={() => router.replace('/onboarding/basic-info')} className="w-full items-center justify-center rounded-[27.5px] bg-primary py-4">
+        <Pressable onPress={() => router.replace('/onboarding/basic-info')} className="w-full items-center justify-center rounded-[27.5px] bg-black py-4">
           <Text className="text-[15px] font-bold text-white">다시 입력하기</Text>
         </Pressable>
       </SafeAreaView>
@@ -104,7 +104,7 @@ export default function OnboardingCompleteScreen() {
       </View>
 
       <View className="pb-7">
-        <Pressable onPress={() => router.replace('/home')} className="w-full items-center justify-center rounded-[27.5px] bg-primary py-[18px]">
+        <Pressable onPress={() => router.replace('/home')} className="w-full items-center justify-center rounded-[27.5px] bg-black py-[18px]">
           <Text className="text-[15px] font-bold text-white">홈으로 가기</Text>
         </Pressable>
       </View>

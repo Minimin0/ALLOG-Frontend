@@ -18,8 +18,8 @@ function Header({ title }) {
   const router = useRouter();
   return (
     <View className="flex-row items-center gap-3 px-5 py-3">
-      <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-full border border-line bg-surface">
-        <Text className="text-[20px] text-ink">‹</Text>
+      <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-black">
+        <Text className="text-[20px] text-white">‹</Text>
       </Pressable>
       <Text className="text-[19px] font-bold text-ink">{title}</Text>
     </View>

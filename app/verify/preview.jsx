@@ -70,8 +70,8 @@ export default function PreviewScreen() {
           <Pressable onPress={submit} disabled={submitting} className="h-[48px] items-center justify-center rounded-pill bg-ink" style={{ opacity: submitting ? 0.7 : 1 }}>
             <Text className="text-[15px] font-bold text-white">{submitting ? '인증을 준비하고 있어요' : '인증하기'}</Text>
           </Pressable>
-          <Pressable onPress={retake} disabled={submitting} className="h-[48px] items-center justify-center rounded-pill bg-disabled" style={{ opacity: submitting ? 0.7 : 1 }}>
-            <Text className="text-[15px] font-bold text-white">다시 촬영하기</Text>
+          <Pressable onPress={retake} disabled={submitting} className="h-[48px] items-center justify-center rounded-pill border border-line bg-surface" style={{ opacity: submitting ? 0.7 : 1 }}>
+            <Text className="text-[15px] font-bold text-ink">다시 촬영하기</Text>
           </Pressable>
         </View>
       </ScrollView>

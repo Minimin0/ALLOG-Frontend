@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,8 +21,7 @@ export default function BottomNavBar({ active }) {
 
   return (
     <View
-      className="flex-row items-end justify-around border-t border-line bg-surface px-2 pt-2"
-      style={{ paddingBottom: insets.bottom + 8 }}
+      style={[styles.bar, { height: 80 + insets.bottom, paddingBottom: 10 + insets.bottom }]}
     >
       {ITEMS.map(({ to, label, Icon, center }) => {
         const isActive = active === to;
@@ -30,9 +29,9 @@ export default function BottomNavBar({ active }) {
 
         if (center) {
           return (
-            <Pressable key={to} onPress={onPress} className="-mt-8" accessibilityLabel="홈">
-              <View className="h-14 w-14 items-center justify-center rounded-full bg-[#c7c3bb]">
-                <Icon color={colors.white} size={24} />
+            <Pressable key={to} onPress={onPress} style={styles.item} accessibilityLabel="홈">
+              <View style={styles.home}>
+                <Icon color={colors.white} size={26} />
               </View>
             </Pressable>
           );
@@ -40,12 +39,49 @@ export default function BottomNavBar({ active }) {
 
         const color = isActive ? colors.ink : colors.disabled;
         return (
-          <Pressable key={to} onPress={onPress} className="flex-1 items-center gap-1 py-1">
-            <Icon color={color} size={24} />
-            <Text style={{ color, fontSize: 10, fontWeight: '700' }}>{label}</Text>
+          <Pressable key={to} onPress={onPress} style={styles.item}>
+            <Icon color={color} size={routeIconSize(to)} />
+            <Text style={[styles.label, { color }]}>{label}</Text>
           </Pressable>
         );
       })}
     </View>
   );
 }
+
+function routeIconSize(to) {
+  if (to === '/group') return 30;
+  if (to === '/explore' || to === '/my') return 27;
+  return 29;
+}
+
+const styles = StyleSheet.create({
+  bar: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingTop: 10,
+    backgroundColor: colors.white,
+    elevation: 12,
+  },
+  item: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  label: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  home: {
+    width: 62,
+    height: 62,
+    marginTop: -30,
+    borderRadius: 31,
+    borderWidth: 8,
+    borderColor: colors.white,
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

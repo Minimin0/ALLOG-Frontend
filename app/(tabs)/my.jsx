@@ -3,6 +3,7 @@ import { View, Text, Pressable, ScrollView, Modal } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
+import AnimatedEntrance from '@/components/common/AnimatedEntrance';
 import { useAuthStore } from '@/stores/authStore';
 import { useUserStore } from '@/stores/userStore';
 
@@ -57,9 +58,9 @@ export default function MyScreen() {
 
       <ScrollView className="flex-1 px-[30px]" contentContainerClassName="gap-5 pb-8 pt-4">
         {/* 프로필 카드 */}
-        <View className="rounded-[26px] border border-line bg-surface p-5">
+        <AnimatedEntrance style={{ borderRadius: 26, borderWidth: 1, borderColor: '#e7e3d8', backgroundColor: '#fefefe', padding: 20 }}>
           <View className="flex-row items-center gap-4">
-            <View className="h-[56px] w-[56px] items-center justify-center rounded-full bg-primary">
+            <View className="h-[56px] w-[56px] items-center justify-center rounded-full bg-black">
               <Text className="text-[20px] font-bold text-white">{profile?.nickname?.[0] ?? 'A'}</Text>
             </View>
             <View className="flex-1">
@@ -89,11 +90,11 @@ export default function MyScreen() {
               <View className="mt-1 flex-row items-center gap-1"><Icon name="check" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.successfulRoutines ?? 0}회</Text></View>
             </View>
           </View>
-        </View>
+        </AnimatedEntrance>
 
         {/* 관심 루틴 (온보딩에서 고른 값) */}
         {interests.length > 0 && (
-          <View>
+          <AnimatedEntrance delay={70}>
             <Text className="mb-2.5 text-[13px] font-bold text-muted">관심 루틴</Text>
             <View className="flex-row justify-between rounded-[26px] border border-line bg-surface p-4">
               {interests.map((item) => (
@@ -105,28 +106,30 @@ export default function MyScreen() {
                 </View>
               ))}
             </View>
-          </View>
+          </AnimatedEntrance>
         )}
 
         {/* 메뉴 */}
-        <View className="overflow-hidden rounded-[20px] border border-line bg-surface">
+        <AnimatedEntrance delay={140} style={{ overflow: 'hidden', borderRadius: 20, borderWidth: 1, borderColor: '#e7e3d8', backgroundColor: '#fefefe' }}>
           {menuItems.map((item, i) => (
             <Pressable
               key={item.label}
               onPress={() => router.push(item.path)}
-              className={`flex-row items-center gap-3 px-5 py-4 ${i > 0 ? 'border-t border-line' : ''}`}
+              className={`h-[50px] flex-row items-center gap-3 px-5 ${i > 0 ? 'border-t border-line' : ''}`}
             >
               <Icon name={item.icon} size={18} />
               <Text className="flex-1 text-[13px] font-medium text-ink">{item.label}</Text>
               <Text className="text-[14px] text-disabled">›</Text>
             </Pressable>
           ))}
-        </View>
+        </AnimatedEntrance>
 
         {/* 로그아웃 */}
-        <Pressable onPress={() => { setLogoutError(''); setLogoutOpen(true); }} className="h-[50px] items-center justify-center rounded-[13px] border border-heart bg-surface">
-          <Text className="text-[15px] font-bold text-heart">로그아웃</Text>
-        </Pressable>
+        <AnimatedEntrance delay={210}>
+          <Pressable onPress={() => { setLogoutError(''); setLogoutOpen(true); }} className="h-[50px] items-center justify-center rounded-[13px] border border-heart bg-surface">
+            <Text className="text-[15px] font-bold text-heart">로그아웃</Text>
+          </Pressable>
+        </AnimatedEntrance>
       </ScrollView>
 
       {/* 로그아웃 확인 바텀시트 — 반투명 배경 + 아래에서 위로 */}

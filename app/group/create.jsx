@@ -7,14 +7,15 @@ import { ApiError } from '@/services/api';
 import { createGroup, fetchRoutineCatalog } from '@/services/groupApi';
 import { useUserStore } from '@/stores/userStore';
 import { colors } from '@/theme';
+import Icon from '@/components/common/Icon';
 
 // 그룹 만들기. 생성자는 OWNER로 참가하며 하트 1개를 쓴다 — 차감은 전부 백엔드가 한다.
 // 그룹 도메인 enum은 UPPERCASE다 (PUBLIC/PRIVATE, DAILY).
 const categories = [
-  { label: '수분케어', key: 'HYDRATION' },
-  { label: '식사', key: 'MEAL' },
-  { label: '운동', key: 'EXERCISE' },
-  { label: '수면', key: 'SLEEP' },
+  { label: '수분케어', key: 'HYDRATION', icon: 'selfcare' },
+  { label: '식사', key: 'MEAL', icon: 'meal' },
+  { label: '운동', key: 'EXERCISE', icon: 'exercise' },
+  { label: '수면', key: 'SLEEP', icon: 'sleep' },
 ];
 const durations = ['7일', '14일', '30일'];
 
@@ -33,6 +34,7 @@ export default function CreateGroupScreen() {
   const [visibility, setVisibility] = useState('public');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [nameFocused, setNameFocused] = useState(false);
 
   // routineDefinitionId는 환경마다 다르므로 하드코딩하지 않고 GET /api/v1/routines에서 받는다.
   useEffect(() => {
@@ -97,9 +99,9 @@ export default function CreateGroupScreen() {
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
-      <View className="flex-row items-center gap-3 px-5 py-3">
-        <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-full border border-line bg-surface">
-          <Text className="text-xl text-ink">‹</Text>
+      <View className="relative h-14 flex-row items-center justify-center px-5">
+        <Pressable onPress={() => router.back()} className="absolute left-5 h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-black">
+          <Text className="text-xl text-white">‹</Text>
         </Pressable>
         <Text className="text-[19px] font-bold text-ink">그룹 만들기</Text>
       </View>
@@ -107,11 +109,12 @@ export default function CreateGroupScreen() {
       <ScrollView className="flex-1 px-5" contentContainerClassName="gap-6 pb-8">
         <View>
           <Text className="mb-2 text-[15px] font-bold text-ink">카테고리 선택</Text>
-          <View className="flex-row flex-wrap gap-2">
+          <View className="flex-row flex-wrap gap-3">
             {categories.map((c) => {
               const active = category === c.label;
               return (
-                <Pressable key={c.label} onPress={() => setCategory(c.label)} className={`rounded-full border px-4 py-2 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
+                <Pressable key={c.label} onPress={() => setCategory(c.label)} className={`w-[47%] items-center rounded-[18px] border px-4 py-5 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
+                  <View className="mb-2 h-11 w-11 items-center justify-center rounded-full bg-beige-icon"><Icon name={c.icon} size={23} /></View>
                   <Text className={`text-[13px] font-semibold ${active ? 'text-ink' : 'text-subtle'}`}>{c.label}</Text>
                 </Pressable>
               );
@@ -121,8 +124,8 @@ export default function CreateGroupScreen() {
 
         <View>
           <Text className="mb-2 text-[15px] font-bold text-ink">그룹명</Text>
-          <TextInput value={name} onChangeText={setName} placeholder="매일 물 2L 마시기" placeholderTextColor={colors.disabled}
-            className="rounded-[15px] border border-line bg-surface px-4 py-4 text-[14px] text-ink" />
+          <TextInput value={name} onChangeText={setName} onFocus={() => setNameFocused(true)} onBlur={() => setNameFocused(false)} placeholder="매일 물 2L 마시기" placeholderTextColor={colors.disabled}
+            className={`rounded-[15px] border bg-surface px-4 py-4 text-[14px] text-ink ${error ? 'border-danger' : nameFocused ? 'border-primary' : 'border-line'}`} />
         </View>
 
         <View>
@@ -179,7 +182,7 @@ export default function CreateGroupScreen() {
         <Pressable
           onPress={submit}
           disabled={!canSubmit}
-          className={`items-center justify-center rounded-[27.5px] py-4 ${canSubmit ? 'bg-primary' : 'bg-primary opacity-40'}`}
+          className={`items-center justify-center rounded-[27.5px] bg-black py-4 ${canSubmit ? '' : 'opacity-40'}`}
         >
           {busy ? <ActivityIndicator color={colors.white} /> : <Text className="text-[15px] font-bold text-white">그룹 만들기 (♥ 1개 사용)</Text>}
         </Pressable>

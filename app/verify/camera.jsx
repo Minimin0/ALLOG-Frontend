@@ -4,6 +4,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { useRouter } from 'expo-router';
+import Svg, { Circle } from 'react-native-svg';
 
 import { useVerificationStore } from '@/stores/verificationStore.js';
 
@@ -100,13 +101,23 @@ export default function CameraScreen() {
       </View>
 
       <View className="items-center py-8">
-        <Pressable
-          onPress={recordVerification}
-          disabled={busy || !cameraReady}
-          className="h-16 w-16 rounded-full bg-white"
-          style={{ opacity: busy || !cameraReady ? 0.7 : 1 }}
-        />
-        <Text className="mt-3 text-center text-[13px] text-white/70">{captureError ?? (busy ? '영상에서 인증 사진을 만들고 있어요' : '3초 동안 루틴을 촬영해요')}</Text>
+        <View className="h-[82px] w-[82px] items-center justify-center">
+          {busy && (
+            <Svg width={82} height={82} style={{ position: 'absolute', transform: [{ rotate: '-90deg' }] }}>
+              <Circle cx={41} cy={41} r={37} fill="none" stroke="rgba(255,255,255,.25)" strokeWidth={4} />
+              <Circle cx={41} cy={41} r={37} fill="none" stroke="#ffffff" strokeWidth={4} strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 37}`} strokeDashoffset={(2 * Math.PI * 37) * (1 - progress / RECORDING_SECONDS)} />
+            </Svg>
+          )}
+          <Pressable
+            onPress={recordVerification}
+            disabled={busy || !cameraReady}
+            className="h-[68px] w-[68px] items-center justify-center rounded-full border-[5px] border-white"
+            style={{ opacity: !cameraReady ? 0.7 : 1 }}
+          >
+            <View className={`h-[50px] w-[50px] ${busy ? 'rounded-[14px]' : 'rounded-full'} bg-white`} />
+          </Pressable>
+        </View>
+        <Text className="mt-3 text-center text-[13px] text-white/80">{captureError ?? (busy ? `3초 촬영 중 · ${Math.min(progress + 1, RECORDING_SECONDS)}초` : '3초 동안 루틴을 촬영해요')}</Text>
       </View>
     </View>
   );

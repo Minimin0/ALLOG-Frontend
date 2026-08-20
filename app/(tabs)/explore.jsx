@@ -4,6 +4,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
+import AnimatedEntrance from '@/components/common/AnimatedEntrance';
 import { ApiError } from '@/services/api';
 import { fetchPublicGroups, fetchRoutineCatalog, joinGroup } from '@/services/groupApi';
 import { useUserStore } from '@/stores/userStore';
@@ -159,7 +160,7 @@ export default function ExploreScreen() {
               setDurationFilter(appliedDuration);
               setFilterOpen(true);
             }}
-            className="h-[45px] w-[45px] items-center justify-center rounded-[14px] bg-primary"
+            className="h-[45px] w-[45px] items-center justify-center rounded-[14px] bg-black"
           >
             <Icon name="filter" size={18} />
             {hasActiveFilter && <View className="absolute right-[6px] top-[6px] h-[8px] w-[8px] rounded-full bg-heart" />}
@@ -188,7 +189,7 @@ export default function ExploreScreen() {
 
         {/* 마감 임박 */}
         {almostFull && (
-          <View className="rounded-[18px] border border-line bg-primary-tint p-4">
+          <AnimatedEntrance delay={70} style={{ borderRadius: 18, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.primaryTint, padding: 16 }}>
             <Pressable onPress={() => router.push(`/explore/group/${almostFull.groupId}`)}>
               <Text className="text-[11px]">
                 <Text className="font-bold text-ink">마감 임박 </Text>
@@ -205,11 +206,11 @@ export default function ExploreScreen() {
             </Pressable>
             <Pressable
               onPress={() => { setJoinError(''); setJoinTarget(almostFull); }}
-              className="mt-3 self-end rounded-[12px] bg-primary px-3.5 py-2"
+              className="mt-3 self-end rounded-[12px] bg-black px-3.5 py-2"
             >
               <Text className="text-[12px] font-bold text-surface">참가</Text>
             </Pressable>
-          </View>
+          </AnimatedEntrance>
         )}
 
         {/* 모집중인 그룹 */}
@@ -239,7 +240,7 @@ export default function ExploreScreen() {
               {filteredGroups.map((group) => {
                 const full = group.currentMembers >= group.maxMembers;
                 return (
-                  <View key={group.groupId} className="flex-row items-center justify-between rounded-[16px] border border-line bg-surface p-4">
+                  <AnimatedEntrance key={group.groupId} delay={Math.min(280, 120 + filteredGroups.indexOf(group) * 70)} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 16, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface, padding: 16 }}>
                     <Pressable className="flex-1" onPress={() => router.push(`/explore/group/${group.groupId}`)}>
                       <Text className={`text-[15px] font-bold ${full ? 'text-disabled' : 'text-ink'}`}>{group.name}</Text>
                       <Text className={`mt-1.5 text-[12px] ${full ? 'text-disabled' : 'text-muted'}`}>
@@ -253,7 +254,7 @@ export default function ExploreScreen() {
                     >
                       <Text className={`text-[12px] font-bold ${full ? 'text-heart' : 'text-[#1f3d2b]'}`}>{full ? '마감' : '참가'}</Text>
                     </Pressable>
-                  </View>
+                  </AnimatedEntrance>
                 );
               })}
             </View>
@@ -265,7 +266,7 @@ export default function ExploreScreen() {
           <Text className="text-[13px] font-medium text-muted">하고싶은 루틴이 없다면?</Text>
           <Pressable
             onPress={() => router.push('/group/create')}
-            className="mt-3 h-[50px] w-full items-center justify-center rounded-[27.5px] bg-primary"
+            className="mt-3 h-[50px] w-full items-center justify-center rounded-[27.5px] bg-black"
           >
             <Text className="text-[15px] font-bold text-white">직접 그룹 만들기</Text>
           </Pressable>
@@ -286,7 +287,7 @@ export default function ExploreScreen() {
               <Pressable disabled={joining} onPress={() => setJoinTarget(null)} className="flex-1 items-center justify-center rounded-[14px] bg-surface-alt py-3">
                 <Text className="text-[14px] font-bold text-ink">취소</Text>
               </Pressable>
-              <Pressable disabled={joining} onPress={confirmJoin} className={`flex-1 items-center justify-center rounded-[14px] bg-primary py-3 ${joining ? 'opacity-60' : ''}`}>
+              <Pressable disabled={joining} onPress={confirmJoin} className={`flex-1 items-center justify-center rounded-[14px] bg-black py-3 ${joining ? 'opacity-60' : ''}`}>
                 {joining ? <ActivityIndicator color={colors.white} /> : <Text className="text-[14px] font-bold text-white">참가하기</Text>}
               </Pressable>
             </View>
@@ -337,7 +338,7 @@ export default function ExploreScreen() {
               </Pressable>
               <Pressable
                 onPress={() => { setAppliedCategories(draftCategories); setAppliedDuration(durationFilter); setFilterOpen(false); }}
-                className="flex-1 items-center justify-center rounded-[14px] bg-primary py-3"
+                className="flex-1 items-center justify-center rounded-[14px] bg-black py-3"
               >
                 <Text className="text-[14px] font-bold text-white">적용</Text>
               </Pressable>

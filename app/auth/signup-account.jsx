@@ -61,7 +61,7 @@ export default function SignUpAccountScreen() {
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
       <View className="flex-1 px-6 pt-16">
-        <Pressable onPress={() => router.back()} className="mb-4 h-8 w-8 items-center justify-center">
+        <Pressable onPress={() => router.replace('/auth/login')} className="mb-4 h-8 w-8 items-center justify-center">
           <Text className="text-2xl text-ink">‹</Text>
         </Pressable>
 

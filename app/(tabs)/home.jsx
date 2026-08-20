@@ -5,6 +5,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import CoachMascotButton from '@/components/common/CoachMascotButton';
 import Icon from '@/components/common/Icon';
 import AnimatedGauge from '@/components/common/AnimatedGauge';
+import AnimatedEntrance from '@/components/common/AnimatedEntrance';
 import { useGroupStore } from '@/stores/groupStore';
 import { useUserStore } from '@/stores/userStore';
 import { colors } from '@/theme';
@@ -80,7 +81,7 @@ export default function HomeScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
       >
         {/* 하트 / 포인트 — 잔액과 혜택 상태는 모두 서버 응답만 표시한다. */}
-        <View className="flex-row gap-3">
+        <AnimatedEntrance style={{ flexDirection: 'row', gap: 12 }}>
           <View className="flex-1 rounded-[17px] border border-line bg-surface px-4 py-3">
             <View className="flex-row items-center gap-2">
               <Icon name="heart" size={18} />
@@ -100,16 +101,16 @@ export default function HomeScreen() {
             <Text className="mt-2 text-[12px] font-semibold text-reward">포인트</Text>
             <Text className="mt-1 text-[12px] font-semibold text-muted">포인트 혜택 보러가기 ›</Text>
           </Pressable>
-        </View>
+        </AnimatedEntrance>
 
         {/* 오늘의 루틴 */}
-        <View className="overflow-hidden rounded-[20px] border border-line">
+        <AnimatedEntrance delay={70} style={{ overflow: 'hidden', borderRadius: 20, borderWidth: 1, borderColor: colors.line }}>
           <View className="items-center bg-primary-tint px-5 pb-5 pt-4">
             <Text className="text-[13px] font-semibold text-primary">오늘의 루틴</Text>
             <Text className="mt-2 text-[20px] font-bold text-ink">{current?.groupName ?? '아직 참여 중인 그룹이 없어요'}</Text>
             <Pressable
               onPress={() => router.push(current ? { pathname: '/verify', params: { groupId: String(current.groupId) } } : '/explore')}
-              className="mt-4 h-[44px] w-full items-center justify-center rounded-[15px] bg-primary"
+              className="mt-4 h-[35px] w-[142px] items-center justify-center rounded-[15px] bg-black"
             >
               <Text className="text-[13px] font-bold text-mint-badge">{current ? '인증하러 가기' : '그룹 찾아보기'}</Text>
             </Pressable>
@@ -121,10 +122,10 @@ export default function HomeScreen() {
               <Text className="text-[13px] font-semibold text-ink">{remainingText(personal.certificationDeadline)}</Text>
             </View>
           )}
-        </View>
+        </AnimatedEntrance>
 
         {/* 완료 루틴 / 연속 성공 — 순위 API는 아직 없으므로 실제 값만 보여준다 */}
-        <View className="h-[81px] flex-row items-center rounded-[15px] border border-line bg-surface">
+        <AnimatedEntrance delay={140} style={{ height: 81, flexDirection: 'row', alignItems: 'center', borderRadius: 15, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface }}>
           <Pressable onPress={() => router.push('/my')} className="flex-1 items-center gap-1">
             <View className="flex-row items-center gap-1.5">
               <Icon name="chart" size={16} />
@@ -148,10 +149,10 @@ export default function HomeScreen() {
               <Text className="text-[12px] font-bold text-ink">일째</Text>
             </Text>
           </Pressable>
-        </View>
+        </AnimatedEntrance>
 
         {/* 서버가 정한 완주 목표(requiredCompletionCount) 대비 진행률 */}
-        <View className="rounded-[14px] border border-line bg-surface p-4">
+        <AnimatedEntrance delay={210} style={{ borderRadius: 14, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.surface, padding: 16 }}>
           <View className="flex-row items-center justify-between">
             <Text className="text-[13px] font-semibold text-ink">완주 목표 진행률</Text>
             <Text className="text-[20px] font-bold text-primary-light">{completionProgress}%</Text>
@@ -160,7 +161,7 @@ export default function HomeScreen() {
             <AnimatedGauge percent={completionProgress} color={colors.primaryLight} height={9} />
           </View>
           <Text className="mt-2 text-right text-[11px] font-bold text-reward">완주 목표 {completedTowardGoal} / {required}회</Text>
-        </View>
+        </AnimatedEntrance>
       </ScrollView>
     </View>
   );

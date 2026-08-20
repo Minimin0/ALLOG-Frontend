@@ -16,8 +16,8 @@ function Header({ title }) {
   const router = useRouter();
   return (
     <View className="flex-row items-center gap-3 px-5 py-3">
-      <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-full border border-line bg-surface">
-        <Text className="text-[20px] text-ink">‹</Text>
+      <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-black">
+        <Text className="text-[20px] text-white">‹</Text>
       </Pressable>
       <Text className="text-[19px] font-bold text-ink">{title}</Text>
     </View>
@@ -36,7 +36,7 @@ export default function Support() {
           <Text className="mt-1 text-[11px] font-medium leading-5 text-muted">평일 10:00 ~ 18:00 (주말·공휴일 휴무){'\n'}보통 영업일 기준 1~2일 이내 답변드려요.</Text>
           <Pressable
             onPress={() => Linking.openURL('mailto:support@allog.app')}
-            className="mt-3 h-[44px] items-center justify-center rounded-[13px] bg-primary"
+            className="mt-3 h-[44px] items-center justify-center rounded-[13px] bg-black"
           >
             <Text className="text-[13px] font-bold text-white">support@allog.app 로 문의하기</Text>
           </Pressable>

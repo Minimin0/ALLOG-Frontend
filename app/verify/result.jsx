@@ -119,8 +119,8 @@ export default function ResultScreen() {
 
         {state === 'failed' && (
           <>
-            <View className="h-20 w-20 items-center justify-center rounded-full bg-danger">
-              <Text className="text-4xl text-white">!</Text>
+            <View className="h-20 w-20 items-center justify-center rounded-full bg-reward-tint">
+              <Text className="text-4xl text-reward">!</Text>
             </View>
             <Text className="text-[22px] font-bold text-ink">인증을 제출하지 못했어요</Text>
             <Text className="text-center text-[15px] text-muted">{failureMessage(outcome?.errorCode)}</Text>
@@ -132,19 +132,19 @@ export default function ResultScreen() {
         {state === 'failed' ? (
           <>
             {canRetryUpload && (
-              <Pressable onPress={() => router.replace('/verify/loading')} className="h-[52px] items-center justify-center rounded-pill bg-primary">
+              <Pressable onPress={() => router.replace('/verify/loading')} className="h-[52px] items-center justify-center rounded-pill bg-black">
                 <Text className="text-[15px] font-bold text-white">다시 시도하기</Text>
               </Pressable>
             )}
-            <Pressable onPress={retake} className="h-[52px] items-center justify-center rounded-pill bg-disabled">
-              <Text className="text-[15px] font-bold text-white">다시 촬영하기</Text>
+            <Pressable onPress={retake} className="h-[52px] items-center justify-center rounded-pill border border-line bg-surface">
+              <Text className="text-[15px] font-bold text-ink">다시 촬영하기</Text>
             </Pressable>
             <Pressable onPress={goToGroup} className="items-center py-2">
               <Text className="text-[13px] font-semibold text-muted">내 그룹으로</Text>
             </Pressable>
           </>
         ) : (
-          <Pressable onPress={goToGroup} className="h-[52px] items-center justify-center rounded-pill bg-primary">
+          <Pressable onPress={goToGroup} className="h-[52px] items-center justify-center rounded-pill bg-black">
             <Text className="text-[15px] font-bold text-white">내 그룹으로</Text>
           </Pressable>
         )}
