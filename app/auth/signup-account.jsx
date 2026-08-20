@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import { authErrorMessage, signUp } from '@/services/authApi';
-import { AuthStatus, useAuthStore } from '@/stores/authStore';
+import { AuthStatus, authBootstrapErrorMessage, useAuthStore } from '@/stores/authStore';
 import { colors } from '@/theme';
 
 // 계정 만들기. Firebase 이메일/비밀번호 계정을 실제로 생성한다.
@@ -13,6 +13,8 @@ import { colors } from '@/theme';
 export default function SignUpAccountScreen() {
   const router = useRouter();
   const status = useAuthStore((s) => s.status);
+  const firebaseUser = useAuthStore((s) => s.firebaseUser);
+  const errorCode = useAuthStore((s) => s.errorCode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -22,18 +24,31 @@ export default function SignUpAccountScreen() {
 
   // 계정이 생기면 프로필이 없으므로 GET /users/me는 404 → 온보딩으로 간다.
   useEffect(() => {
-    if (status === AuthStatus.ONBOARDING) router.replace('/onboarding/basic-info');
-    else if (status === AuthStatus.READY) router.replace('/home');
-  }, [status, router]);
+    if (status === AuthStatus.ONBOARDING) {
+      setBusy(false);
+      router.replace('/onboarding/basic-info');
+    } else if (status === AuthStatus.READY) {
+      setBusy(false);
+      router.replace('/home');
+    } else if (status === AuthStatus.ERROR) {
+      setBusy(false);
+      setError(authBootstrapErrorMessage(errorCode));
+    }
+  }, [status, errorCode, router]);
 
   const submit = async () => {
     if (busy || !match) return;
     setError('');
     setBusy(true);
     try {
-      await signUp(email, password);
+      if (status === AuthStatus.ERROR && firebaseUser) {
+        await useAuthStore.getState().bootstrap();
+      } else {
+        await signUp(email, password);
+      }
     } catch (e) {
       setError(authErrorMessage(e));
+    } finally {
       setBusy(false);
     }
   };

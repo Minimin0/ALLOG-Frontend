@@ -19,6 +19,16 @@ export const AuthStatus = {
   ERROR: "error", // 401 / 네트워크 등
 };
 
+export function authBootstrapErrorMessage(errorCode) {
+  if (errorCode === ApiError.UNAUTHORIZED) {
+    return "로그인 세션을 확인하지 못했어요. 다시 연결해주세요.";
+  }
+  if (errorCode === ApiError.NETWORK || errorCode === ApiError.SERVICE_UNAVAILABLE) {
+    return "로그인 정보는 확인됐지만 서버에 연결하지 못했어요. 다시 시도해주세요.";
+  }
+  return "로그인 정보를 불러오지 못했어요. 다시 시도해주세요.";
+}
+
 export const useAuthStore = create((set, get) => ({
   status: AuthStatus.LOADING,
   firebaseUser: null,
@@ -47,17 +57,24 @@ export const useAuthStore = create((set, get) => ({
 
   // GET /users/me 한 번으로 온보딩 여부를 판정한다.
   bootstrap: async () => {
-    const response = await useUserStore.getState().loadProfile();
-    if (response.ok) {
-      set({ status: AuthStatus.READY, errorCode: null });
+    set({ status: AuthStatus.LOADING, errorCode: null });
+    try {
+      const response = await useUserStore.getState().loadProfile();
+      if (response.ok) {
+        set({ status: AuthStatus.READY, errorCode: null });
+        return response;
+      }
+      if (response.errorCode === ApiError.NOT_FOUND) {
+        set({ status: AuthStatus.ONBOARDING, errorCode: null });
+        return response;
+      }
+      set({ status: AuthStatus.ERROR, errorCode: response.errorCode });
+      return response;
+    } catch {
+      const response = { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
+      set({ status: AuthStatus.ERROR, errorCode: response.errorCode });
       return response;
     }
-    if (response.errorCode === ApiError.NOT_FOUND) {
-      set({ status: AuthStatus.ONBOARDING, errorCode: null });
-      return response;
-    }
-    set({ status: AuthStatus.ERROR, errorCode: response.errorCode });
-    return response;
   },
 
   // 온보딩 완료 직후 재조회 없이 상태만 올린다.

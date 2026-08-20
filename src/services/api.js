@@ -4,6 +4,7 @@
 import { getCurrentIdToken } from "./authApi";
 
 export const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "";
+export const DEFAULT_API_TIMEOUT_MS = 15_000;
 
 // 화면이 분기해야 하는 최소 단위. 백엔드는 같은 409를 body 있이/없이 모두 보내므로
 // INSUFFICIENT_HEARTS와 그 밖의 CONFLICT를 반드시 다른 케이스로 취급합니다.
@@ -52,7 +53,16 @@ function classify(status, data) {
  */
 export async function apiRequest(path, options = {}) {
   if (!BASE_URL) return { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
-  const { method = "GET", body, headers = {}, skipAuth = false, overrideToken, _getToken = getCurrentIdToken, _hasRetriedAuth = false } = options;
+  const {
+    method = "GET",
+    body,
+    headers = {},
+    skipAuth = false,
+    overrideToken,
+    _getToken = getCurrentIdToken,
+    _hasRetriedAuth = false,
+    _timeoutMs = DEFAULT_API_TIMEOUT_MS,
+  } = options;
 
   const finalHeaders = { "Content-Type": "application/json", ...headers };
 
@@ -65,21 +75,32 @@ export async function apiRequest(path, options = {}) {
   }
 
   let response;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), _timeoutMs);
   try {
     response = await fetch(`${BASE_URL}${path}`, {
       method,
       headers: finalHeaders,
       body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
     });
   } catch (error) {
+    clearTimeout(timeout);
     return { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
   }
 
   // 204/401/409는 body가 아예 없을 수 있으므로 response.json()을 무조건 호출하지 않고,
   // 먼저 text로 읽은 뒤 비어있지 않을 때만 파싱합니다.
   let data = null;
+  let text = "";
   try {
-    const text = await response.text();
+    text = await response.text();
+  } catch (error) {
+    clearTimeout(timeout);
+    return { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
+  }
+  clearTimeout(timeout);
+  try {
     data = text ? JSON.parse(text) : null;
   } catch (error) {
     data = null;

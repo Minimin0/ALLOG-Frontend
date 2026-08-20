@@ -70,7 +70,29 @@ try {
   assert.equal(check.requestCalls.length, 1);
   assert.equal(check.result.errorCode, ApiError.UNAUTHORIZED);
 
-  console.log('api 401 refresh retry OK');
+  globalThis.fetch = async (_url, request) => new Promise((_resolve, reject) => {
+    request.signal.addEventListener('abort', () => {
+      const error = new Error('aborted');
+      error.name = 'AbortError';
+      reject(error);
+    }, { once: true });
+  });
+  const timeout = await apiRequest('/timeout', { _getToken: async () => null, _timeoutMs: 5 });
+  assert.equal(timeout.errorCode, ApiError.NETWORK);
+  assert.equal(timeout.status, 0);
+
+  globalThis.fetch = async (_url, request) => ({
+    ok: true,
+    status: 200,
+    text: async () => new Promise((_resolve, reject) => {
+      request.signal.addEventListener('abort', () => reject(new Error('body aborted')), { once: true });
+    }),
+  });
+  const bodyTimeout = await apiRequest('/body-timeout', { _getToken: async () => null, _timeoutMs: 5 });
+  assert.equal(bodyTimeout.errorCode, ApiError.NETWORK);
+  assert.equal(bodyTimeout.status, 0);
+
+  console.log('api timeout and 401 refresh retry OK');
 } finally {
   if (previousApiBaseUrl === undefined) {
     delete process.env.EXPO_PUBLIC_API_BASE_URL;

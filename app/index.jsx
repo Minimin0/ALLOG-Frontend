@@ -3,7 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 
-import { AuthStatus, useAuthStore } from '@/stores/authStore';
+import { AuthStatus, authBootstrapErrorMessage, useAuthStore } from '@/stores/authStore';
 
 // 시작 화면 (웹 src/pages/auth/StartPage.jsx의 RN 포팅). 앱 진입점 "/".
 // 웹→RN: div→View, p/h1→Text, button→Pressable, useNavigate→useRouter,
@@ -11,6 +11,8 @@ import { AuthStatus, useAuthStore } from '@/stores/authStore';
 export default function StartScreen() {
   const router = useRouter();
   const status = useAuthStore((s) => s.status);
+  const firebaseUser = useAuthStore((s) => s.firebaseUser);
+  const errorCode = useAuthStore((s) => s.errorCode);
 
   // Firebase 세션이 AsyncStorage에 남아 있으면 다시 로그인시키지 않는다.
   useEffect(() => {
@@ -43,11 +45,20 @@ export default function StartScreen() {
         </View>
 
         <View className="pb-10">
+          {status === AuthStatus.ERROR && firebaseUser ? (
+            <Text className="mb-3 text-center text-[12px] font-semibold text-danger">
+              {authBootstrapErrorMessage(errorCode)}
+            </Text>
+          ) : null}
           <Pressable
-            onPress={() => router.push('/auth/login')}
+            onPress={() => status === AuthStatus.ERROR && firebaseUser
+              ? useAuthStore.getState().bootstrap()
+              : router.push('/auth/login')}
             className="h-[50px] items-center justify-center rounded-[20px] bg-primary active:opacity-90"
           >
-            <Text className="text-[18px] font-bold text-white">시작하기</Text>
+            <Text className="text-[18px] font-bold text-white">
+              {status === AuthStatus.ERROR && firebaseUser ? '다시 연결하기' : '시작하기'}
+            </Text>
           </Pressable>
 
           <View className="mt-3 flex-row items-center justify-center">

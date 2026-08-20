@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 
 import { authErrorMessage, signIn } from '@/services/authApi';
 import { isFirebaseConfigured } from '@/services/firebase';
-import { AuthStatus, useAuthStore } from '@/stores/authStore';
+import { AuthStatus, authBootstrapErrorMessage, useAuthStore } from '@/stores/authStore';
 import { colors } from '@/theme';
 
 // 로그인. Firebase 이메일/비밀번호 인증 → 백엔드가 검증하는 ID Token 발급.
@@ -20,6 +20,8 @@ const socials = [
 export default function LoginScreen() {
   const router = useRouter();
   const status = useAuthStore((s) => s.status);
+  const firebaseUser = useAuthStore((s) => s.firebaseUser);
+  const errorCode = useAuthStore((s) => s.errorCode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -28,24 +30,38 @@ export default function LoginScreen() {
   // 로그인 성공 후 갈 곳은 GET /users/me 한 번으로 정해진다 (authStore.bootstrap).
   //   READY → 메인 / ONBOARDING(404) → 온보딩. 404는 에러가 아니다.
   useEffect(() => {
-    if (status === AuthStatus.READY) router.replace('/home');
-    else if (status === AuthStatus.ONBOARDING) router.replace('/onboarding/basic-info');
-  }, [status, router]);
+    if (status === AuthStatus.READY) {
+      setBusy(false);
+      router.replace('/home');
+    } else if (status === AuthStatus.ONBOARDING) {
+      setBusy(false);
+      router.replace('/onboarding/basic-info');
+    } else if (status === AuthStatus.ERROR) {
+      setBusy(false);
+      setError(authBootstrapErrorMessage(errorCode));
+    }
+  }, [status, errorCode, router]);
 
   const submit = async () => {
     if (busy) return;
     setError('');
     setBusy(true);
     try {
-      await signIn(email, password);
+      if (status === AuthStatus.ERROR && firebaseUser) {
+        await useAuthStore.getState().bootstrap();
+      } else {
+        await signIn(email, password);
+      }
       // 이후 라우팅은 authStore 구독이 bootstrap을 마치면 위 effect가 처리한다.
     } catch (e) {
       setError(authErrorMessage(e));
+    } finally {
       setBusy(false);
     }
   };
 
   const waiting = busy || status === AuthStatus.LOADING;
+  const canRetryBootstrap = status === AuthStatus.ERROR && !!firebaseUser;
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
@@ -81,10 +97,10 @@ export default function LoginScreen() {
 
         <Pressable
           onPress={submit}
-          disabled={waiting || !email || !password}
-          className={`mt-3 h-[50px] items-center justify-center rounded-[20px] bg-primary ${waiting || !email || !password ? 'opacity-50' : ''}`}
+          disabled={waiting || (!canRetryBootstrap && (!email || !password))}
+          className={`mt-3 h-[50px] items-center justify-center rounded-[20px] bg-primary ${waiting || (!canRetryBootstrap && (!email || !password)) ? 'opacity-50' : ''}`}
         >
-          {waiting ? <ActivityIndicator color={colors.white} /> : <Text className="text-[18px] font-bold text-white">로그인</Text>}
+          {waiting ? <ActivityIndicator color={colors.white} /> : <Text className="text-[18px] font-bold text-white">{canRetryBootstrap ? '다시 연결하기' : '로그인'}</Text>}
         </Pressable>
 
         <View className="mt-3 flex-row justify-center gap-6">
