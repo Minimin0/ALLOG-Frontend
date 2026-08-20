@@ -3,94 +3,15 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors } from '@/theme';
-
-import StartScreen from '../../mobile/src/screens/auth/StartScreen';
-import LoginScreen from '../../mobile/src/screens/auth/LoginScreen';
-import SignUpAccountScreen from '../../mobile/src/screens/auth/SignUpAccountScreen';
-import BasicInfoScreen from '../../mobile/src/screens/onboarding/BasicInfoScreen';
-import HabitScreen from '../../mobile/src/screens/onboarding/HabitScreen';
-import CoachStyleScreen from '../../mobile/src/screens/onboarding/CoachStyleScreen';
-import LifestyleScreen from '../../mobile/src/screens/onboarding/LifestyleScreen';
-import CompleteScreen from '../../mobile/src/screens/onboarding/CompleteScreen';
-import HomeScreen from '../../mobile/src/screens/main/HomeNative';
-import ExploreScreen from '../../mobile/src/screens/main/ExploreScreen';
-import MyGroupScreen from '../../mobile/src/screens/main/MyGroupNative';
-import RewardScreen from '../../mobile/src/screens/main/RewardScreen';
-import MyScreen from '../../mobile/src/screens/main/MyScreen';
 import {
-  CreateGroupScreen, GroupCreatedScreen, WaitingRoomScreen, JoinByCodeScreen,
-  JoinCompleteScreen, InviteGroupScreen,
-} from '../../mobile/src/screens/group/GroupFlowScreens';
-import {
-  VerificationStartScreen, CameraScreen, PreviewScreen,
-  VerificationLoadingScreen, VerificationResultScreen,
-} from '../../mobile/src/screens/verification/VerificationScreens';
-import {
-  RewardDetailScreen, EditProfileScreen, NotificationsScreen, PrivacyScreen,
-  TermsScreen, SupportScreen, SettingsScreen,
+  PrivacyScreen,
+  RewardDetailScreen,
+  SettingsScreen,
 } from '../../mobile/src/screens/details/AccountRewardScreens';
-import { AiCoachScreen, ReportScreen } from '../../mobile/src/screens/details/AuxScreens';
-import {
-  FullRankingScreen, RankingCriteriaScreen, GroupResultScreen, ExploreGroupDetailScreen,
-} from '../../mobile/src/screens/group/GroupMoreScreens';
-import {
-  PreferPeriodScreen, GroupRecommendScreen,
-  InviteLandingScreen, DevHomeScreen, PlaceholderScreen,
-} from '../../mobile/src/screens/utility/UtilityScreens';
 
-const SCREENS = {
-  Start: StartScreen, Login: LoginScreen,
-  SignUpAccount: SignUpAccountScreen, BasicInfo: BasicInfoScreen, Habits: HabitScreen,
-  CoachStyle: CoachStyleScreen, Lifestyle: LifestyleScreen, OnboardingComplete: CompleteScreen,
-  Home: HomeScreen, Explore: ExploreScreen, Group: MyGroupScreen, Reward: RewardScreen, My: MyScreen,
-  CreateGroup: CreateGroupScreen, GroupCreated: GroupCreatedScreen, WaitingRoom: WaitingRoomScreen,
-  JoinByCode: JoinByCodeScreen, JoinComplete: JoinCompleteScreen, InviteGroup: InviteGroupScreen,
-  Verification: VerificationStartScreen, Camera: CameraScreen, Preview: PreviewScreen,
-  VerificationLoading: VerificationLoadingScreen, VerificationResult: VerificationResultScreen,
-  RewardDetail: RewardDetailScreen, EditProfile: EditProfileScreen, Notifications: NotificationsScreen,
-  Privacy: PrivacyScreen, Terms: TermsScreen, Support: SupportScreen, Settings: SettingsScreen,
-  AiCoach: AiCoachScreen, Report: ReportScreen,
-  FullRanking: FullRankingScreen, RankingCriteria: RankingCriteriaScreen, GroupResult: GroupResultScreen,
-  GroupDetail: ExploreGroupDetailScreen,
-  PreferPeriod: PreferPeriodScreen, GroupRecommend: GroupRecommendScreen,
-  InviteLanding: InviteLandingScreen, DevHome: DevHomeScreen, Placeholder: PlaceholderScreen,
-};
-
-const PATHS = {
-  Start: '/', Login: '/auth/login',
-  SignUpAccount: '/auth/signup-account', BasicInfo: '/onboarding/basic-info',
-  Habits: '/onboarding/habits', CoachStyle: '/onboarding/coach-style',
-  Lifestyle: '/onboarding/lifestyle', OnboardingComplete: '/onboarding/complete',
-  PreferPeriod: '/onboarding/lifestyle', GroupRecommend: '/onboarding/complete',
-  Home: '/(tabs)/home', Group: '/(tabs)/group', Explore: '/(tabs)/explore',
-  Reward: '/(tabs)/reward', My: '/(tabs)/my', CreateGroup: '/group/create',
-  GroupCreated: '/group/created', WaitingRoom: '/group/waiting-room', JoinByCode: '/group/join',
-  JoinComplete: '/group/join-complete', InviteGroup: '/group/invite',
-  Verification: '/verify', Camera: '/verify/camera', Preview: '/verify/preview',
-  VerificationLoading: '/verify/loading', VerificationResult: '/verify/result',
-  RewardDetail: '/reward/reward', EditProfile: '/my/edit-profile', Notifications: '/my/notifications',
-  Privacy: '/my/privacy', Terms: '/my/terms', Support: '/my/support', Settings: '/my/settings',
-  AiCoach: '/ai', Report: '/report', FullRanking: '/ranking',
-  RankingCriteria: '/ranking', GroupResult: '/group/join-complete', GroupDetail: '/explore/group/group',
-  InviteLanding: '/group/invite', Placeholder: '/my/settings',
-};
-
-// /mobile의 Stack.Group에서 상단 Safe Area를 제공하던 HW 상세 화면들.
-// 탭 화면은 app/(tabs)/_layout.jsx가 이미 처리하고, bananayeon 화면은 이
-// 어댑터를 사용하지 않으므로 각 영역의 레이아웃에 영향을 주지 않는다.
-const TOP_SAFE_AREA_SCREENS = new Set([
-  'CreateGroup', 'GroupCreated', 'WaitingRoom', 'JoinByCode', 'JoinComplete',
-  'InviteGroup', 'RewardDetail', 'EditProfile', 'Notifications', 'Privacy',
-  'Terms', 'Support', 'Settings', 'GroupDetail',
-  'InviteLanding',
-]);
-
-function encodeParams(params = {}) {
-  return Object.fromEntries(Object.entries(params).map(([key, value]) => [
-    key,
-    typeof value === 'string' ? value : JSON.stringify(value),
-  ]));
-}
+// 세 개의 donor supporting screen만 남긴 의도적인 adapter다. 인증·온보딩·탭·프로필은
+// 모두 app/의 production-backed route가 직접 소유하므로 여기서 다시 선택할 수 없다.
+const SCREENS = { Privacy: PrivacyScreen, RewardDetail: RewardDetailScreen, Settings: SettingsScreen };
 
 function decodeParams(params) {
   return Object.fromEntries(Object.entries(params).map(([key, value]) => {
@@ -104,31 +25,12 @@ export default function MobileScreenRoute({ screen }) {
   const router = useRouter();
   const searchParams = useLocalSearchParams();
   const route = useMemo(() => ({ params: decodeParams(searchParams) }), [searchParams]);
-  const navigation = useMemo(() => {
-    const target = (name, params) => {
-      if (name === 'Home' && params?.screen) return PATHS[params.screen] || PATHS.Home;
-      return PATHS[name] || PATHS.Placeholder;
-    };
-    const href = (name, params) => ({ pathname: target(name, params), params: encodeParams(params) });
-    return {
-      navigate: (name, params) => router.push(href(name, params)),
-      push: (name, params) => router.push(href(name, params)),
-      replace: (name, params) => router.replace(href(name, params)),
-      reset: ({ routes }) => {
-        const last = routes?.[routes.length - 1];
-        if (last) router.replace(href(last.name, last.params));
-      },
-      goBack: () => router.back(),
-    };
-  }, [router]);
-  const Screen = SCREENS[screen] || PlaceholderScreen;
-  const content = <Screen navigation={navigation} route={route} />;
-
-  if (!TOP_SAFE_AREA_SCREENS.has(screen)) return content;
+  const Screen = SCREENS[screen];
+  if (!Screen) throw new Error(`Unknown legacy adapter screen: ${screen}`);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
-      {content}
+      <Screen navigation={{ goBack: () => router.back() }} route={route} />
     </SafeAreaView>
   );
 }

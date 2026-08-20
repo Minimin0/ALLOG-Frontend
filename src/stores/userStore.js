@@ -3,7 +3,7 @@
 import { create } from "zustand";
 
 import { ApiError } from "../services/api";
-import { createMyProfile, fetchMyProfile, fetchMyStats } from "../services/userApi";
+import { createMyProfile, fetchMyProfile, fetchMyStats, updateMyProfile } from "../services/userApi";
 
 export const useUserStore = create((set) => ({
   profile: null,
@@ -22,6 +22,12 @@ export const useUserStore = create((set) => ({
 
   createProfile: async (body) => {
     const response = await createMyProfile(body);
+    if (response.ok) set({ profile: response.data });
+    return response;
+  },
+
+  updateProfile: async (body) => {
+    const response = await updateMyProfile(body);
     if (response.ok) set({ profile: response.data });
     return response;
   },
