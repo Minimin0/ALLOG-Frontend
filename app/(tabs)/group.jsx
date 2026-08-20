@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { Platform, View, Text, Pressable, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
@@ -18,6 +18,10 @@ import { colors } from '@/theme';
 // 내 그룹. GET /me/groups/{id} + GET /me/groups/{id}/progress가 authority다.
 // 멤버 목록·개인 랭킹·멤버별 인증 피드 API는 아직 없어서, 없는 것을 지어내지 않고
 // 백엔드가 실제로 주는 값(내 진행률 / 그룹 집계)만 보여준다.
+
+// Pretendard Variable이 안드로이드에서 font-bold를 기대만큼 굵게 그리지 못해서
+// 큰 숫자 텍스트에는 시스템 black 폰트로 보정한다 (홈/마이 화면과 동일 패턴).
+const statBoldFont = Platform.OS === 'android' ? { fontFamily: 'sans-serif-black' } : null;
 const TABS = [
   { key: 'feed', label: '인증' },
   { key: 'ranking', label: '랭킹' },
@@ -153,7 +157,6 @@ export default function GroupScreen() {
     try {
       if (group.visibility === 'PUBLIC') {
         await Clipboard.setStringAsync(Linking.createURL(`explore/group/${group.groupId}`));
-        toast('복사했어요!');
         return;
       }
 
@@ -200,8 +203,8 @@ export default function GroupScreen() {
         {tab !== 'info' ? (
           <CoachMascotButton
             to={`/ai?groupId=${group.groupId}&from=${tab === 'feed' ? 'feed' : 'ranking'}`}
-            circle={54}
             size={44}
+            bare
           />
         ) : (
           <View className="h-14 w-14" />
@@ -312,7 +315,7 @@ export default function GroupScreen() {
                 <Pressable onPress={copyShare} className="flex-row items-center justify-between border-b border-line py-3">
                   <Text className="text-[15px] text-muted">{group.visibility === 'PUBLIC' ? '그룹 링크' : '초대 코드'}</Text>
                   <Text className="text-[15px] font-semibold text-ink">
-                    {group.visibility === 'PUBLIC' ? '링크 복사하기 ›' : inviteCode ? '코드 복사하기 ›' : '코드 받기 ›'}
+                    {group.visibility === 'PUBLIC' ? '링크 복사하기 📎' : inviteCode ? '코드 복사하기 ›' : '코드 받기 ›'}
                   </Text>
                 </Pressable>
               )}
@@ -321,7 +324,7 @@ export default function GroupScreen() {
             <View className="rounded-item border border-line bg-surface p-4">
               <View className="flex-row items-center justify-between">
                 <Text className="text-[11px] font-semibold text-ink">우리 그룹 공동 성공률</Text>
-                <Text className="text-[25px] font-bold text-primary">{successRate}%</Text>
+                <Text className="text-[25px] font-bold text-primary" style={statBoldFont}>{successRate}%</Text>
               </View>
               <View className="mt-2 h-2 w-full rounded-pill bg-disabled">
                 <AnimatedGauge percent={successRate} color={colors.primary} height={8} />
@@ -338,11 +341,11 @@ export default function GroupScreen() {
             <View className="flex-row rounded-item border border-line bg-surface py-4">
               <View className="flex-1 items-center border-r border-line">
                 <Text className="text-[12px] font-bold text-ink">남은 기간</Text>
-                <Text className="mt-1 text-[30px] font-bold text-primary">{dday === null ? '–' : `D-${Math.max(0, dday)}`}</Text>
+                <Text className="mt-1 text-[30px] font-bold text-primary" style={statBoldFont}>{dday === null ? '–' : `D-${Math.max(0, dday)}`}</Text>
               </View>
               <View className="flex-1 items-center">
                 <Text className="text-[12px] font-bold text-ink">내 달성</Text>
-                <Text className="mt-1 text-[30px] font-bold text-primary">
+                <Text className="mt-1 text-[30px] font-bold text-primary" style={statBoldFont}>
                   {personal ? `${personal.completedCount}/${personal.requiredCompletionCount}` : '–'}
                 </Text>
               </View>

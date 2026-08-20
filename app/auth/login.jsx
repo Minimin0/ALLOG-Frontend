@@ -74,19 +74,21 @@ export default function LoginScreen() {
           value={loginId}
           onChangeText={(value) => setLoginId(value.toLowerCase())}
           placeholder="아이디"
-          placeholderTextColor={colors.black}
+          placeholderTextColor={colors.disabled}
           autoCapitalize="none"
           autoCorrect={false}
           className="mb-4 h-[50px] rounded-[30px] border border-line bg-white px-5 text-[15px] text-ink"
+          style={{ textAlignVertical: 'center', paddingVertical: 0 }}
         />
         <TextInput
           value={password}
           onChangeText={setPassword}
           placeholder="비밀번호"
-          placeholderTextColor={colors.black}
+          placeholderTextColor={colors.disabled}
           secureTextEntry
           onSubmitEditing={submit}
           className="mb-2 h-[50px] rounded-[30px] border border-line bg-white px-5 text-[15px] text-ink"
+          style={{ textAlignVertical: 'center', paddingVertical: 0 }}
         />
 
         {error ? <Text className="mb-2 text-center text-[12px] font-semibold text-danger">{error}</Text> : null}

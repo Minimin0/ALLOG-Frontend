@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { View, Text, Pressable, ScrollView, RefreshControl } from 'react-native';
+import { Platform, View, Text, Pressable, ScrollView, RefreshControl } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 
 import CoachMascotButton from '@/components/common/CoachMascotButton';
@@ -22,6 +22,10 @@ function formatDeadline(iso) {
   const display = hour % 12 === 0 ? 12 : hour % 12;
   return `마감 ${meridiem} ${display}:${minute}`;
 }
+
+// Pretendard Variable이 안드로이드에서 font-bold(700)를 기대만큼 굵게 렌더링하지 못해서,
+// 이 화면의 다른 볼드 텍스트보다 얇아 보인다. HomeNative.js의 statBig과 같은 방식으로 보정.
+const statBoldFont = Platform.OS === 'android' ? { fontFamily: 'sans-serif-black' } : null;
 
 function remainingText(iso) {
   if (!iso) return null;
@@ -87,7 +91,7 @@ export default function HomeScreen() {
               <Text className="text-[18px] font-bold text-ink">{stats?.hearts ?? '–'}</Text>
             </View>
             <Text className="mt-2 text-[12px] font-semibold text-heart">하트</Text>
-            <Text className="mt-1 text-[12px] font-medium text-muted">획득 이벤트는 준비 중이에요</Text>
+            <Text className="mt-1 text-[12px] font-semibold text-muted">획득 이벤트는 준비 중이에요</Text>
           </View>
           <Pressable
             onPress={() => router.push('/reward')}
@@ -105,8 +109,13 @@ export default function HomeScreen() {
         {/* 오늘의 루틴 */}
         <View className="overflow-hidden rounded-[20px] border border-line">
           <View className="items-center bg-primary-tint px-5 pb-5 pt-4">
-            <Text className="text-[13px] font-semibold text-primary">오늘의 루틴</Text>
-            <Text className="mt-2 text-[20px] font-bold text-ink">{current?.groupName ?? '아직 참여 중인 그룹이 없어요'}</Text>
+            <Text className="text-[13px] font-bold text-primary" style={[statBoldFont, { letterSpacing: 0.3 }]}>오늘의 루틴</Text>
+            <Text
+              className="mt-2.5 text-center text-[20px] font-bold text-ink"
+              style={[statBoldFont, { lineHeight: 27 }]}
+            >
+              {current?.groupName ?? '아직 참여 중인 그룹이 없어요'}
+            </Text>
             <Pressable
               onPress={() => router.push(current ? { pathname: '/verify', params: { groupId: String(current.groupId) } } : '/explore')}
               className="mt-4 h-[44px] w-full items-center justify-center rounded-[15px] bg-primary"
@@ -128,11 +137,11 @@ export default function HomeScreen() {
           <Pressable onPress={() => router.push('/my')} className="flex-1 items-center gap-1">
             <View className="flex-row items-center gap-1.5">
               <Icon name="chart" size={16} />
-              <Text className="text-[12px] font-bold text-ink">완료 루틴</Text>
+              <Text className="text-[12px] font-bold text-ink" style={statBoldFont}>완료 루틴</Text>
             </View>
             <Text>
-              <Text className="text-[25px] font-bold text-primary">{stats?.successfulRoutines ?? 0}</Text>
-              <Text className="text-[12px] font-bold text-ink"> 개</Text>
+              <Text className="text-[25px] font-bold text-primary" style={statBoldFont}>{stats?.successfulRoutines ?? 0}</Text>
+              <Text className="text-[12px] font-bold text-ink" style={statBoldFont}> 개</Text>
             </Text>
           </Pressable>
 
@@ -141,11 +150,11 @@ export default function HomeScreen() {
           <Pressable onPress={() => router.push('/my')} className="flex-1 items-center gap-1">
             <View className="flex-row items-center gap-1.5">
               <Icon name="fire" size={16} />
-              <Text className="text-[12px] font-bold text-ink">연속 성공</Text>
+              <Text className="text-[12px] font-bold text-ink" style={statBoldFont}>연속 성공</Text>
             </View>
             <Text>
-              <Text className="text-[25px] font-bold text-primary">{personal?.currentStreak ?? 0}</Text>
-              <Text className="text-[12px] font-bold text-ink">일째</Text>
+              <Text className="text-[25px] font-bold text-primary" style={statBoldFont}>{personal?.currentStreak ?? 0}</Text>
+              <Text className="text-[12px] font-bold text-ink" style={statBoldFont}>일째</Text>
             </Text>
           </Pressable>
         </View>

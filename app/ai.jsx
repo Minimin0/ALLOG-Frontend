@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import Animated, { FadeInUp } from 'react-native-reanimated';
+import Animated, { FadeInUp, Layout } from 'react-native-reanimated';
 
 import AiMessageRN from '@/components/ai/AiMessageRN';
 import BottomNavBar from '@/components/nav/BottomNavBar';
@@ -125,16 +125,18 @@ export default function AiCoachScreen() {
               </View>
             ) : null}
             {followUps.map((item) => (
-              <View key={item.key} className="gap-2">
-                <View className="max-w-[80%] self-end rounded-2xl bg-primary px-4 py-3">
+              <Animated.View key={item.key} layout={Layout.springify()} className="gap-2">
+                <Animated.View entering={FadeInUp.duration(250)} className="max-w-[80%] self-end rounded-2xl bg-primary px-4 py-3">
                   <Text className="text-[15px] leading-6 text-white">{item.label}</Text>
-                </View>
-                {item.answer ? <AiMessageRN text={item.answer.message} /> : item.failed ? (
-                  <Text className="px-1 text-[13px] font-semibold text-danger">답변을 가져오지 못했어요.</Text>
-                ) : (
-                  <View className="items-start pl-12"><ActivityIndicator color={colors.spinner} /></View>
-                )}
-              </View>
+                </Animated.View>
+                <Animated.View entering={FadeInUp.duration(250).delay(80)}>
+                  {item.answer ? <AiMessageRN text={item.answer.message} /> : item.failed ? (
+                    <Text className="px-1 text-[13px] font-semibold text-danger">답변을 가져오지 못했어요.</Text>
+                  ) : (
+                    <View className="items-start pl-12"><ActivityIndicator color={colors.spinner} /></View>
+                  )}
+                </Animated.View>
+              </Animated.View>
             ))}
           </>
         ) : (

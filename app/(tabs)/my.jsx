@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { View, Text, Pressable, ScrollView, Modal } from 'react-native';
+import { Platform, View, Text, Pressable, ScrollView, Modal } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
@@ -8,6 +8,10 @@ import { useUserStore } from '@/stores/userStore';
 
 // 마이 페이지. 하트/리워드/성공한 루틴은 GET /users/me/stats, 닉네임과 관심 루틴은
 // GET /users/me에서 온다. 루틴별 인증 횟수 API는 없으므로 관심 루틴을 대신 보여준다.
+
+// 홈 화면과 동일 — Pretendard Variable이 안드로이드에서 font-bold를 기대만큼
+// 굵게 그리지 못해서 숫자 텍스트에는 시스템 black 폰트로 보정한다.
+const statBoldFont = Platform.OS === 'android' ? { fontFamily: 'sans-serif-black' } : null;
 const INTEREST_META = {
   hydration: { label: '수분케어', icon: 'selfcare' },
   exercise: { label: '운동', icon: 'exercise' },
@@ -75,18 +79,35 @@ export default function MyScreen() {
 
           <View className="my-4 h-px bg-line" />
 
-          <View className="flex-row">
-            <View className="flex-1 items-center">
-              <Text className="text-[10px] font-semibold text-heart">하트</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="heart" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.hearts ?? '–'}</Text></View>
+          <View className="flex-row items-stretch">
+            <View className="flex-1 items-center gap-2">
+              <View className="flex-row items-center gap-1">
+                <Icon name="heart" size={12} />
+                <Text className="text-[11px] font-bold text-heart">하트</Text>
+              </View>
+              <Text className="text-[20px] font-bold text-ink" style={statBoldFont}>{stats?.hearts ?? '–'}</Text>
             </View>
-            <View className="flex-1 items-center">
-              <Text className="text-[10px] font-semibold text-muted">리워드</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="coin" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.rewardPoints ?? '–'}</Text></View>
+
+            <View className="w-px bg-line" />
+
+            <View className="flex-1 items-center gap-2">
+              <View className="flex-row items-center gap-1">
+                <Icon name="coin" size={12} />
+                <Text className="text-[11px] font-bold text-reward">리워드</Text>
+              </View>
+              <Text className="text-[20px] font-bold text-ink" style={statBoldFont}>{stats?.rewardPoints ?? '–'}</Text>
             </View>
-            <View className="flex-1 items-center">
-              <Text className="text-[10px] font-semibold text-muted">성공한 루틴</Text>
-              <View className="mt-1 flex-row items-center gap-1"><Icon name="check" size={13} /><Text className="text-[15px] font-bold text-ink">{stats?.successfulRoutines ?? 0}회</Text></View>
+
+            <View className="w-px bg-line" />
+
+            <View className="flex-1 items-center gap-2">
+              <View className="flex-row items-center gap-1">
+                <Icon name="check" size={12} />
+                <Text className="text-[11px] font-bold text-primary">성공한 루틴</Text>
+              </View>
+              <Text className="text-[20px] font-bold text-ink" style={statBoldFont}>
+                {stats?.successfulRoutines ?? 0}<Text className="text-[13px] font-bold text-ink">회</Text>
+              </Text>
             </View>
           </View>
         </View>
@@ -95,13 +116,13 @@ export default function MyScreen() {
         {interests.length > 0 && (
           <View>
             <Text className="mb-2.5 text-[13px] font-bold text-muted">관심 루틴</Text>
-            <View className="flex-row justify-between rounded-[26px] border border-line bg-surface p-4">
+            <View className="flex-row flex-wrap justify-start gap-5 rounded-[26px] border border-line bg-surface p-4">
               {interests.map((item) => (
                 <View key={item.label} className="items-center">
                   <View className="h-[54px] w-[54px] items-center justify-center rounded-full bg-beige-icon">
                     <Icon name={item.icon} size={24} />
                   </View>
-                  <Text className="mt-2 text-[11px] font-semibold text-ink">{item.label}</Text>
+                  <Text className="mt-2 text-[11px] font-bold text-ink">{item.label}</Text>
                 </View>
               ))}
             </View>
@@ -117,15 +138,15 @@ export default function MyScreen() {
               className={`flex-row items-center gap-3 px-5 py-4 ${i > 0 ? 'border-t border-line' : ''}`}
             >
               <Icon name={item.icon} size={18} />
-              <Text className="flex-1 text-[13px] font-medium text-ink">{item.label}</Text>
+              <Text className="flex-1 text-[13px] font-bold text-ink">{item.label}</Text>
               <Text className="text-[14px] text-disabled">›</Text>
             </Pressable>
           ))}
         </View>
 
         {/* 로그아웃 */}
-        <Pressable onPress={() => { setLogoutError(''); setLogoutOpen(true); }} className="h-[50px] items-center justify-center rounded-[13px] border border-heart bg-surface">
-          <Text className="text-[15px] font-bold text-heart">로그아웃</Text>
+        <Pressable onPress={() => { setLogoutError(''); setLogoutOpen(true); }} className="h-[50px] items-center justify-center rounded-full bg-heart/10 active:bg-heart/20">
+          <Text className="text-[15px] font-bold text-heart" style={statBoldFont}>로그아웃</Text>
         </Pressable>
       </ScrollView>
 
@@ -134,7 +155,7 @@ export default function MyScreen() {
         <Pressable className="flex-1 justify-end bg-black/40" onPress={() => setLogoutOpen(false)}>
           <Pressable className="rounded-t-[24px] bg-surface px-6 pb-8 pt-6" onPress={() => {}}>
             <Text className="text-center text-[17px] font-bold text-ink">정말 로그아웃 하시겠어요?</Text>
-            {logoutError ? <Text className="mt-2 text-center text-[12px] font-semibold text-heart">{logoutError}</Text> : null}
+            {logoutError ? <Text className="mt-2 text-center text-[12px] font-bold text-heart">{logoutError}</Text> : null}
             <View className="mt-6 flex-row gap-3">
               <Pressable onPress={() => setLogoutOpen(false)} className="flex-1 items-center justify-center rounded-[14px] border border-line bg-surface py-3.5">
                 <Text className="text-[14px] font-bold text-ink">아니오</Text>

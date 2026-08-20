@@ -9,9 +9,11 @@ const EXERCISE = ['주 1회', '주 2회', '주 3회', '주 4회', '주 5회', '�
 const MEAL = ['먹지 않음', '1회', '2회', '3회 이상'];
 const PERIOD = ['7일', '14일', '30일'];
 
+// 테두리는 항상 2px로 고정하고 색만 바꾼다 — 선택 시 굵기가 바뀌면 칩 크기가
+// 미세하게 변해 옆/아래 칩이 밀리기 때문.
 function Chip({ label, active, onPress, width }) {
   return (
-    <Pressable onPress={onPress} style={{ width }} className={`items-center rounded-[15px] border py-3 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
+    <Pressable onPress={onPress} style={{ width }} className={`items-center rounded-[15px] border-2 py-3 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
       <Text className={`text-[14px] font-semibold ${active ? 'text-primary' : 'text-ink'}`}>{label}</Text>
     </Pressable>
   );

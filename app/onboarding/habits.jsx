@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, Easing } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
@@ -12,6 +13,36 @@ const habits = [
   { label: '식사', subtitle: '균형 잡힌 식단 유지', icon: 'meal' },
   { label: '수면', subtitle: '규칙적인 수면 패턴', icon: 'sleep' },
 ];
+
+// 테두리는 항상 2px로 고정하고 색만 바꾼다 — 선택 시 1px→2px로 굵기가 변하면
+// 박스 전체 크기가 미세하게 변해 옆/아래 카드가 밀리는 원인이 되기 때문.
+function HabitCard({ label, subtitle, icon, active, onPress }) {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    if (active) {
+      scale.value = withSequence(
+        withTiming(1.12, { duration: 130, easing: Easing.out(Easing.quad) }),
+        withTiming(1, { duration: 180, easing: Easing.out(Easing.quad) }),
+      );
+    }
+  }, [active]);
+
+  const style = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  return (
+    <Animated.View style={[{ width: '47%' }, style]}>
+      <Pressable
+        onPress={onPress}
+        className={`items-center gap-1 rounded-[15px] border-2 px-3 py-4 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}
+      >
+        <View className="mb-1"><Icon name={icon} size={24} /></View>
+        <Text className="text-[15px] font-bold text-ink">{label}</Text>
+        <Text className="text-[10px] font-medium text-subtle">{subtitle}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
 
 export default function HabitsScreen() {
   const router = useRouter();
@@ -33,21 +64,16 @@ export default function HabitsScreen() {
       canNext={selected.length > 0}
     >
       <View className="flex-row flex-wrap gap-3">
-        {habits.map((h) => {
-          const active = selected.includes(h.label);
-          return (
-            <Pressable
-              key={h.label}
-              onPress={() => toggle(h.label)}
-              style={{ width: '47%' }}
-              className={`items-center gap-1 rounded-[15px] border px-3 py-4 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}
-            >
-              <View className="mb-1"><Icon name={h.icon} size={24} /></View>
-              <Text className="text-[15px] font-bold text-ink">{h.label}</Text>
-              <Text className="text-[10px] font-medium text-subtle">{h.subtitle}</Text>
-            </Pressable>
-          );
-        })}
+        {habits.map((h) => (
+          <HabitCard
+            key={h.label}
+            label={h.label}
+            subtitle={h.subtitle}
+            icon={h.icon}
+            active={selected.includes(h.label)}
+            onPress={() => toggle(h.label)}
+          />
+        ))}
       </View>
     </OnboardingShellRN>
   );

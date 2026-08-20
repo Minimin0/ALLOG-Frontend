@@ -1,7 +1,11 @@
-import { View, Text, Pressable, ScrollView, Linking } from 'react-native';
+import { Platform, View, Text, Pressable, ScrollView, Linking } from 'react-native';
 
 import Icon from '@/components/common/Icon';
 import { useUserStore } from '@/stores/userStore';
+
+// Pretendard Variable이 안드로이드에서 font-bold를 기대만큼 굵게 그리지 못해서
+// 큰 숫자 텍스트에는 시스템 black 폰트로 보정한다 (홈/마이/내그룹과 동일 패턴).
+const statBoldFont = Platform.OS === 'android' ? { fontFamily: 'sans-serif-black' } : null;
 
 // 보유 포인트는 백엔드 stats가 authority다. 혜택 카탈로그·교환 API는 아직 제공되지 않는다.
 const rewards = [
@@ -25,7 +29,7 @@ export default function RewardScreen() {
           <View className="mt-2 flex-row items-end justify-between">
             <View className="flex-row items-center gap-2">
               <Icon name="coin" size={24} />
-              <Text className="text-[30px] font-bold text-on-dark">{points}</Text>
+              <Text className="text-[30px] font-bold text-on-dark" style={statBoldFont}>{points}</Text>
             </View>
             <Pressable onPress={() => Linking.openURL('https://anti-agingclub.kr/')}>
               <Text className="pb-1 text-[12px] font-bold text-surface">AAC 홈페이지 바로가기</Text>

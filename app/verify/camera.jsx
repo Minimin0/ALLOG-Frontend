@@ -84,19 +84,21 @@ export default function CameraScreen() {
         ))}
       </View>
 
-      <View className="mx-5 flex-1 overflow-hidden rounded-[44px]">
-        <CameraView
-          ref={cameraRef}
-          style={{ flex: 1 }}
-          facing="back"
-          mode="video"
-          mute
-          onCameraReady={() => setCameraReady(true)}
-          onMountError={() => {
-            setCameraReady(false);
-            setCaptureError('카메라를 시작하지 못했어요. 권한과 기기를 확인해주세요.');
-          }}
-        />
+      <View className="flex-1 items-center justify-center px-5">
+        <View className="w-full overflow-hidden rounded-[44px]" style={{ aspectRatio: 3 / 4 }}>
+          <CameraView
+            ref={cameraRef}
+            style={{ flex: 1 }}
+            facing="back"
+            mode="video"
+            mute
+            onCameraReady={() => setCameraReady(true)}
+            onMountError={() => {
+              setCameraReady(false);
+              setCaptureError('카메라를 시작하지 못했어요. 권한과 기기를 확인해주세요.');
+            }}
+          />
+        </View>
       </View>
 
       <View className="items-center py-8">

@@ -122,7 +122,7 @@ export default function CreateGroupScreen() {
         <View>
           <Text className="mb-2 text-[15px] font-bold text-ink">그룹명</Text>
           <TextInput value={name} onChangeText={setName} placeholder="매일 물 2L 마시기" placeholderTextColor={colors.disabled}
-            className="rounded-[15px] border border-line bg-surface px-4 py-4 text-[14px] text-ink" />
+            className="rounded-[15px] border border-line bg-surface px-4 py-4 text-[14px] text-ink" style={{ textAlignVertical: 'center' }} />
         </View>
 
         <View>
@@ -165,7 +165,7 @@ export default function CreateGroupScreen() {
             ].map((v) => {
               const active = visibility === v.key;
               return (
-                <Pressable key={v.key} onPress={() => setVisibility(v.key)} className={`flex-1 items-center rounded-[15px] border px-3 py-4 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
+                <Pressable key={v.key} onPress={() => setVisibility(v.key)} className={`flex-1 items-center rounded-[15px] border-2 px-3 py-4 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
                   <Text className="text-[14px] font-bold text-ink">{v.title}</Text>
                   <Text className="mt-1 text-center text-[11px] font-medium text-subtle">{v.note}</Text>
                 </Pressable>

@@ -66,7 +66,7 @@ export default function JoinByCodeScreen() {
           maxLength={32}
           onSubmitEditing={submit}
           className="mt-5 rounded-[15px] border border-line bg-surface px-4 py-4 text-center text-[22px] font-bold text-ink"
-          style={{ letterSpacing: 6 }}
+          style={{ letterSpacing: 6, textAlignVertical: 'center' }}
         />
 
         {error ? <Text className="mt-2 text-center text-[12px] font-semibold text-heart">{error}</Text> : null}

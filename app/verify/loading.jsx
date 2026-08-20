@@ -68,6 +68,15 @@ const STEPS = [
   { Icon: CheckIcon, title: '인증 제출', sub: '서버에 제출 확정' },
 ];
 
+// 백엔드가 너무 빨리 응답하면 캐릭터/체크리스트 연출이 인지되기도 전에 끝나버린다.
+// 실제 호출은 그대로 두고, 각 단계가 최소 이만큼은 화면에 머물도록 부족한 시간만 채운다.
+const MIN_STEP_MS = 500;
+
+function waitForRemainder(stepStartedAt, minMs) {
+  const remaining = minMs - (Date.now() - stepStartedAt);
+  return remaining > 0 ? new Promise((resolve) => setTimeout(resolve, remaining)) : Promise.resolve();
+}
+
 export default function LoadingScreen() {
   const router = useRouter();
   const media = useVerificationStore((s) => s.media);
@@ -99,12 +108,16 @@ export default function LoadingScreen() {
       }
 
       // 1) 오늘 슬롯 열기 — 인증 사진 저장소가 없어도 이 단계는 동작한다.
+      let stepStartedAt = Date.now();
       const opened = await openTodayVerification(groupId);
       if (cancelled) return;
       if (!opened.ok) return finish({ state: 'failed', step: 'open', errorCode: opened.errorCode });
+      await waitForRemainder(stepStartedAt, MIN_STEP_MS);
+      if (cancelled) return;
       setStep(1);
 
       // 2) signed upload URL — 저장소 미구성이면 여기서 503이 난다(정상적인 운영 상태).
+      stepStartedAt = Date.now();
       let blob;
       try {
         blob = await (await fetch(media.uri)).blob();
@@ -123,15 +136,21 @@ export default function LoadingScreen() {
           errorCode: intent.errorCode,
         });
       }
+      await waitForRemainder(stepStartedAt, MIN_STEP_MS);
+      if (cancelled) return;
       setStep(2);
 
       // 3) 저장소로 직접 PUT
+      stepStartedAt = Date.now();
       const uploaded = await uploadToPresignedUrl(intent.data, blob);
       if (cancelled) return;
       if (!uploaded.ok) return finish({ state: 'failed', step: 'upload', errorCode: uploaded.errorCode });
+      await waitForRemainder(stepStartedAt, MIN_STEP_MS);
+      if (cancelled) return;
       setStep(3);
 
       // 4) 제출 확정 — 여기서 끝나도 '승인'이 아니라 '제출됨'이다. 판정은 백엔드가 한다.
+      stepStartedAt = Date.now();
       const submitted = await submitVerification(groupId);
       if (cancelled) return;
       if (!submitted.ok) {
@@ -141,6 +160,8 @@ export default function LoadingScreen() {
           errorCode: submitted.errorCode,
         });
       }
+      await waitForRemainder(stepStartedAt, MIN_STEP_MS);
+      if (cancelled) return;
       setStep(4);
 
       await useGroupStore.getState().loadGroup(groupId);

@@ -76,6 +76,7 @@ export default function SignUpAccountScreen() {
           autoCapitalize="none"
           autoCorrect={false}
           className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
+          style={{ textAlignVertical: 'center', paddingVertical: 0 }}
         />
 
         <Text className="mt-6 text-[15px] font-bold text-subtle">비밀번호</Text>
@@ -86,6 +87,7 @@ export default function SignUpAccountScreen() {
           placeholder="비밀번호 (8자리 이상)"
           placeholderTextColor={colors.disabled}
           className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
+          style={{ textAlignVertical: 'center', paddingVertical: 0 }}
         />
 
         <View className="mt-3 h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
@@ -96,6 +98,7 @@ export default function SignUpAccountScreen() {
             placeholder="비밀번호 확인"
             placeholderTextColor={colors.disabled}
             className="flex-1 text-[16px] text-ink"
+            style={{ textAlignVertical: 'center', paddingVertical: 0 }}
           />
           {match && <Text className="text-primary">✓</Text>}
         </View>

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, Easing } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 
 import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
@@ -12,6 +13,36 @@ const coaches = [
   { name: '팩트형', tone: '숫자와 근거로 말할게요', icon: 'fact' },
   { name: '유머형', tone: '가볍고 재밌게 말할게요', icon: 'humor' },
 ];
+
+// 테두리를 항상 2px로 고정하고 색만 바꾼다 — 굵기가 바뀌면 카드 크기가 미세하게
+// 변해 옆 카드가 밀리기 때문.
+function CoachCard({ name, tone, icon, active, onPress }) {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    if (active) {
+      scale.value = withSequence(
+        withTiming(1.12, { duration: 130, easing: Easing.out(Easing.quad) }),
+        withTiming(1, { duration: 180, easing: Easing.out(Easing.quad) }),
+      );
+    }
+  }, [active]);
+
+  const style = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  return (
+    <Animated.View style={[{ width: '47%', height: 160 }, style]}>
+      <Pressable
+        onPress={onPress}
+        className={`h-full items-center justify-center rounded-[15px] border-2 px-3 py-3 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}
+      >
+        <View className="mb-2"><Icon name={icon} size={72} /></View>
+        <Text className="text-[15px] font-bold text-ink">{name}</Text>
+        <Text className="mt-1 text-[10px] font-medium text-subtle">{tone}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
 
 export default function CoachStyleScreen() {
   const router = useRouter();
@@ -32,21 +63,16 @@ export default function CoachStyleScreen() {
       canNext={!!selected}
     >
       <View className="flex-row flex-wrap gap-3">
-        {coaches.map((c) => {
-          const active = selected === c.name;
-          return (
-            <Pressable
-              key={c.name}
-              onPress={() => setSelected(c.name)}
-              style={{ width: '47%', height: 160 }}
-              className={`items-center justify-center rounded-[15px] border px-3 py-3 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}
-            >
-              <View className="mb-2"><Icon name={c.icon} size={72} /></View>
-              <Text className="text-[15px] font-bold text-ink">{c.name}</Text>
-              <Text className="mt-1 text-[10px] font-medium text-subtle">{c.tone}</Text>
-            </Pressable>
-          );
-        })}
+        {coaches.map((c) => (
+          <CoachCard
+            key={c.name}
+            name={c.name}
+            tone={c.tone}
+            icon={c.icon}
+            active={selected === c.name}
+            onPress={() => setSelected(c.name)}
+          />
+        ))}
       </View>
     </OnboardingShellRN>
   );

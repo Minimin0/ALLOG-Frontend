@@ -52,7 +52,7 @@ export default function PreviewScreen() {
           <Text className="text-[18px] font-bold text-ink">{detail?.group?.name ?? '오늘의 루틴'}</Text>
         </View>
 
-        <View className="mb-3 h-56 w-full overflow-hidden rounded-card bg-black">
+        <View className="mb-3 w-full overflow-hidden rounded-card bg-black" style={{ aspectRatio: 3 / 4 }}>
           <VideoView player={player} style={{ flex: 1 }} contentFit="cover" nativeControls={false} />
         </View>
         <Text className="mb-3 text-center text-[12px] text-muted">무음으로 재생됩니다.</Text>

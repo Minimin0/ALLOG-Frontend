@@ -55,7 +55,7 @@ export default function BasicInfoScreen() {
         <View>
           <Text className="mb-2 text-[13px] font-bold text-subtle">닉네임</Text>
           <TextInput value={form.nickname} onChangeText={(v) => set('nickname', v)} placeholder="사용하실 닉네임을 입력해주세요." placeholderTextColor={colors.disabled}
-            className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" />
+            className="h-11 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" style={{ textAlignVertical: 'center', paddingVertical: 0 }} />
         </View>
 
         <View>
@@ -64,7 +64,7 @@ export default function BasicInfoScreen() {
             {genders.map((g) => {
               const active = form.gender === g;
               return (
-                <Pressable key={g} onPress={() => set('gender', g)} className={`flex-1 items-center rounded-[15px] border py-3 ${active ? 'border-2 border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
+                <Pressable key={g} onPress={() => set('gender', g)} className={`flex-1 items-center rounded-[15px] border-2 py-3 ${active ? 'border-primary bg-primary-pale' : 'border-line bg-surface'}`}>
                   <Text className={`text-[14px] font-bold ${active ? 'text-primary' : 'text-ink'}`}>{g}</Text>
                 </Pressable>
               );
@@ -76,7 +76,7 @@ export default function BasicInfoScreen() {
           <Text className="mb-2 text-[13px] font-bold text-subtle">생년월일</Text>
           <View className="flex-row gap-2">
             <TextInput value={form.birth} onChangeText={(v) => set('birth', formatBirthInput(v))} placeholder="YYYY-MM-DD" placeholderTextColor={colors.disabled} keyboardType="number-pad" maxLength={10}
-              className="h-11 flex-1 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" />
+              className="h-11 flex-1 rounded-[15px] border border-line bg-surface px-4 text-[15px] text-ink" style={{ textAlignVertical: 'center', paddingVertical: 0 }} />
             <Pressable
               onPress={() => setBirthPickerOpen(true)}
               accessibilityRole="button"
@@ -105,14 +105,14 @@ export default function BasicInfoScreen() {
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">키</Text>
             <View className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
-              <TextInput value={form.height} onChangeText={(v) => set('height', v)} placeholder="165" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+              <TextInput value={form.height} onChangeText={(v) => set('height', v)} placeholder="165" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" style={{ textAlignVertical: 'center', paddingVertical: 0 }} />
               <Text className="text-[12px] text-subtle">cm</Text>
             </View>
           </View>
           <View className="flex-1">
             <Text className="mb-2 text-[13px] font-bold text-subtle">몸무게</Text>
             <View className="h-11 flex-row items-center rounded-[15px] border border-line bg-surface px-4">
-              <TextInput value={form.weight} onChangeText={(v) => set('weight', v)} placeholder="50" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" />
+              <TextInput value={form.weight} onChangeText={(v) => set('weight', v)} placeholder="50" placeholderTextColor={colors.disabled} keyboardType="number-pad" className="flex-1 text-center text-[15px] text-ink" style={{ textAlignVertical: 'center', paddingVertical: 0 }} />
               <Text className="text-[12px] text-subtle">kg</Text>
             </View>
           </View>

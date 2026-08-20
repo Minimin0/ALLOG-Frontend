@@ -133,7 +133,7 @@ export default function ExploreScreen() {
     <View className="flex-1 bg-bg">
       <View className="flex-row items-center justify-between px-[30px] pt-4">
         <Text className="text-[28px] font-bold text-ink">탐색</Text>
-        <CoachMascotButton to="/ai" circle={54} size={44} />
+        <CoachMascotButton to="/ai" size={44} bare />
       </View>
 
       <ScrollView
@@ -151,6 +151,7 @@ export default function ExploreScreen() {
               placeholder="그룹 또는 루틴 검색..."
               placeholderTextColor={colors.muted}
               className="flex-1 text-[14px] text-muted"
+              style={{ textAlignVertical: 'center', paddingVertical: 0 }}
             />
           </View>
           <Pressable
