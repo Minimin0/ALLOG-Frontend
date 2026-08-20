@@ -1,50 +1,12 @@
-import { useState } from "react";
 import {
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import OnboardingShell from "../../components/OnboardingShell";
 import { colors } from "../../theme";
-export function FirebaseDebugScreen({ navigation }) {
-  const [groupId, setGroupId] = useState("1"),
-    [result, setResult] = useState(null);
-  return (
-    <ScrollView style={s.screen} contentContainerStyle={s.content}>
-      <Text style={s.back} onPress={() => navigation.navigate("Login")}>
-        &lt; 로그인으로
-      </Text>
-      <Text style={s.title}>Firebase 인증 디버그 (7B-2)</Text>
-      <View style={s.card}>
-        <Text>
-          <Text style={s.bold}>Firebase Login: </Text>미로그인
-        </Text>
-        <Text>
-          <Text style={s.bold}>ID Token 발급 여부: </Text>미발급
-        </Text>
-      </View>
-      <Text style={s.help}>
-        로그인 화면에서 구글 로그인을 먼저 진행해주세요.
-      </Text>
-      <Text style={s.label}>groupId (테스트용, 하드코딩 아님)</Text>
-      <TextInput value={groupId} onChangeText={setGroupId} style={s.input} />
-      <Pressable
-        style={s.button}
-        onPress={() => setResult("Firebase 설정과 로그인이 필요합니다.")}
-      >
-        <Text style={s.buttonText}>백엔드 API 호출 (정상 토큰)</Text>
-      </Pressable>
-      {result && (
-        <View style={s.card}>
-          <Text style={s.error}>{result}</Text>
-        </View>
-      )}
-    </ScrollView>
-  );
-}
 export function PreferPeriodScreen() {
   return (
     <View style={s.placeholder}>

@@ -28,10 +28,10 @@
 | 경계 | 현재 authority | 검토 포인트 |
 |---|---|---|
 | 앱 entry | `expo-router/entry` | `mobile/App.js`는 canonical entry가 아니다. |
-| root | `app/_layout.jsx` | Firebase auth store 초기화와, #12 이후 Pretendard/splash 초기화가 위치한다. |
+| root | `app/_layout.jsx` | SecureStore 기반 auth store 초기화와, #12 이후 Pretendard/splash 초기화가 위치한다. |
 | live mobile screens | `mobile/src/**` | `src/components/MobileScreenRoute.jsx`가 Expo routes에서 import한다. legacy로 삭제하거나 방치하지 않는다. |
 | API endpoint | `EXPO_PUBLIC_API_BASE_URL` | default production endpoint는 `https://api.allog-app.store`; Android emulator local backend에는 `http://10.0.2.2:8080`만 사용한다. |
-| identity | Firebase bearer token → backend internal user | client는 Firebase identity만 다루며 business domain user id는 backend authority다. |
+| identity | ALLOG bearer token subject → backend internal user | client는 token만 보관하며 business domain user id와 권한은 backend authority다. |
 | media upload | upload intent → signed PUT → submit | Android는 filesystem path·signing secret을 받지 않는다. 현 backend는 nginx/Spring/Gabia private local media store를 사용한다. |
 
 ## 3. Backend authority boundary

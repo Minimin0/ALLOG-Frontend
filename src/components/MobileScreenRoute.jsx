@@ -6,7 +6,6 @@ import { colors } from '@/theme';
 
 import StartScreen from '../../mobile/src/screens/auth/StartScreen';
 import LoginScreen from '../../mobile/src/screens/auth/LoginScreen';
-import SignUpPhoneScreen from '../../mobile/src/screens/auth/SignUpPhoneScreen';
 import SignUpAccountScreen from '../../mobile/src/screens/auth/SignUpAccountScreen';
 import BasicInfoScreen from '../../mobile/src/screens/onboarding/BasicInfoScreen';
 import HabitScreen from '../../mobile/src/screens/onboarding/HabitScreen';
@@ -35,12 +34,12 @@ import {
   FullRankingScreen, RankingCriteriaScreen, GroupResultScreen, ExploreGroupDetailScreen,
 } from '../../mobile/src/screens/group/GroupMoreScreens';
 import {
-  FirebaseDebugScreen, PreferPeriodScreen, GroupRecommendScreen,
+  PreferPeriodScreen, GroupRecommendScreen,
   InviteLandingScreen, DevHomeScreen, PlaceholderScreen,
 } from '../../mobile/src/screens/utility/UtilityScreens';
 
 const SCREENS = {
-  Start: StartScreen, Login: LoginScreen, SignUpPhone: SignUpPhoneScreen,
+  Start: StartScreen, Login: LoginScreen,
   SignUpAccount: SignUpAccountScreen, BasicInfo: BasicInfoScreen, Habits: HabitScreen,
   CoachStyle: CoachStyleScreen, Lifestyle: LifestyleScreen, OnboardingComplete: CompleteScreen,
   Home: HomeScreen, Explore: ExploreScreen, Group: MyGroupScreen, Reward: RewardScreen, My: MyScreen,
@@ -52,13 +51,13 @@ const SCREENS = {
   Privacy: PrivacyScreen, Terms: TermsScreen, Support: SupportScreen, Settings: SettingsScreen,
   AiCoach: AiCoachScreen, Report: ReportScreen,
   FullRanking: FullRankingScreen, RankingCriteria: RankingCriteriaScreen, GroupResult: GroupResultScreen,
-  GroupDetail: ExploreGroupDetailScreen, FirebaseDebug: FirebaseDebugScreen,
+  GroupDetail: ExploreGroupDetailScreen,
   PreferPeriod: PreferPeriodScreen, GroupRecommend: GroupRecommendScreen,
   InviteLanding: InviteLandingScreen, DevHome: DevHomeScreen, Placeholder: PlaceholderScreen,
 };
 
 const PATHS = {
-  Start: '/', Login: '/auth/login', SignUpPhone: '/auth/signup-phone',
+  Start: '/', Login: '/auth/login',
   SignUpAccount: '/auth/signup-account', BasicInfo: '/onboarding/basic-info',
   Habits: '/onboarding/habits', CoachStyle: '/onboarding/coach-style',
   Lifestyle: '/onboarding/lifestyle', OnboardingComplete: '/onboarding/complete',
@@ -73,7 +72,7 @@ const PATHS = {
   Privacy: '/my/privacy', Terms: '/my/terms', Support: '/my/support', Settings: '/my/settings',
   AiCoach: '/ai', Report: '/report', FullRanking: '/ranking',
   RankingCriteria: '/ranking', GroupResult: '/group/join-complete', GroupDetail: '/explore/group/group',
-  FirebaseDebug: '/auth/firebase-debug', InviteLanding: '/group/invite', Placeholder: '/my/settings',
+  InviteLanding: '/group/invite', Placeholder: '/my/settings',
 };
 
 // /mobile의 Stack.Group에서 상단 Safe Area를 제공하던 HW 상세 화면들.
@@ -82,7 +81,7 @@ const PATHS = {
 const TOP_SAFE_AREA_SCREENS = new Set([
   'CreateGroup', 'GroupCreated', 'WaitingRoom', 'JoinByCode', 'JoinComplete',
   'InviteGroup', 'RewardDetail', 'EditProfile', 'Notifications', 'Privacy',
-  'Terms', 'Support', 'Settings', 'GroupDetail', 'FirebaseDebug',
+  'Terms', 'Support', 'Settings', 'GroupDetail',
   'InviteLanding',
 ]);
 

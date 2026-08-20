@@ -32,4 +32,4 @@ main
 
 ## 보안 규칙
 
-`.env`, API key, password, Firebase Admin credential, media signing secret, filesystem path를 commit하지 않는다. `.env.example`에는 key name과 안전한 설명만 둔다. `EXPO_PUBLIC_*` 값은 client bundle에 노출되므로 server secret으로 사용하지 않는다.
+`.env`, API key, password, auth token signing secret, media signing secret, filesystem path를 commit하지 않는다. `.env.example`에는 key name과 안전한 설명만 둔다. `EXPO_PUBLIC_*` 값은 client bundle에 노출되므로 server secret으로 사용하지 않는다.

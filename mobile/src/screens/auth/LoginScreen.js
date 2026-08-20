@@ -72,7 +72,7 @@ export default function LoginScreen({ navigation }) {
         <Text style={s.signupText}>계정이 없다면?</Text>
         <Text
           style={s.signupLink}
-          onPress={() => navigation.navigate("SignUpPhone")}
+          onPress={() => navigation.navigate("SignUpAccount")}
         >
           회원 가입하기
         </Text>
@@ -89,7 +89,7 @@ export default function LoginScreen({ navigation }) {
               label === "Google 로그인"
                 ? () =>
                     setGoogleError(
-                      "Firebase 및 Google OAuth 설정값이 필요합니다.",
+                      "소셜 로그인은 아직 준비 중입니다. 아이디로 로그인해 주세요.",
                     )
                 : undefined
             }

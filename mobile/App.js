@@ -7,7 +7,6 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { AppStateProvider } from "./src/state/AppState";
 import StartScreen from "./src/screens/auth/StartScreen";
 import LoginScreen from "./src/screens/auth/LoginScreen";
-import SignUpPhoneScreen from "./src/screens/auth/SignUpPhoneScreen";
 import SignUpAccountScreen from "./src/screens/auth/SignUpAccountScreen";
 import BasicInfoScreen from "./src/screens/onboarding/BasicInfoScreen";
 import HabitScreen from "./src/screens/onboarding/HabitScreen";
@@ -51,7 +50,6 @@ import {
   ExploreGroupDetailScreen,
 } from "./src/screens/group/GroupMoreScreens";
 import {
-  FirebaseDebugScreen,
   PreferPeriodScreen,
   GroupRecommendScreen,
   InviteLandingScreen,
@@ -93,7 +91,6 @@ export default function App() {
           >
             <Stack.Screen name="Start" component={StartScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="SignUpPhone" component={SignUpPhoneScreen} />
             <Stack.Screen
               name="SignUpAccount"
               component={SignUpAccountScreen}
@@ -164,10 +161,6 @@ export default function App() {
               <Stack.Screen
                 name="GroupDetail"
                 component={ExploreGroupDetailScreen}
-              />
-              <Stack.Screen
-                name="FirebaseDebug"
-                component={FirebaseDebugScreen}
               />
               <Stack.Screen
                 name="InviteLanding"

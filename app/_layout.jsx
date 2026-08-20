@@ -2,14 +2,14 @@ import '../global.css';
 
 import { useEffect } from 'react';
 import { Text, TextInput } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, usePathname, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { useAuthStore } from '@/stores/authStore';
+import { AuthStatus, useAuthStore } from '@/stores/authStore';
 import { colors } from '@/theme';
 
 // 정식 Expo Router runtime에서 폰트가 준비될 때까지 첫 화면을 지킨다.
@@ -23,14 +23,24 @@ TextInput.defaultProps.style = [{ fontFamily: 'Pretendard' }, TextInput.defaultP
 // 앱 루트 레이아웃 (웹의 App.jsx + BrowserRouter 역할).
 // Expo Router가 app/ 폴더의 파일을 경로로 매핑한다 (파일기반 라우팅).
 export default function RootLayout() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const authStatus = useAuthStore((state) => state.status);
   const [fontsLoaded, fontError] = useFonts({
     Pretendard: require('../mobile/assets/fonts/PretendardVariable.ttf'),
   });
 
-  // Firebase 세션 구독을 앱 전체에서 한 번만 시작한다. 앱을 다시 열어도 로그인이 유지된다.
+  // SecureStore 세션을 앱 전체에서 한 번만 복구한다.
   useEffect(() => {
     useAuthStore.getState().init();
   }, []);
+
+  useEffect(() => {
+    const publicPath = pathname === '/' || pathname === '/auth/login' || pathname === '/auth/signup-account';
+    if (authStatus === AuthStatus.SIGNED_OUT && !publicPath) {
+      router.dismissTo('/');
+    }
+  }, [authStatus, pathname, router]);
 
   useEffect(() => {
     if (fontsLoaded || fontError) SplashScreen.hideAsync();

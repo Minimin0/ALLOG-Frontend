@@ -29,7 +29,7 @@ ALLOG is an Android-first React Native and Expo Router wellness group client.
 
 ## Production integration
 
-Production API is https://api.allog-app.store. Expo uses EXPO_PUBLIC_API_BASE_URL and Firebase public client values use EXPO_PUBLIC_FIREBASE_ variables. Firebase Admin credentials, database passwords, AI keys, media signing secrets, and server filesystem paths are backend-only secrets.
+Production API is https://api.allog-app.store. Expo uses only `EXPO_PUBLIC_API_BASE_URL`; local ID/password authentication and token signing are backend-owned. Database passwords, token-signing secrets, AI keys, media-signing secrets, and server filesystem paths are backend-only secrets.
 
 Backend is the business-truth authority for lifecycle, schedule, Heart, reward, and final verification decisions.
 
@@ -41,7 +41,7 @@ Request upload-intent, PUT the returned uploadUrl with returned requiredHeaders,
 
 ## Local Development
 
-Copy .env.example to .env, set Firebase public values, run npm ci, then run npm run android. Use the production HTTPS API by default; for an Android emulator local backend use http://10.0.2.2:8080, never localhost.
+Copy `.env.example` to `.env`, set `EXPO_PUBLIC_API_BASE_URL`, run `npm ci`, then run `npm run android`. Use the production HTTPS API by default; for an Android emulator local backend use `http://10.0.2.2:8080`, never `localhost`.
 
 ## Environment Variables
 

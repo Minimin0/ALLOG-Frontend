@@ -29,7 +29,7 @@ export function submitVerification(groupId, options) {
 
 /**
  * 서명된 업로드 URL로 바이트를 직접 올린다. 백엔드가 돌려준 method/headers를 그대로 써야 한다.
- * 별도 업로드 endpoint로 가는 요청이므로 Firebase Authorization 헤더를 붙이지 않는다.
+ * 별도 업로드 endpoint로 가는 요청이므로 ALLOG Authorization 헤더를 붙이지 않는다.
  */
 export async function uploadToPresignedUrl(intent, blob) {
   const headers = {};

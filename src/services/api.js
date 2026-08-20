@@ -1,15 +1,17 @@
 // api service — 공통 API 클라이언트
-// ALLOG 백엔드 요청에 Firebase ID Token을 자동으로 Authorization 헤더에 실어 보냅니다.
+// ALLOG 백엔드 요청에 local access token을 자동으로 Authorization 헤더에 실어 보냅니다.
 // Expo(RN)에서는 import.meta가 없으므로 EXPO_PUBLIC_* 환경변수를 사용합니다.
-import { getCurrentIdToken } from "./authApi";
+import { clearAccessToken, getAccessToken, notifyUnauthorized } from './tokenStore';
 
 export const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "";
+export const DEFAULT_API_TIMEOUT_MS = 15_000;
 
 // 화면이 분기해야 하는 최소 단위. 백엔드는 같은 409를 body 있이/없이 모두 보내므로
 // INSUFFICIENT_HEARTS와 그 밖의 CONFLICT를 반드시 다른 케이스로 취급합니다.
 export const ApiError = {
   NETWORK: "NETWORK_ERROR",
   UNAUTHORIZED: "UNAUTHORIZED",
+  RATE_LIMITED: "RATE_LIMITED",
   NOT_FOUND: "NOT_FOUND",
   CONFLICT: "CONFLICT",
   INSUFFICIENT_HEARTS: "INSUFFICIENT_HEARTS",
@@ -29,6 +31,7 @@ function backendCode(data) {
 function classify(status, data) {
   if (status === 0) return ApiError.NETWORK;
   if (status === 401) return ApiError.UNAUTHORIZED;
+  if (status === 429) return ApiError.RATE_LIMITED;
   if (status === 404) return ApiError.NOT_FOUND;
   if (status === 409) {
     return backendCode(data) === "INSUFFICIENT_HEARTS" ? ApiError.INSUFFICIENT_HEARTS : ApiError.CONFLICT;
@@ -52,7 +55,15 @@ function classify(status, data) {
  */
 export async function apiRequest(path, options = {}) {
   if (!BASE_URL) return { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
-  const { method = "GET", body, headers = {}, skipAuth = false, overrideToken, _getToken = getCurrentIdToken, _hasRetriedAuth = false } = options;
+  const {
+    method = "GET",
+    body,
+    headers = {},
+    skipAuth = false,
+    overrideToken,
+    _getToken = getAccessToken,
+    _timeoutMs = DEFAULT_API_TIMEOUT_MS,
+  } = options;
 
   const finalHeaders = { "Content-Type": "application/json", ...headers };
 
@@ -65,34 +76,40 @@ export async function apiRequest(path, options = {}) {
   }
 
   let response;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), _timeoutMs);
   try {
     response = await fetch(`${BASE_URL}${path}`, {
       method,
       headers: finalHeaders,
       body: body ? JSON.stringify(body) : undefined,
+      signal: controller.signal,
     });
   } catch (error) {
+    clearTimeout(timeout);
     return { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
   }
 
   // 204/401/409는 body가 아예 없을 수 있으므로 response.json()을 무조건 호출하지 않고,
   // 먼저 text로 읽은 뒤 비어있지 않을 때만 파싱합니다.
   let data = null;
+  let text = "";
   try {
-    const text = await response.text();
+    text = await response.text();
+  } catch (error) {
+    clearTimeout(timeout);
+    return { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
+  }
+  clearTimeout(timeout);
+  try {
     data = text ? JSON.parse(text) : null;
   } catch (error) {
     data = null;
   }
 
-  if (response.status === 401 && !skipAuth && overrideToken === undefined && !_hasRetriedAuth) {
-    let refreshedToken;
-    try {
-      refreshedToken = await _getToken(true);
-    } catch (error) {
-      refreshedToken = null;
-    }
-    return apiRequest(path, { ...options, overrideToken: refreshedToken, _getToken, _hasRetriedAuth: true });
+  if (response.status === 401 && !skipAuth && overrideToken === undefined) {
+    await clearAccessToken();
+    notifyUnauthorized();
   }
 
   return {

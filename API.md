@@ -4,7 +4,7 @@
 - 작성일: 2026-08-14
 - 대상: ALLOG MVP
 - Base URL: `/api/v1`
-- 인증: Firebase ID Token
+- 인증: ALLOG Access Token
 
 > 이 문서는 ALLOG 프론트엔드와 백엔드 사이의 MVP API 계약서다. MVP 제외 기능은 부록 A에 기록하며 본문 API의 동작은 하나로 고정한다.
 
@@ -14,10 +14,34 @@
 
 ## 0.1 인증
 
-- 공개 API로 표시된 API를 제외한 모든 요청은 `Authorization: Bearer <Firebase ID Token>` 헤더가 필요하다.
-- 백엔드는 Firebase Admin SDK로 토큰을 검증하고 Firebase `uid`로 사용자를 식별한다.
-- 전화번호 인증은 Firebase Phone Auth로 클라이언트가 수행한다. 별도의 SMS 발급·검증 API는 제공하지 않는다.
+- 공개 API로 표시된 API를 제외한 모든 요청은 `Authorization: Bearer <ALLOG Access Token>` 헤더가 필요하다.
+- 백엔드는 서명·issuer·만료를 검증하고 token subject의 내부 `userId`로 사용자를 식별한다.
+- 회원가입과 로그인은 아이디·비밀번호만 사용한다. 전화번호·SMS·OTP 인증 경로는 없다.
 - 인증 실패는 `401 UNAUTHORIZED`를 반환한다.
+
+### 회원가입
+
+- `POST /api/v1/auth/signup` (공개 API)
+- `loginId`: trim/lowercase 정규화, 영문 소문자·숫자·underscore, 4~32자
+- `password`: 8~72자. 응답과 token에는 포함되지 않는다.
+
+```json
+{ "loginId": "alloguser", "password": "judge-copyable-password" }
+```
+
+성공 시 `201 Created`:
+
+```json
+{ "accessToken": "...", "tokenType": "Bearer", "expiresInSeconds": 86400 }
+```
+
+중복 아이디는 `409 LOGIN_ID_ALREADY_EXISTS`, 입력 오류는 `400 VALIDATION_ERROR`다.
+
+### 로그인
+
+- `POST /api/v1/auth/login` (공개 API)
+- 요청·성공 응답 형식은 회원가입과 같다.
+- 존재하지 않는 아이디와 틀린 비밀번호는 모두 `401 INVALID_CREDENTIALS`와 같은 일반 메시지를 반환한다.
 
 ## 0.2 요청 및 응답
 
@@ -139,7 +163,6 @@
 {
   "userId": "u1",
   "nickname": "민지",
-  "email": "minji@example.com",
   "gender": "female",
   "birthDate": "2000-07-30",
   "heightCm": 165,
@@ -162,7 +185,6 @@
 |---|---|---:|---|
 | `userId` | string | X | 사용자 ID |
 | `nickname` | string | X | 닉네임 |
-| `email` | string | X | Firebase 계정 이메일 |
 | `gender` | enum | O | 선택 입력 성별 |
 | `birthDate` | string(date) | O | 선택 입력 생년월일 |
 | `heightCm` | number | O | 선택 입력 키(cm) |
@@ -175,7 +197,7 @@
 | HTTP | 코드 | 발생 조건 |
 |---:|---|---|
 | 401 | `UNAUTHORIZED` | 토큰 검증 실패 |
-| 404 | `PROFILE_NOT_FOUND` | Firebase 계정은 있으나 프로필 미생성 |
+| 404 | `PROFILE_NOT_FOUND` | 계정은 있으나 프로필 미생성 |
 
 ### 9. 중복 호출 처리
 조회 API이므로 동일 데이터를 반환한다.
@@ -188,7 +210,7 @@
 - 호출 시점: 온보딩 완료 버튼 선택 시
 - 인증: 필수
 - Content-Type: `application/json`
-- 중복 호출 정책: 동일 Firebase 사용자에게 프로필이 있으면 `409 PROFILE_ALREADY_EXISTS`; `Idempotency-Key` 재요청은 최초 성공 응답을 반환한다.
+- 중복 호출 정책: 동일 인증 사용자에게 프로필이 있으면 `409 PROFILE_ALREADY_EXISTS`; `Idempotency-Key` 재요청은 최초 성공 응답을 반환한다.
 
 ### 2. Path 파라미터
 없음
@@ -637,7 +659,7 @@
 ### 5. 요청 예시
 ```http
 POST /api/v1/groups/g1/join
-Authorization: Bearer <Firebase ID Token>
+Authorization: Bearer <ALLOG Access Token>
 Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000
 ```
 
@@ -1989,7 +2011,7 @@ MVP는 LLM을 호출하지 않는다. 자유 질문은 `fallback` 안내와 추�
 ### 1. 기본 정보
 - Method / Path: `DELETE /api/v1/users/me/push-tokens/{tokenId}`
 - 목적: 로그아웃할 현재 기기의 푸시 토큰을 비활성화한다.
-- 호출 시점: Firebase 로그아웃 직전
+- 호출 시점: 로컬 token 삭제 직전
 - 인증: 필수
 - Content-Type: 없음
 - 중복 호출 정책: 이미 삭제된 경우 `204`를 반환한다.
@@ -2020,7 +2042,7 @@ MVP는 LLM을 호출하지 않는다. 자유 질문은 `fallback` 안내와 추�
 | 403 | `PUSH_TOKEN_ACCESS_DENIED` | 다른 사용자의 토큰 |
 
 ### 9. 중복 호출 처리
-이미 삭제된 경우에도 `204`를 반환한다. 로그아웃 자체는 Firebase Auth에서 수행한다.
+이미 삭제된 경우에도 `204`를 반환한다. 로그아웃은 client SecureStore의 ALLOG token을 삭제한다.
 
 ## 현재 약관 목록
 
@@ -2166,7 +2188,7 @@ MVP는 LLM을 호출하지 않는다. 자유 질문은 `fallback` 안내와 추�
 - 실제 LLM 기반 자유 질문 답변
 - 댓글·별도 체크인·공동 목표 활동 기반 그룹 기여도
 - 갤러리의 기존 영상 업로드
-- 별도 SMS 발급·검증 API
+- 전화번호·SMS·OTP 인증
 
 # 부록 B. 프론트 표시 변환
 

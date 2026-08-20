@@ -26,9 +26,9 @@ const menuItems = [
 export default function MyScreen() {
   const router = useRouter();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [logoutError, setLogoutError] = useState('');
   const profile = useUserStore((s) => s.profile);
   const stats = useUserStore((s) => s.stats);
-  const firebaseUser = useAuthStore((s) => s.firebaseUser);
 
   useFocusEffect(
     useCallback(() => {
@@ -41,9 +41,13 @@ export default function MyScreen() {
     .filter(Boolean);
 
   const confirmLogout = async () => {
+    setLogoutError('');
+    if (!await useAuthStore.getState().signOut()) {
+      setLogoutError('로그아웃하지 못했어요. 다시 시도해 주세요.');
+      return;
+    }
     setLogoutOpen(false);
-    await useAuthStore.getState().signOut();
-    router.replace('/');
+    router.dismissTo('/');
   };
 
   return (
@@ -61,7 +65,6 @@ export default function MyScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-[18px] font-bold text-ink">{profile?.nickname ?? '–'}</Text>
-              <Text className="mt-0.5 text-[12px] font-medium text-muted">{firebaseUser?.email ?? ''}</Text>
             </View>
             <Pressable
               onPress={() => router.push('/my/edit-profile')}
@@ -122,7 +125,7 @@ export default function MyScreen() {
         </View>
 
         {/* 로그아웃 */}
-        <Pressable onPress={() => setLogoutOpen(true)} className="h-[50px] items-center justify-center rounded-[13px] border border-heart bg-surface">
+        <Pressable onPress={() => { setLogoutError(''); setLogoutOpen(true); }} className="h-[50px] items-center justify-center rounded-[13px] border border-heart bg-surface">
           <Text className="text-[15px] font-bold text-heart">로그아웃</Text>
         </Pressable>
       </ScrollView>
@@ -132,6 +135,7 @@ export default function MyScreen() {
         <Pressable className="flex-1 justify-end bg-black/40" onPress={() => setLogoutOpen(false)}>
           <Pressable className="rounded-t-[24px] bg-surface px-6 pb-8 pt-6" onPress={() => {}}>
             <Text className="text-center text-[17px] font-bold text-ink">정말 로그아웃 하시겠어요?</Text>
+            {logoutError ? <Text className="mt-2 text-center text-[12px] font-semibold text-heart">{logoutError}</Text> : null}
             <View className="mt-6 flex-row gap-3">
               <Pressable onPress={() => setLogoutOpen(false)} className="flex-1 items-center justify-center rounded-[14px] border border-line bg-surface py-3.5">
                 <Text className="text-[14px] font-bold text-ink">아니오</Text>
