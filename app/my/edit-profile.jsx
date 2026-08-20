@@ -1,21 +1,35 @@
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView, TextInput } from 'react-native';
+import { View, Text, Pressable, ScrollView, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import Icon from '@/components/common/Icon';
 import SleepTimeDial from '@/components/common/SleepTimeDial';
+import { useUserStore } from '@/stores/userStore';
 
-// 프로필 편집 (웹 EditProfilePage 포팅).
+// 프로필 편집 (웹 EditProfilePage 포팅). 저장은 PATCH /api/v1/users/me — 계약에 없는 키(키/몸무게/물섭취량)는
+// 절대 보내지 않는다(보내면 400 UNKNOWN_FIELD). 이 셋은 화면에는 남겨두되 로컬 편집만 유지한다.
 const genders = ['여성', '남성', '선택 안함'];
+const GENDER_TO_KO = { female: '여성', male: '남성' };
+const GENDER_TO_EN = { 여성: 'female', 남성: 'male' };
 const coachStyles = [
   { name: '응원형', icon: 'coach' },
   { name: '압박형', icon: 'pressure' },
   { name: '팩트형', icon: 'fact' },
   { name: '유머형', icon: 'humor' },
 ];
+const COACH_STYLE_TO_KO = { supportive: '응원형', pressuring: '압박형', fact_based: '팩트형', humorous: '유머형' };
+const COACH_STYLE_TO_EN = { 응원형: 'supportive', 압박형: 'pressuring', 팩트형: 'fact_based', 유머형: 'humorous' };
 const exerciseOptions = ['주 1회', '주 2회', '주 3회', '주 4회', '주 5회', '거의 안함'];
+const EXERCISE_DAYS_TO_KO = { 1: '주 1회', 2: '주 2회', 3: '주 3회', 4: '주 4회', 5: '주 5회', 0: '거의 안함' };
+const EXERCISE_DAYS_TO_EN = { '주 1회': 1, '주 2회': 2, '주 3회': 3, '주 4회': 4, '주 5회': 5, '거의 안함': 0 };
 const waterOptions = ['0.5L 미만', '0.5L~1L', '1L~1.5L', '1.5L~2L', '2L 이상'];
+const interestItems = [
+  { key: 'hydration', label: '수분케어', icon: 'selfcare' },
+  { key: 'exercise', label: '운동', icon: 'exercise' },
+  { key: 'meal', label: '식사', icon: 'meal' },
+  { key: 'sleep', label: '수면', icon: 'sleep' },
+];
 
 function FieldChip({ active, children, onPress }) {
   return (
@@ -34,23 +48,56 @@ function Divider() {
 
 export default function EditProfile() {
   const router = useRouter();
-  const [nickname, setNickname] = useState('민지');
-  const [gender, setGender] = useState('여성');
-  const [year, setYear] = useState('2000');
-  const [month, setMonth] = useState('07');
-  const [day, setDay] = useState('30');
-  const [height, setHeight] = useState('165');
-  const [weight, setWeight] = useState('50');
-  const [coachStyle, setCoachStyle] = useState('응원형');
-  const [exercise, setExercise] = useState('주 3회');
+  const profile = useUserStore((s) => s.profile);
+  const ob = profile?.onboarding ?? {};
+  const [birthYear = '', birthMonth = '', birthDay = ''] = (profile?.birthDate ?? '').split('-');
+
+  const [nickname, setNickname] = useState(profile?.nickname ?? '');
+  const [gender, setGender] = useState(GENDER_TO_KO[profile?.gender] ?? '선택 안함');
+  const [year, setYear] = useState(birthYear);
+  const [month, setMonth] = useState(birthMonth);
+  const [day, setDay] = useState(birthDay);
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [coachStyle, setCoachStyle] = useState(COACH_STYLE_TO_KO[ob.coachStyle] ?? '응원형');
+  const [exercise, setExercise] = useState(EXERCISE_DAYS_TO_KO[ob.exerciseDaysPerWeek] ?? '주 3회');
   const [water, setWater] = useState('1L~1.5L');
-  const [sleepHours, setSleepHours] = useState(6);
-  const [sleepMinutes, setSleepMinutes] = useState(30);
+  const [interests, setInterests] = useState(ob.interestRoutines ?? []);
+  const [sleepHours, setSleepHours] = useState(Math.floor(ob.averageSleepHours ?? 6));
+  const [sleepMinutes, setSleepMinutes] = useState(Math.round(((ob.averageSleepHours ?? 6.5) % 1) * 60));
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+
+  const toggleInterest = (key) =>
+    setInterests((v) => (v.includes(key) ? v.filter((i) => i !== key) : [...v, key]));
 
   const sleepValue = sleepHours + sleepMinutes / 60;
   const handleSleepChange = (value) => {
     setSleepHours(Math.floor(value));
     setSleepMinutes(Math.round((value % 1) * 60));
+  };
+
+  const save = async () => {
+    if (saving || !nickname.trim()) return;
+    setSaving(true);
+    setSaveError('');
+    const body = {
+      nickname: nickname.trim(),
+      onboarding: {
+        interestRoutines: interests,
+        coachStyle: COACH_STYLE_TO_EN[coachStyle] ?? 'supportive',
+        exerciseDaysPerWeek: EXERCISE_DAYS_TO_EN[exercise] ?? 0,
+        averageSleepHours: sleepValue,
+      },
+    };
+    if (GENDER_TO_EN[gender]) body.gender = GENDER_TO_EN[gender];
+    if (year && month && day) {
+      body.birthDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    const response = await useUserStore.getState().updateProfile(body);
+    setSaving(false);
+    if (response.ok) router.replace('/my');
+    else setSaveError('저장하지 못했어요. 잠시 후 다시 시도해주세요.');
   };
 
   return (
@@ -158,6 +205,20 @@ export default function EditProfile() {
 
         <Divider />
 
+        {/* 관심 카테고리 */}
+        <View>
+          <Text className="mb-2 text-center text-[15px] font-bold text-ink">관심 카테고리</Text>
+          <View className="flex-row flex-wrap justify-center gap-2">
+            {interestItems.map((item) => (
+              <FieldChip key={item.key} active={interests.includes(item.key)} onPress={() => toggleInterest(item.key)}>
+                {item.label}
+              </FieldChip>
+            ))}
+          </View>
+        </View>
+
+        <Divider />
+
         {/* 수면 시간 */}
         <View className="gap-3">
           <Text className="text-center text-[15px] font-bold text-ink">수면 시간</Text>
@@ -198,8 +259,13 @@ export default function EditProfile() {
           </View>
         </View>
 
-        <Pressable onPress={() => router.replace('/my')} className="h-[52px] items-center justify-center rounded-[27.5px] bg-primary">
-          <Text className="text-[15px] font-bold text-white">저장하기</Text>
+        {saveError ? <Text className="text-center text-[12px] font-semibold text-danger">{saveError}</Text> : null}
+        <Pressable
+          onPress={save}
+          disabled={saving || !nickname.trim()}
+          className={`h-[52px] items-center justify-center rounded-[27.5px] bg-primary ${saving || !nickname.trim() ? 'opacity-50' : ''}`}
+        >
+          {saving ? <ActivityIndicator color="#fff" /> : <Text className="text-[15px] font-bold text-white">저장하기</Text>}
         </Pressable>
       </ScrollView>
     </SafeAreaView>

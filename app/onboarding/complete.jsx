@@ -120,7 +120,7 @@ export default function OnboardingCompleteScreen() {
           ))}
         </View>
         <Text style={s.copy}>
-          <Text style={s.red}>하트</Text>는 <Text style={s.bold}>그룹 참가</Text>에 사용돼요.
+          <Text style={s.red}>하트</Text>는 <Text style={s.bold}>그룹 참가</Text>에만 사용돼요.
         </Text>
         <View style={s.card}>
           <Text style={s.cardHead}>

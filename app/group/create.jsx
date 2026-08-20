@@ -83,7 +83,7 @@ export default function CreateGroupScreen() {
       router.replace(
         visibility === 'private'
           ? { pathname: '/group/invite', params: { groupId } }
-          : { pathname: '/group/created', params: { groupId } },
+          : { pathname: '/group/created', params: { groupId, name, capacity: String(capacity) } },
       );
       return;
     }

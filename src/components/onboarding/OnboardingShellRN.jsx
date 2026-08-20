@@ -20,6 +20,7 @@ export default function OnboardingShellRN({
   onNext,
   nextLabel = '다음',
   canNext = true,
+  canBack = true,
   children,
 }) {
   return (
@@ -27,9 +28,13 @@ export default function OnboardingShellRN({
       <KeyboardAvoidingView style={s.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView style={s.scroll} contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
           <View style={s.head}>
-            <Pressable onPress={onBack} style={s.back}>
-              <Text style={s.arrow}>←</Text>
-            </Pressable>
+            {canBack ? (
+              <Pressable onPress={onBack} style={s.back}>
+                <Text style={s.arrow}>←</Text>
+              </Pressable>
+            ) : (
+              <View style={s.back} />
+            )}
             <Text style={s.step}>STEP {step}</Text>
           </View>
           <View style={s.progress}>
@@ -42,9 +47,11 @@ export default function OnboardingShellRN({
           <View style={s.form}>{children}</View>
         </ScrollView>
         <View style={s.footer}>
-          <Pressable style={s.secondary} onPress={onBack}>
-            <Text style={s.secondaryText}>이전</Text>
-          </Pressable>
+          {canBack ? (
+            <Pressable style={s.secondary} onPress={onBack}>
+              <Text style={s.secondaryText}>이전</Text>
+            </Pressable>
+          ) : null}
           <Pressable disabled={!canNext} style={[s.primary, !canNext && s.disabled]} onPress={onNext}>
             <Text style={[s.primaryText, !canNext && s.disabledText]}>{nextLabel}</Text>
           </Pressable>

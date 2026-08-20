@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import * as Clipboard from 'expo-clipboard';
 
 import { ApiError } from '@/services/api';
 import { issueInviteCode } from '@/services/inviteApi';
@@ -13,6 +14,13 @@ export default function InviteGroupScreen() {
   const groupId = Array.isArray(params.groupId) ? params.groupId[0] : params.groupId;
   const [code, setCode] = useState(null);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const copyCode = async () => {
+    if (!code) return;
+    await Clipboard.setStringAsync(code);
+    setCopied(true);
+  };
 
   useEffect(() => {
     if (!groupId) {
@@ -39,11 +47,27 @@ export default function InviteGroupScreen() {
         {error ? (
           <Text className="mt-2 px-4 text-center text-[13px] font-semibold text-danger">{error}</Text>
         ) : code ? (
-          <Text className="mt-1 text-[24px] font-bold tracking-widest text-primary">{code}</Text>
+          <>
+            <Text className="mt-1 text-[24px] font-bold tracking-widest text-primary">{code}</Text>
+            <Pressable
+              onPress={copyCode}
+              className="mt-4 items-center justify-center rounded-[15px] border border-line bg-bg px-5 py-2.5"
+            >
+              <Text className="text-[13px] font-bold text-ink">{copied ? '복사됨' : '코드 복사하기'}</Text>
+            </Pressable>
+          </>
         ) : (
           <ActivityIndicator className="mt-2" color="#4b7f63" />
         )}
       </View>
+      {!error ? (
+        <View className="w-full rounded-[20px] border border-line bg-surface px-5 py-5">
+          <Text className="mb-2 text-[14px] font-bold text-ink">참여 방법</Text>
+          <Text className="text-[13px] leading-5 text-muted">
+            1. 탐색 화면에서 '코드로 참여하기'를 눌러요.{'\n'}2. 위 코드를 입력하면 바로 참여돼요.
+          </Text>
+        </View>
+      ) : null}
       <Pressable
         onPress={() => router.replace(groupId ? { pathname: '/group', params: { groupId } } : '/group')}
         className="w-full items-center justify-center rounded-[27.5px] bg-ink py-4"

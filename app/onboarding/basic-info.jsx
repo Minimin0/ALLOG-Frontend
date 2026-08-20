@@ -7,8 +7,9 @@ import OnboardingShellRN from '@/components/onboarding/OnboardingShellRN';
 import { useOnboardingStore } from '@/stores/onboardingStore';
 
 // 기본 정보 (STEP 1). 화면은 팀원 최신 디자인(mobile/src/screens/onboarding/BasicInfoScreen.js) 이식.
-// 달력 피커(@react-native-community/datetimepicker)는 이 앱에 설치되어 있지 않은
-// 의존성이라 가져오지 않고, 도너의 web 분기와 같은 직접 입력 방식을 유지한다.
+// 달력 피커(@react-native-community/datetimepicker)는 패키지는 설치돼 있으나 아직 연결 전이다.
+// 네이티브 모듈이라 Expo Go로는 테스트가 안 돼서, 개발 빌드 준비 후 연결 예정. 그때까지는
+// 도너의 web 분기와 같은 직접 입력 방식을 유지한다.
 const genders = ['여성', '남성', '선택 안함'];
 
 export default function BasicInfoScreen() {
@@ -36,7 +37,7 @@ export default function BasicInfoScreen() {
       total={4}
       title="기본 정보를 입력해주세요."
       subtitle="입력하신 정보로 맞춤 루틴을 추천해드려요."
-      onBack={() => router.back()}
+      canBack={false}
       onNext={() => {
         patch({ nickname: form.nickname, gender: form.gender, birth: form.birth });
         router.push('/onboarding/habits');

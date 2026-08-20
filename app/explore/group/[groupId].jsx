@@ -100,19 +100,20 @@ export default function GroupDetailScreen() {
   }
 
   const full = group.currentMembers !== null && group.currentMembers >= group.maxMembers;
+  const statusLabel = group.status === 'RECRUITING' ? '모집중' : group.status === 'FULL' ? '정원마감' : group.status;
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-bg">
       {/* 헤더 */}
       <View className="flex-row items-center gap-3 px-5 py-3">
-        <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-[13px] bg-ink">
-          <Text className="text-[28px] leading-[32px] text-white">‹</Text>
+        <Pressable onPress={() => router.back()} className="h-[43px] w-[43px] items-center justify-center rounded-full border border-line bg-surface">
+          <Text className="text-[20px] text-ink">‹</Text>
         </Pressable>
         <View className="flex-1">
           <View className="flex-row items-center gap-2">
             <Text className="text-[18px] font-bold text-ink" numberOfLines={1}>{group.name}</Text>
             <View className="rounded-full bg-primary-pale px-2 py-0.5">
-              <Text className="text-[11px] font-bold text-primary">{group.status}</Text>
+              <Text className="text-[11px] font-bold text-primary">{statusLabel}</Text>
             </View>
           </View>
           {group.currentMembers !== null && (
@@ -121,6 +122,15 @@ export default function GroupDetailScreen() {
             </Text>
           )}
         </View>
+        {isMember && group.visibility === 'PRIVATE' ? (
+          <Pressable
+            onPress={() => router.push({ pathname: '/group/invite', params: { groupId: String(groupId) } })}
+            className="flex-row items-center gap-1 rounded-full border border-line bg-surface px-3 py-2"
+          >
+            <Text className="text-[13px]">🔗</Text>
+            <Text className="text-[12px] font-bold text-ink">초대코드</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       <ScrollView className="flex-1 px-5" contentContainerClassName="gap-4 py-5 pb-28">
@@ -165,7 +175,7 @@ export default function GroupDetailScreen() {
           <Pressable
             onPress={join}
             disabled={joining || full}
-            className={`items-center justify-center rounded-[27.5px] bg-ink py-4 ${joining || full ? 'opacity-50' : ''}`}
+            className={`items-center justify-center rounded-[27.5px] bg-primary py-4 ${joining || full ? 'opacity-50' : ''}`}
           >
             {joining
               ? <ActivityIndicator color="#fff" />
