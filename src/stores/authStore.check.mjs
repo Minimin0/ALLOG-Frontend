@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 let source = fs.readFileSync(new URL('./authStore.js', import.meta.url), 'utf8')
-  .replace('import { create } from "zustand";', `
+  .replace('import { create } from \'zustand\';', `
     const create = (initializer) => {
       let state;
       const set = (update) => {
@@ -17,59 +17,139 @@ let source = fs.readFileSync(new URL('./authStore.js', import.meta.url), 'utf8')
       return store;
     };
   `)
-  .replace('import { ApiError } from "../services/api";', `
+  .replace("import { ApiError } from '../services/api';", `
     const ApiError = {
-      NETWORK: 'NETWORK_ERROR',
-      UNAUTHORIZED: 'UNAUTHORIZED',
-      NOT_FOUND: 'NOT_FOUND',
+      NETWORK: 'NETWORK_ERROR', UNAUTHORIZED: 'UNAUTHORIZED', NOT_FOUND: 'NOT_FOUND',
       SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
     };
   `)
-  .replace('import { signOutUser, subscribeToAuthChanges } from "../services/authApi";', `
-    const signOutUser = async () => {};
-    const subscribeToAuthChanges = () => () => {};
+  .replace("import { signIn, signUp } from '../services/authApi';", `
+    let authCalls = 0;
+    let authResponder = async () => ({ ok: true, status: 200, data: {}, errorCode: null });
+    const signIn = async (...args) => { authCalls += 1; return authResponder(...args); };
+    const signUp = async (...args) => { authCalls += 1; return authResponder(...args); };
   `)
-  .replace('import { isFirebaseConfigured } from "../services/firebase";', 'const isFirebaseConfigured = true;')
-  .replace('import { useUserStore } from "./userStore";', `
+  .replace("import { clearAccessToken, getAccessToken, onUnauthorized } from '../services/tokenStore';", `
+    let storedToken = null;
+    let unauthorizedHandler = () => {};
+    const clearAccessToken = async () => { storedToken = null; };
+    const getAccessToken = async () => storedToken;
+    const onUnauthorized = (handler) => { unauthorizedHandler = handler; };
+  `)
+  .replace("import { useUserStore } from './userStore';", `
     let profileLoader = async () => ({ ok: true, status: 200, data: {}, errorCode: null });
     const useUserStore = { getState: () => ({ loadProfile: profileLoader, reset: () => {} }) };
   `);
-source += '\nexport const __setProfileLoader = (loader) => { profileLoader = loader; };';
+source += `
+  export const __setToken = (token) => { storedToken = token; };
+  export const __setProfileLoader = (loader) => { profileLoader = loader; };
+  export const __setAuthResponder = (responder) => { authResponder = responder; authCalls = 0; };
+  export const __authCalls = () => authCalls;
+  export const __unauthorized = () => unauthorizedHandler();
+`;
 
 const module = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
-const { AuthStatus, __setProfileLoader, useAuthStore } = module;
+const {
+  AuthStatus, __authCalls, __setAuthResponder, __setProfileLoader, __setToken,
+  __unauthorized, useAuthStore,
+} = module;
 
-async function bootstrapWith(loader) {
+async function initWith(token, loader) {
+  __setToken(token);
   __setProfileLoader(loader);
-  useAuthStore.setState({ status: AuthStatus.SIGNED_OUT, firebaseUser: { uid: 'judge' }, errorCode: null });
-  const result = await Promise.race([
-    useAuthStore.getState().bootstrap(),
-    new Promise((_resolve, reject) => setTimeout(() => reject(new Error('bootstrap did not settle')), 250)),
-  ]);
+  useAuthStore.setState({
+    status: AuthStatus.LOADING, hasSession: false, errorCode: null,
+    initialized: false, authPromise: null,
+  });
+  await useAuthStore.getState().init();
   assert.notEqual(useAuthStore.getState().status, AuthStatus.LOADING);
-  return result;
 }
 
-await bootstrapWith(async () => ({ ok: true, status: 200, data: {}, errorCode: null }));
+await initWith(null, async () => { throw new Error('must not load'); });
+assert.equal(useAuthStore.getState().status, AuthStatus.SIGNED_OUT);
+
+await initWith('token', async () => ({ ok: true, status: 200, data: {}, errorCode: null }));
 assert.equal(useAuthStore.getState().status, AuthStatus.READY);
 
-await bootstrapWith(async () => ({ ok: false, status: 404, data: null, errorCode: 'NOT_FOUND' }));
+await initWith('token', async () => ({ ok: false, status: 404, data: null, errorCode: 'NOT_FOUND' }));
 assert.equal(useAuthStore.getState().status, AuthStatus.ONBOARDING);
 
-await bootstrapWith(async () => ({ ok: false, status: 0, data: null, errorCode: 'NETWORK_ERROR' }));
-assert.equal(useAuthStore.getState().status, AuthStatus.ERROR);
-assert.equal(useAuthStore.getState().errorCode, 'NETWORK_ERROR');
+await initWith('token', async () => ({ ok: false, status: 401, data: null, errorCode: 'UNAUTHORIZED' }));
+assert.equal(useAuthStore.getState().status, AuthStatus.SIGNED_OUT);
+assert.equal(useAuthStore.getState().hasSession, false);
 
-await bootstrapWith(async () => { throw new Error('unexpected'); });
-assert.equal(useAuthStore.getState().status, AuthStatus.ERROR);
-assert.equal(useAuthStore.getState().errorCode, 'NETWORK_ERROR');
+await initWith('token', async () => ({ ok: false, status: 0, data: null, errorCode: 'NETWORK_ERROR' }));
+assert.equal(useAuthStore.getState().status, AuthStatus.ERROR_RETRYABLE);
+
+await initWith('token', async () => { throw new Error('timeout'); });
+assert.equal(useAuthStore.getState().status, AuthStatus.ERROR_RETRYABLE);
+
+__setProfileLoader(async () => ({ ok: true, status: 200, data: {}, errorCode: null }));
+__setAuthResponder(async () => ({ ok: true, status: 200, data: { accessToken: 'token' }, errorCode: null }));
+await useAuthStore.getState().signIn('judge', 'password');
+assert.equal(useAuthStore.getState().status, AuthStatus.READY);
+
+__setAuthResponder(async () => ({ ok: false, status: 401, data: null, errorCode: 'UNAUTHORIZED' }));
+await useAuthStore.getState().signIn('judge', 'wrong');
+assert.equal(useAuthStore.getState().status, AuthStatus.AUTH_ERROR);
+assert.equal(useAuthStore.getState().authPromise, null);
+
+__setProfileLoader(async () => ({ ok: false, status: 404, data: null, errorCode: 'NOT_FOUND' }));
+__setAuthResponder(async () => ({ ok: true, status: 201, data: { accessToken: 'token' }, errorCode: null }));
+await useAuthStore.getState().signUp('newjudge', 'password');
+assert.equal(useAuthStore.getState().status, AuthStatus.ONBOARDING);
+
+let resolveAuth;
+__setAuthResponder(() => new Promise((resolve) => { resolveAuth = resolve; }));
+const first = useAuthStore.getState().signIn('judge', 'password');
+const second = useAuthStore.getState().signIn('judge', 'password');
+assert.equal(__authCalls(), 1);
+resolveAuth({ ok: false, status: 401, data: null, errorCode: 'UNAUTHORIZED' });
+await Promise.all([first, second]);
+assert.equal(useAuthStore.getState().status, AuthStatus.AUTH_ERROR);
+
+__unauthorized();
+assert.equal(useAuthStore.getState().status, AuthStatus.SIGNED_OUT);
 
 for (const path of ['../../app/auth/login.jsx', '../../app/auth/signup-account.jsx']) {
   const screen = fs.readFileSync(new URL(path, import.meta.url), 'utf8');
-  assert.match(screen, /AuthStatus\.ERROR/);
-  assert.match(screen, /setBusy\(false\)/);
-  assert.match(screen, /getState\(\)\.bootstrap\(\)/);
+  assert.match(screen, /if \(busy/);
   assert.match(screen, /finally/);
+  assert.doesNotMatch(screen, /Firebase|phone|email-address|placeholder="이메일"/i);
 }
 
-console.log('auth bootstrap terminal states and screen recovery OK');
+const tokenStore = fs.readFileSync(new URL('../services/tokenStore.js', import.meta.url), 'utf8');
+assert.match(tokenStore, /expo-secure-store/);
+assert.doesNotMatch(tokenStore, /AsyncStorage|console\./);
+
+const tokenModuleSource = tokenStore
+  .replace("import { Platform } from 'react-native';", "const Platform = { OS: 'android' };")
+  .replace("import * as SecureStore from 'expo-secure-store';", `
+    let secureValue = null;
+    let failWrite = false;
+    let failDelete = false;
+    const SecureStore = {
+      getItemAsync: async () => secureValue,
+      setItemAsync: async (_key, value) => {
+        if (failWrite) throw new Error('write failed');
+        secureValue = value;
+      },
+      deleteItemAsync: async () => {
+        if (failDelete) throw new Error('delete failed');
+        secureValue = null;
+      },
+    };
+  `) + `
+    export const __failWrite = () => { failWrite = true; };
+    export const __failDelete = () => { failDelete = true; };
+  `;
+const tokenModule = await import(`data:text/javascript;base64,${Buffer.from(tokenModuleSource).toString('base64')}`);
+await tokenModule.setAccessToken('stable-token');
+tokenModule.__failWrite();
+await assert.rejects(tokenModule.setAccessToken('unsaved-token'));
+assert.equal(await tokenModule.getAccessToken(), 'stable-token');
+tokenModule.__failDelete();
+await tokenModule.clearAccessToken();
+assert.equal(await tokenModule.getAccessToken(), null);
+
+console.log('finite local auth states, SecureStore, and duplicate-submit guard OK');

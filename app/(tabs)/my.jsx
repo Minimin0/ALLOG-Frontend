@@ -28,7 +28,6 @@ export default function MyScreen() {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const profile = useUserStore((s) => s.profile);
   const stats = useUserStore((s) => s.stats);
-  const firebaseUser = useAuthStore((s) => s.firebaseUser);
 
   useFocusEffect(
     useCallback(() => {
@@ -61,7 +60,6 @@ export default function MyScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-[18px] font-bold text-ink">{profile?.nickname ?? '–'}</Text>
-              <Text className="mt-0.5 text-[12px] font-medium text-muted">{firebaseUser?.email ?? ''}</Text>
             </View>
             <Pressable
               onPress={() => router.push('/my/edit-profile')}

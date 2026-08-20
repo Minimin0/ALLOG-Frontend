@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 
@@ -11,10 +11,10 @@ import { AuthStatus, authBootstrapErrorMessage, useAuthStore } from '@/stores/au
 export default function StartScreen() {
   const router = useRouter();
   const status = useAuthStore((s) => s.status);
-  const firebaseUser = useAuthStore((s) => s.firebaseUser);
+  const hasSession = useAuthStore((s) => s.hasSession);
   const errorCode = useAuthStore((s) => s.errorCode);
 
-  // Firebase 세션이 AsyncStorage에 남아 있으면 다시 로그인시키지 않는다.
+  // SecureStore 세션이 남아 있으면 프로필 상태에 따라 바로 이동한다.
   useEffect(() => {
     if (status === AuthStatus.READY) router.replace('/home');
     else if (status === AuthStatus.ONBOARDING) router.replace('/onboarding/basic-info');
@@ -28,10 +28,11 @@ export default function StartScreen() {
     >
       <View className="flex-1 px-12">
         <View className="flex-1 items-center pt-32">
-          {/* TODO: 실제 로고 에셋으로 교체 → <Image source={require('../assets/images/Logo.png')} /> */}
-          <View className="h-[76px] w-[76px] items-center justify-center rounded-2xl bg-primary-tint">
-            <Text className="text-3xl font-bold text-primary">A</Text>
-          </View>
+          <Image
+            source={require('../mobile/assets/images/Logo.png')}
+            className="h-[76px] w-[76px]"
+            resizeMode="contain"
+          />
 
           <Text className="mt-2 text-[15px] font-bold text-ink">Anti Lazing Log</Text>
 
@@ -45,19 +46,20 @@ export default function StartScreen() {
         </View>
 
         <View className="pb-10">
-          {status === AuthStatus.ERROR && firebaseUser ? (
+          {(status === AuthStatus.ERROR_RETRYABLE && hasSession)
+            || (status === AuthStatus.SIGNED_OUT && errorCode === 'UNAUTHORIZED') ? (
             <Text className="mb-3 text-center text-[12px] font-semibold text-danger">
               {authBootstrapErrorMessage(errorCode)}
             </Text>
           ) : null}
           <Pressable
-            onPress={() => status === AuthStatus.ERROR && firebaseUser
+            onPress={() => status === AuthStatus.ERROR_RETRYABLE && hasSession
               ? useAuthStore.getState().bootstrap()
               : router.push('/auth/login')}
             className="h-[50px] items-center justify-center rounded-[20px] bg-primary active:opacity-90"
           >
             <Text className="text-[18px] font-bold text-white">
-              {status === AuthStatus.ERROR && firebaseUser ? '다시 연결하기' : '시작하기'}
+              {status === AuthStatus.ERROR_RETRYABLE && hasSession ? '다시 연결하기' : '시작하기'}
             </Text>
           </Pressable>
 

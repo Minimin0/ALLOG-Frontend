@@ -3,19 +3,17 @@ import { View, Text, Pressable, TextInput, ActivityIndicator } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-import { authErrorMessage, signUp } from '@/services/authApi';
+import { authErrorMessage } from '@/services/authApi';
 import { AuthStatus, authBootstrapErrorMessage, useAuthStore } from '@/stores/authStore';
 import { colors } from '@/theme';
 
-// 계정 만들기. Firebase 이메일/비밀번호 계정을 실제로 생성한다.
-// 백엔드에는 회원가입 API가 없다 — 첫 인증 요청에서 내부 사용자가 만들어지고,
-// 프로필은 온보딩 마지막 단계의 POST /api/v1/users가 만든다.
+// 계정 만들기. Backend local ID/password 계정을 생성하고 access token을 받는다.
 export default function SignUpAccountScreen() {
   const router = useRouter();
   const status = useAuthStore((s) => s.status);
-  const firebaseUser = useAuthStore((s) => s.firebaseUser);
+  const hasSession = useAuthStore((s) => s.hasSession);
   const errorCode = useAuthStore((s) => s.errorCode);
-  const [email, setEmail] = useState('');
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
@@ -30,7 +28,7 @@ export default function SignUpAccountScreen() {
     } else if (status === AuthStatus.READY) {
       setBusy(false);
       router.replace('/home');
-    } else if (status === AuthStatus.ERROR) {
+    } else if (status === AuthStatus.ERROR_RETRYABLE) {
       setBusy(false);
       setError(authBootstrapErrorMessage(errorCode));
     }
@@ -41,19 +39,23 @@ export default function SignUpAccountScreen() {
     setError('');
     setBusy(true);
     try {
-      if (status === AuthStatus.ERROR && firebaseUser) {
-        await useAuthStore.getState().bootstrap();
-      } else {
-        await signUp(email, password);
-      }
-    } catch (e) {
-      setError(authErrorMessage(e));
+      const response = status === AuthStatus.ERROR_RETRYABLE && hasSession
+        ? await useAuthStore.getState().bootstrap()
+        : await useAuthStore.getState().signUp(loginId, password);
+      if (!response.ok && response.errorCode !== 'NOT_FOUND') setError(
+        status === AuthStatus.ERROR_RETRYABLE && hasSession
+          ? authBootstrapErrorMessage(response.errorCode)
+          : authErrorMessage(response),
+      );
+    } catch {
+      setError('서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       setBusy(false);
     }
   };
 
   const waiting = busy || status === AuthStatus.LOADING;
+  const validLoginId = /^[a-z0-9_]{4,32}$/.test(loginId);
 
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-bg">
@@ -62,17 +64,16 @@ export default function SignUpAccountScreen() {
           <Text className="text-2xl text-ink">‹</Text>
         </Pressable>
 
-        <Text className="text-[25px] font-black text-ink" style={{ lineHeight: 35 }}>이메일과 비밀번호를{'\n'}입력해 주세요.</Text>
+        <Text className="text-[25px] font-black text-ink" style={{ lineHeight: 35 }}>아이디와 비밀번호를{'\n'}입력해 주세요.</Text>
 
-        <Text className="mt-8 text-[15px] font-bold text-subtle">이메일</Text>
+        <Text className="mt-8 text-[15px] font-bold text-subtle">아이디</Text>
         <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="allog@example.com"
+          value={loginId}
+          onChangeText={(value) => setLoginId(value.toLowerCase())}
+          placeholder="영문 소문자, 숫자, _ (4~32자)"
           placeholderTextColor={colors.disabled}
           autoCapitalize="none"
           autoCorrect={false}
-          keyboardType="email-address"
           className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
         />
 
@@ -81,7 +82,7 @@ export default function SignUpAccountScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="비밀번호 (6자리 이상)"
+          placeholder="비밀번호 (8자리 이상)"
           placeholderTextColor={colors.disabled}
           className="mt-2 h-11 rounded-[15px] border border-line bg-surface px-4 text-[16px] text-ink"
         />
@@ -104,8 +105,8 @@ export default function SignUpAccountScreen() {
 
         <Pressable
           onPress={submit}
-          disabled={waiting || !match || !email}
-          className={`mb-4 h-[50px] items-center justify-center rounded-[20px] bg-ink ${waiting || !match || !email ? 'opacity-50' : ''}`}
+          disabled={waiting || !match || !validLoginId || password.length < 8}
+          className={`mb-4 h-[50px] items-center justify-center rounded-[20px] bg-ink ${waiting || !match || !validLoginId || password.length < 8 ? 'opacity-50' : ''}`}
         >
           {waiting ? <ActivityIndicator color={colors.white} /> : <Text className="text-[18px] font-bold text-[#f2f2f6]">완료</Text>}
         </Pressable>

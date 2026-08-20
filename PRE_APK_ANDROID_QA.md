@@ -4,7 +4,7 @@
 >
 > **Device-runtime status:** `ANDROID_DEVICE_E2E_NOT_FAKED`
 >
-> **Branch under test:** `feature/final-ui-polish`
+> **Branch under test:** `fix/post-review-ui-ai-followups`
 >
 > **Baseline main:** `f3abf9ccd8a5a3a298462bfd07dd2f83d4663f36` (`PR #14` merged)
 
@@ -19,16 +19,16 @@
 | 정적 계약 검사 | PASS | 각 명령이 exit code 0으로 종료되어야 한다. |
 | Android bundle export | PASS | `metadata.json`과 Android Hermes bundle이 생성되어야 한다. |
 | 실제 기기/에뮬레이터 E2E | DEFERRED | 아래 A–O 체크리스트를 실제 Android 환경에서 수행·기록해야 한다. |
-| 인증 transport E2E | `TRANSPORT_E2E_NOT_RERUN` | 유효한 backend, Firebase, signed-URL test fixture가 제공될 때만 재실행한다. |
+| 인증 transport E2E | `TRANSPORT_E2E_NOT_RERUN` | local-auth backend, ID/password test account, signed-URL test fixture가 제공될 때 재실행한다. |
 
 ## B. 빌드 대상과 선행 조건
 
-QA 담당자는 PR merge 후보의 정확한 commit SHA를 기록하고, 연결할 backend 환경과 Firebase test account를 사전에 확보한다. 실제 Wallet, Reward, Group lifecycle의 판단값은 client state가 아니라 backend 응답을 사용하므로, backend fixture 없이 보이는 숫자만으로 성공을 판정해서는 안 된다.
+QA 담당자는 PR merge 후보의 정확한 commit SHA를 기록하고, 연결할 backend 환경과 local-auth test account를 사전에 확보한다. 실제 Wallet, Reward, Group lifecycle의 판단값은 client state가 아니라 backend 응답을 사용하므로, backend fixture 없이 보이는 숫자만으로 성공을 판정해서는 안 된다.
 
 | 필요 항목 | 확인 내용 |
 |---|---|
 | Android 환경 | 실제 기기 또는 API level이 명시된 emulator, 화면 크기, Android 버전 |
-| 인증 | Firebase test user 또는 로그인 가능한 test identity |
+| 인증 | 로그인 가능한 local ID/password test identity |
 | backend | groups, progress, user stats, verification upload-intent가 동작하는 test environment |
 | 권한 | camera permission만 허용한다. microphone permission을 요청하면 실패다. |
 | 증빙 | 화면 녹화 또는 스크린샷, API 실패 시 timestamp와 error code |
@@ -41,7 +41,7 @@ APK 또는 development build를 깨끗한 Android 환경에 설치한다. Cold s
 
 ## D. 시작·로그인 화면
 
-로그인 화면에서 아이디 입력 후 IME의 다음 동작이 비밀번호 field로 이동하는지 확인한다. 비밀번호 입력 중 키보드가 CTA와 오류 문구를 가리지 않는지, 완료 action이 기존 로그인 이동 동작을 보존하는지 확인한다. Google 버튼의 미설정 오류는 기존 안내 문구가 가독성 있게 표시되어야 하며, visual polish가 auth provider나 Firebase credential 동작을 바꾸면 안 된다.
+로그인 화면에서 아이디 입력 후 IME의 다음 동작이 비밀번호 field로 이동하는지 확인한다. 비밀번호 입력 중 키보드가 CTA와 오류 문구를 가리지 않는지, 완료 action이 기존 로그인 이동 동작을 보존하는지 확인한다. Social button은 준비 중 안내만 제공하며 새 OAuth provider를 연결하지 않는다.
 
 | 시나리오 | 기대 결과 | 결과 |
 |---|---|---|
@@ -143,7 +143,7 @@ APK 또는 development build를 깨끗한 Android 환경에 설치한다. Cold s
 
 | 상황 | 기대 결과 | 결과 |
 |---|---|---|
-| 401 | 기존 refresh/retry 계약을 사용하며 로그인 상태가 일관된다. | ☐ |
+| 401 | token을 한 번 삭제하고 로그인으로 이동하며 refresh/retry loop가 없다. | ☐ |
 | 409 / insufficient Heart | backend 결정에 맞는 안내만 표시한다. | ☐ |
 | 네트워크 오류 | 재시도 UI가 표시되고 local success로 전환하지 않는다. | ☐ |
 | refresh | stats·groups·progress가 서버 값으로 다시 렌더링된다. | ☐ |
@@ -155,7 +155,8 @@ APK 또는 development build를 깨끗한 Android 환경에 설치한다. Cold s
 | 명령 | 결과 |
 |---|---|
 | `npm ci` | PASS. lockfile 기준 dependency install 완료. |
-| `node src/services/api.check.mjs` | PASS — `api 401 refresh retry OK` |
+| `node src/services/api.check.mjs` | PASS — `api timeout and finite 401 invalidation OK` |
+| `node src/stores/authStore.check.mjs` | PASS — finite local auth states, SecureStore, duplicate-submit guard |
 | `node src/stores/onboardingStore.check.mjs` | PASS — `onboarding mapping OK` |
 | `node scripts/canonical-font.check.mjs` | PASS — `canonical Expo font setup OK` |
 | `node scripts/video-frame-verification.check.mjs` | PASS — `video frame verification boundary OK` |
@@ -174,7 +175,7 @@ QA 종료 시 아래 표를 작성하고 evidence link 또는 파일 경로를 �
 | APK/development build 식별자 | |
 | Android 기기·버전·navigation mode | |
 | backend environment | |
-| Firebase test account / fixture | |
+| Local-auth test account / fixture | |
 | 수행자·일시 | |
 | PASS / FAIL / BLOCKED 요약 | |
 | evidence 경로 | |

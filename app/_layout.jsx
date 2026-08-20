@@ -27,7 +27,7 @@ export default function RootLayout() {
     Pretendard: require('../mobile/assets/fonts/PretendardVariable.ttf'),
   });
 
-  // Firebase 세션 구독을 앱 전체에서 한 번만 시작한다. 앱을 다시 열어도 로그인이 유지된다.
+  // SecureStore 세션을 앱 전체에서 한 번만 복구한다.
   useEffect(() => {
     useAuthStore.getState().init();
   }, []);

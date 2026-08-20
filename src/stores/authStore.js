@@ -1,89 +1,109 @@
-// authStore — Firebase 세션 + 백엔드 프로필 부트스트랩
-//
-// 로그인 성공 후 GET /api/v1/users/me 한 번으로 갈 곳이 정해진다.
-//   200 → 기존 사용자        → 메인
-//   404 → 인증은 됐지만 온보딩 전 → 온보딩 (에러 아님)
-//   401 → 세션/인증 문제
-import { create } from "zustand";
+import { create } from 'zustand';
 
-import { ApiError } from "../services/api";
-import { signOutUser, subscribeToAuthChanges } from "../services/authApi";
-import { isFirebaseConfigured } from "../services/firebase";
-import { useUserStore } from "./userStore";
+import { ApiError } from '../services/api';
+import { signIn, signUp } from '../services/authApi';
+import { clearAccessToken, getAccessToken, onUnauthorized } from '../services/tokenStore';
+import { useUserStore } from './userStore';
 
 export const AuthStatus = {
-  LOADING: "loading", // 부트스트랩 진행 중
-  SIGNED_OUT: "signedOut", // Firebase 사용자 없음
-  ONBOARDING: "onboarding", // 인증됨 + 프로필 없음 (404)
-  READY: "ready", // 인증됨 + 프로필 있음
-  ERROR: "error", // 401 / 네트워크 등
+  LOADING: 'loading',
+  SIGNED_OUT: 'signedOut',
+  ONBOARDING: 'onboarding',
+  READY: 'ready',
+  ERROR_RETRYABLE: 'errorRetryable',
+  AUTH_ERROR: 'authError',
 };
 
 export function authBootstrapErrorMessage(errorCode) {
-  if (errorCode === ApiError.UNAUTHORIZED) {
-    return "로그인 세션을 확인하지 못했어요. 다시 연결해주세요.";
-  }
+  if (errorCode === ApiError.UNAUTHORIZED) return '로그인 세션이 만료됐어요. 다시 로그인해 주세요.';
   if (errorCode === ApiError.NETWORK || errorCode === ApiError.SERVICE_UNAVAILABLE) {
-    return "로그인 정보는 확인됐지만 서버에 연결하지 못했어요. 다시 시도해주세요.";
+    return '서버에 연결하지 못했어요. 다시 시도해 주세요.';
   }
-  return "로그인 정보를 불러오지 못했어요. 다시 시도해주세요.";
+  return '로그인 정보를 불러오지 못했어요. 다시 시도해 주세요.';
 }
 
 export const useAuthStore = create((set, get) => ({
   status: AuthStatus.LOADING,
-  firebaseUser: null,
+  hasSession: false,
   errorCode: null,
-  unsubscribe: null,
+  initialized: false,
+  authPromise: null,
 
-  // 앱 시작 시 한 번. Firebase 미설정이면 SIGNED_OUT으로 두고 앱은 계속 살아 있게 한다.
-  init: () => {
-    if (get().unsubscribe) return;
-    if (!isFirebaseConfigured) {
-      set({ status: AuthStatus.SIGNED_OUT, firebaseUser: null });
-      return;
-    }
-
-    const unsubscribe = subscribeToAuthChanges(async (user) => {
-      if (!user) {
-        useUserStore.getState().reset();
-        set({ status: AuthStatus.SIGNED_OUT, firebaseUser: null, errorCode: null });
+  init: async () => {
+    if (get().initialized) return;
+    set({ initialized: true, status: AuthStatus.LOADING, errorCode: null });
+    onUnauthorized(() => {
+      useUserStore.getState().reset();
+      set({ status: AuthStatus.SIGNED_OUT, hasSession: false, errorCode: ApiError.UNAUTHORIZED });
+    });
+    try {
+      const token = await getAccessToken();
+      if (!token) {
+        set({ status: AuthStatus.SIGNED_OUT, hasSession: false, errorCode: null });
         return;
       }
-      set({ firebaseUser: user, status: AuthStatus.LOADING, errorCode: null });
+      set({ hasSession: true });
       await get().bootstrap();
-    });
-    set({ unsubscribe });
+    } catch {
+      set({ status: AuthStatus.ERROR_RETRYABLE, hasSession: false, errorCode: ApiError.NETWORK });
+    }
   },
 
-  // GET /users/me 한 번으로 온보딩 여부를 판정한다.
   bootstrap: async () => {
     set({ status: AuthStatus.LOADING, errorCode: null });
     try {
       const response = await useUserStore.getState().loadProfile();
       if (response.ok) {
-        set({ status: AuthStatus.READY, errorCode: null });
-        return response;
+        set({ status: AuthStatus.READY, hasSession: true, errorCode: null });
+      } else if (response.errorCode === ApiError.NOT_FOUND) {
+        set({ status: AuthStatus.ONBOARDING, hasSession: true, errorCode: null });
+      } else if (response.errorCode === ApiError.UNAUTHORIZED) {
+        await clearAccessToken();
+        useUserStore.getState().reset();
+        set({ status: AuthStatus.SIGNED_OUT, hasSession: false, errorCode: ApiError.UNAUTHORIZED });
+      } else {
+        set({ status: AuthStatus.ERROR_RETRYABLE, errorCode: response.errorCode });
       }
-      if (response.errorCode === ApiError.NOT_FOUND) {
-        set({ status: AuthStatus.ONBOARDING, errorCode: null });
-        return response;
-      }
-      set({ status: AuthStatus.ERROR, errorCode: response.errorCode });
       return response;
     } catch {
       const response = { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
-      set({ status: AuthStatus.ERROR, errorCode: response.errorCode });
+      set({ status: AuthStatus.ERROR_RETRYABLE, errorCode: response.errorCode });
       return response;
     }
   },
 
-  // 온보딩 완료 직후 재조회 없이 상태만 올린다.
-  markReady: () => set({ status: AuthStatus.READY, errorCode: null }),
+  authenticate: async (request) => {
+    if (get().authPromise) return get().authPromise;
+    const promise = (async () => {
+      set({ status: AuthStatus.LOADING, errorCode: null });
+      try {
+        const response = await request();
+        if (!response.ok) {
+          set({ status: AuthStatus.AUTH_ERROR, hasSession: false, errorCode: response.errorCode });
+          return response;
+        }
+        set({ hasSession: true });
+        return get().bootstrap();
+      } catch {
+        const response = { ok: false, status: 0, data: null, errorCode: ApiError.NETWORK };
+        set({ status: AuthStatus.ERROR_RETRYABLE, hasSession: false, errorCode: response.errorCode });
+        return response;
+      } finally {
+        set({ authPromise: null });
+      }
+    })();
+    set({ authPromise: promise });
+    return promise;
+  },
+
+  signIn: (loginId, password) => get().authenticate(() => signIn(loginId, password)),
+  signUp: (loginId, password) => get().authenticate(() => signUp(loginId, password)),
+  markReady: () => set({ status: AuthStatus.READY, hasSession: true, errorCode: null }),
 
   signOut: async () => {
-    await signOutUser();
+    await clearAccessToken();
     useUserStore.getState().reset();
-    set({ status: AuthStatus.SIGNED_OUT, firebaseUser: null, errorCode: null });
+    set({ status: AuthStatus.SIGNED_OUT, hasSession: false, errorCode: null });
   },
 }));
 

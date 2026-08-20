@@ -25,11 +25,6 @@ const mappings = {
     "AiCoachScreen",
     "AiCoach",
   ],
-  "auth/FirebaseDebugPage.jsx": [
-    "src/screens/utility/UtilityScreens.js",
-    "FirebaseDebugScreen",
-    "FirebaseDebug",
-  ],
   "auth/LoginPage.jsx": [
     "src/screens/auth/LoginScreen.js",
     "LoginScreen",
@@ -39,11 +34,6 @@ const mappings = {
     "src/screens/auth/SignUpAccountScreen.js",
     "SignUpAccountScreen",
     "SignUpAccount",
-  ],
-  "auth/SignUpPhonePage.jsx": [
-    "src/screens/auth/SignUpPhoneScreen.js",
-    "SignUpPhoneScreen",
-    "SignUpPhone",
   ],
   "auth/StartPage.jsx": [
     "src/screens/auth/StartScreen.js",

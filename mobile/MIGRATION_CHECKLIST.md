@@ -5,9 +5,7 @@ The web implementation remains intact. A checkbox is marked only after native im
 ## Auth
 - [ ] StartPage
 - [ ] LoginPage
-- [ ] SignUpPhonePage
 - [ ] SignUpAccountPage
-- [ ] FirebaseDebugPage
 
 ## Onboarding
 - [ ] OnboardingShell

@@ -1,7 +1,7 @@
 // api service — 공통 API 클라이언트
-// ALLOG 백엔드 요청에 Firebase ID Token을 자동으로 Authorization 헤더에 실어 보냅니다.
+// ALLOG 백엔드 요청에 local access token을 자동으로 Authorization 헤더에 실어 보냅니다.
 // Expo(RN)에서는 import.meta가 없으므로 EXPO_PUBLIC_* 환경변수를 사용합니다.
-import { getCurrentIdToken } from "./authApi";
+import { clearAccessToken, getAccessToken, notifyUnauthorized } from './tokenStore';
 
 export const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "";
 export const DEFAULT_API_TIMEOUT_MS = 15_000;
@@ -59,8 +59,7 @@ export async function apiRequest(path, options = {}) {
     headers = {},
     skipAuth = false,
     overrideToken,
-    _getToken = getCurrentIdToken,
-    _hasRetriedAuth = false,
+    _getToken = getAccessToken,
     _timeoutMs = DEFAULT_API_TIMEOUT_MS,
   } = options;
 
@@ -106,14 +105,9 @@ export async function apiRequest(path, options = {}) {
     data = null;
   }
 
-  if (response.status === 401 && !skipAuth && overrideToken === undefined && !_hasRetriedAuth) {
-    let refreshedToken;
-    try {
-      refreshedToken = await _getToken(true);
-    } catch (error) {
-      refreshedToken = null;
-    }
-    return apiRequest(path, { ...options, overrideToken: refreshedToken, _getToken, _hasRetriedAuth: true });
+  if (response.status === 401 && !skipAuth && overrideToken === undefined) {
+    await clearAccessToken();
+    notifyUnauthorized();
   }
 
   return {

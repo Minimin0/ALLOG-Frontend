@@ -4,10 +4,13 @@
     "slug": "allog",
     "scheme": "allog",
     "version": "1.0.0",
+    "icon": "./mobile/assets/icon.png",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
+      "image": "./mobile/assets/splash-icon.png",
+      "resizeMode": "contain",
       "backgroundColor": "#f7f6f3"
     },
     "ios": {
@@ -17,6 +20,8 @@
     "android": {
       "package": "com.allog.app",
       "adaptiveIcon": {
+        "foregroundImage": "./mobile/assets/android-icon-foreground.png",
+        "monochromeImage": "./mobile/assets/android-icon-monochrome.png",
         "backgroundColor": "#f7f6f3"
       }
     },
@@ -31,7 +36,8 @@
           "recordAudioAndroid": false
         }
       ],
-      "expo-video"
+      "expo-video",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": false
