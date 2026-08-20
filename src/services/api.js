@@ -11,6 +11,7 @@ export const DEFAULT_API_TIMEOUT_MS = 15_000;
 export const ApiError = {
   NETWORK: "NETWORK_ERROR",
   UNAUTHORIZED: "UNAUTHORIZED",
+  RATE_LIMITED: "RATE_LIMITED",
   NOT_FOUND: "NOT_FOUND",
   CONFLICT: "CONFLICT",
   INSUFFICIENT_HEARTS: "INSUFFICIENT_HEARTS",
@@ -30,6 +31,7 @@ function backendCode(data) {
 function classify(status, data) {
   if (status === 0) return ApiError.NETWORK;
   if (status === 401) return ApiError.UNAUTHORIZED;
+  if (status === 429) return ApiError.RATE_LIMITED;
   if (status === 404) return ApiError.NOT_FOUND;
   if (status === 409) {
     return backendCode(data) === "INSUFFICIENT_HEARTS" ? ApiError.INSUFFICIENT_HEARTS : ApiError.CONFLICT;

@@ -43,9 +43,9 @@ export default function SignUpAccountScreen() {
         ? await useAuthStore.getState().bootstrap()
         : await useAuthStore.getState().signUp(loginId, password);
       if (!response.ok && response.errorCode !== 'NOT_FOUND') setError(
-        status === AuthStatus.ERROR_RETRYABLE && hasSession
-          ? authBootstrapErrorMessage(response.errorCode)
-          : authErrorMessage(response),
+        useAuthStore.getState().status === AuthStatus.AUTH_ERROR
+          ? authErrorMessage(response)
+          : authBootstrapErrorMessage(response.errorCode),
       );
     } catch {
       setError('서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.');

@@ -47,7 +47,7 @@ export default function MyScreen() {
       return;
     }
     setLogoutOpen(false);
-    router.replace('/');
+    router.dismissTo('/');
   };
 
   return (

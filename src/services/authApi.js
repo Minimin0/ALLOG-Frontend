@@ -24,6 +24,7 @@ export function signUp(loginId, password) {
 
 export function authErrorMessage(response) {
   if (response?.status === 401) return '아이디 또는 비밀번호가 올바르지 않아요.';
+  if (response?.status === 429) return '로그인 시도가 너무 많아요. 잠시 후 다시 시도해 주세요.';
   if (response?.status === 409) return '이미 사용 중인 아이디예요.';
   if (response?.errorCode === ApiError.VALIDATION) return '아이디와 비밀번호 형식을 확인해 주세요.';
   if (response?.errorCode === ApiError.NETWORK || response?.errorCode === ApiError.SERVICE_UNAVAILABLE) {

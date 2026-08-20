@@ -37,7 +37,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     const publicPath = pathname === '/' || pathname === '/auth/login' || pathname === '/auth/signup-account';
-    if (authStatus === AuthStatus.SIGNED_OUT && !publicPath) router.replace('/');
+    if (authStatus === AuthStatus.SIGNED_OUT && !publicPath) {
+      router.dismissTo('/');
+    }
   }, [authStatus, pathname, router]);
 
   useEffect(() => {

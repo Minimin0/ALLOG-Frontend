@@ -73,6 +73,9 @@ try {
   assert.equal(module.cleared, 1);
   assert.equal(module.unauthorized, 1);
 
+  check = await run({ status: 429, options: { skipAuth: true } });
+  assert.equal(check.result.errorCode, ApiError.RATE_LIMITED);
+
   globalThis.fetch = async (_url, request) => new Promise((_resolve, reject) => {
     request.signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
   });

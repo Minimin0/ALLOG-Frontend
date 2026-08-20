@@ -49,9 +49,9 @@ export default function LoginScreen() {
         ? await useAuthStore.getState().bootstrap()
         : await useAuthStore.getState().signIn(loginId, password);
       if (!response.ok && response.errorCode !== 'NOT_FOUND') setError(
-        status === AuthStatus.ERROR_RETRYABLE && hasSession
-          ? authBootstrapErrorMessage(response.errorCode)
-          : authErrorMessage(response),
+        useAuthStore.getState().status === AuthStatus.AUTH_ERROR
+          ? authErrorMessage(response)
+          : authBootstrapErrorMessage(response.errorCode),
       );
     } catch {
       setError('서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.');
@@ -97,11 +97,6 @@ export default function LoginScreen() {
         >
           {waiting ? <ActivityIndicator color={colors.white} /> : <Text className="text-[18px] font-bold text-white">{canRetryBootstrap ? '다시 연결하기' : '로그인'}</Text>}
         </Pressable>
-
-        <View className="mt-3 flex-row justify-center gap-6">
-          <Text className="text-[13px] text-ink">아이디 찾기</Text>
-          <Text className="text-[13px] text-ink">비밀번호 찾기</Text>
-        </View>
 
         <View className="mt-5 flex-row justify-center">
           <Text className="text-[13px] text-ink">계정이 없다면? </Text>

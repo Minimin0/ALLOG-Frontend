@@ -100,6 +100,19 @@ await useAuthStore.getState().signIn('judge', 'wrong');
 assert.equal(useAuthStore.getState().status, AuthStatus.AUTH_ERROR);
 assert.equal(useAuthStore.getState().authPromise, null);
 
+__setAuthResponder(async () => ({ ok: false, status: 429, data: null, errorCode: 'RATE_LIMITED' }));
+const limited = await useAuthStore.getState().signIn('judge', 'wrong');
+assert.equal(limited.status, 429);
+assert.equal(useAuthStore.getState().status, AuthStatus.AUTH_ERROR);
+assert.equal(useAuthStore.getState().authPromise, null);
+
+__setProfileLoader(async () => ({ ok: false, status: 0, data: null, errorCode: 'NETWORK_ERROR' }));
+__setAuthResponder(async () => ({ ok: true, status: 200, data: { accessToken: 'token' }, errorCode: null }));
+const failedBootstrap = await useAuthStore.getState().signIn('judge', 'password');
+assert.equal(failedBootstrap.errorCode, 'NETWORK_ERROR');
+assert.equal(useAuthStore.getState().status, AuthStatus.ERROR_RETRYABLE);
+assert.equal(useAuthStore.getState().authPromise, null);
+
 __setProfileLoader(async () => ({ ok: false, status: 404, data: null, errorCode: 'NOT_FOUND' }));
 __setAuthResponder(async () => ({ ok: true, status: 201, data: { accessToken: 'token' }, errorCode: null }));
 await useAuthStore.getState().signUp('newjudge', 'password');
@@ -129,12 +142,30 @@ for (const path of ['../../app/auth/login.jsx', '../../app/auth/signup-account.j
   const screen = fs.readFileSync(new URL(path, import.meta.url), 'utf8');
   assert.match(screen, /if \(busy/);
   assert.match(screen, /finally/);
+  assert.match(screen, /useAuthStore\.getState\(\)\.status === AuthStatus\.AUTH_ERROR/);
   assert.doesNotMatch(screen, /Firebase|phone|email-address|placeholder="이메일"/i);
 }
 
+const loginScreen = fs.readFileSync(new URL('../../app/auth/login.jsx', import.meta.url), 'utf8');
+assert.doesNotMatch(loginScreen, /아이디 찾기|비밀번호 찾기/);
+
+const authApiSource = fs.readFileSync(new URL('../services/authApi.js', import.meta.url), 'utf8')
+  .replace("import { ApiError, apiRequest } from './api';", `
+    const ApiError = {
+      VALIDATION: 'VALIDATION_ERROR', NETWORK: 'NETWORK_ERROR', SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
+    };
+    const apiRequest = async () => ({ ok: false });
+  `)
+  .replace("import { setAccessToken } from './tokenStore';", 'const setAccessToken = async () => {};');
+const authApiModule = await import(`data:text/javascript;base64,${Buffer.from(authApiSource).toString('base64')}`);
+assert.equal(
+  authApiModule.authErrorMessage({ status: 429, errorCode: 'RATE_LIMITED' }),
+  '로그인 시도가 너무 많아요. 잠시 후 다시 시도해 주세요.',
+);
+
 const rootLayout = fs.readFileSync(new URL('../../app/_layout.jsx', import.meta.url), 'utf8');
 assert.match(rootLayout, /authStatus === AuthStatus\.SIGNED_OUT/);
-assert.match(rootLayout, /router\.replace\('\/'\)/);
+assert.match(rootLayout, /router\.dismissTo\('\/'\)/);
 
 const tokenStore = fs.readFileSync(new URL('../services/tokenStore.js', import.meta.url), 'utf8');
 assert.match(tokenStore, /expo-secure-store/);
@@ -172,5 +203,6 @@ assert.equal(await tokenModule.getAccessToken(), 'stable-token');
 
 const myScreen = fs.readFileSync(new URL('../../app/(tabs)/my.jsx', import.meta.url), 'utf8');
 assert.match(myScreen, /if \(!await useAuthStore\.getState\(\)\.signOut\(\)\)/);
+assert.match(myScreen, /router\.dismissTo\('\/'\)/);
 
 console.log('finite local auth states, SecureStore, and duplicate-submit guard OK');
